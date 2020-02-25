@@ -49,6 +49,8 @@ public class NeuronController : MonoBehaviour
     transform.position = cursorPosition;
     }
 
+
+
     void OnMouseDown()
     {
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
@@ -60,12 +62,14 @@ public class NeuronController : MonoBehaviour
         // ec.nemu();
         if(newSynapseMode && synapseV1Mode){
             Debug.Log("UNO");
-            SendMessageUpwards("SynapseCoordinate1", gameObject.transform.position);
+            var x = new {position = gameObject.transform.position, name = gameObject.name};
+            SendMessageUpwards("SynapseCoordinate1", gameObject);
 
         }
         else if(newSynapseMode && synapseV2Mode){
             Debug.Log("DOS");
-            SendMessageUpwards("SynapseCoordinate2", gameObject.transform.position);
+            var x = new {position = gameObject.transform.position, name = gameObject.name};
+            SendMessageUpwards("SynapseCoordinate2", gameObject);
         }
     }
 

@@ -11,6 +11,10 @@ public class EditorController : MonoBehaviour
     private bool newSynapseMode = false;
     private Vector3 synapseStart;
     private Vector3 synapseEnd;
+
+    private List<int> neurons = new List<int>();
+    private List<(int, int)> synapses = new List<(int, int)>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,12 +24,10 @@ public class EditorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    public void nemu()
-    {
-        Debug.Log("DOG");
+        foreach ((int i, int j) in synapses)
+            {
+                DrawLine(GameObject.Find("Neurons/"+i.ToString()).transform.position, GameObject.Find("Neurons/"+j.ToString()).transform.position);
+            }
     }
 
     public bool isNewSynapseMode()
@@ -36,7 +38,9 @@ public class EditorController : MonoBehaviour
     public void NewNeuron()
     {
         GameObject newron = Instantiate(NeuronPrefab, new Vector3(neuronCount * 2f - 5, Random.Range(-5f, 5f), 0), Quaternion.identity);
+        newron.name = neuronCount.ToString();
         newron.transform.parent = Neurons.transform;
+        neurons.Add(neuronCount);
         neuronCount += 1;
     }
 
@@ -47,13 +51,23 @@ public class EditorController : MonoBehaviour
         Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
     }
 
-    public void NewSynapseEnd(Vector3 v1, Vector3 v2){
+    public void NewSynapseEnd(Vector3 v1, Vector3 v2, string sourceNeuronName, string destNeuronName){
         synapseStart = v1;
         synapseEnd = v2;
+        synapses.Add((int.Parse(sourceNeuronName), int.Parse(destNeuronName)));
         DrawLine(v1, v2);
+        newSynapseMode = false;
     }
 
-    public void DrawLine(Vector3 start, Vector3 end, float duration = 0.2f)
+    public void testPrintSynapse(){
+        foreach ((int i, int j) in synapses)
+            {
+                print(i.ToString() + " " + j.ToString());
+                
+            }
+    }
+
+    public void DrawLine(Vector3 start, Vector3 end, float duration = 0.03f)
     {
         GameObject myLine = new GameObject();
         myLine.transform.position = start;
@@ -63,7 +77,7 @@ public class EditorController : MonoBehaviour
         lr.SetWidth(0.1f, 0.1f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
-        // GameObject.Destroy(myLine, duration);
+        GameObject.Destroy(myLine, duration);
         lineCount += 1;
     }
 }

@@ -6,6 +6,8 @@ public class NeuronsController : MonoBehaviour
 {
     Vector3 v1;
     Vector3 v2;
+    string sourceNeuronName;
+    string destNeuronName;
     public GameObject EditorController;
     EditorController ec;
     // Start is called before the first frame update
@@ -25,16 +27,18 @@ public class NeuronsController : MonoBehaviour
         BroadcastMessage("SynapseV1ModeReceiver", true);
     }
 
-    public void SynapseCoordinate1(Vector3 vector){
-        v1 = vector;
+    public void SynapseCoordinate1(GameObject neuron){
+        v1 = neuron.transform.position;
+        sourceNeuronName = neuron.name;
         BroadcastMessage("SynapseV1ModeReceiver", false);
         BroadcastMessage("SynapseV2ModeReceiver", true);
     }
 
-    public void SynapseCoordinate2(Vector3 vector){
-        v2 = vector;
+    public void SynapseCoordinate2(GameObject neuron){
+        v2 = neuron.transform.position;
+        destNeuronName = neuron.name;
         BroadcastMessage("SynapseV2ModeReceiver", false);
         BroadcastMessage("NewSynapseModeReceiver", false);
-        ec.NewSynapseEnd(v1, v2);
+        ec.NewSynapseEnd(v1, v2, sourceNeuronName, destNeuronName);
     }
 }

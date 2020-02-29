@@ -22,6 +22,14 @@ public class NeuronsController : MonoBehaviour
         
     }
 
+    public void EditNeuronMode(bool mode){
+        BroadcastMessage("EditNeuronModeReceiver", mode);
+    }
+
+    public void EditNeuronTarget(GameObject neuron){
+        ec.EditNeuron(neuron);
+    }
+
     public void NewSynapseMode(bool mode){
         BroadcastMessage("NewSynapseModeReceiver", mode);
         BroadcastMessage("SynapseV1ModeReceiver", true);

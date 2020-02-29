@@ -6,18 +6,24 @@ public class NeuronController : MonoBehaviour
 {
     public GameObject neuron;
     public GameObject EditorController;
+    public EditorController ec;
     private bool newSynapseMode = false;
     private bool synapseV1Mode = false;
     private bool synapseV2Mode = false;
 
+    private bool editNeuronMode = false;
+
     private Vector3 screenPoint;
     private Vector3 offset;
 
+    private int spikes = 0;
+    private List<string> rules = new List<string>();
 
     // Start is called before the first frame update
     void Start()
     {
         EditorController = GameObject.Find("EditorController");
+        ec = EditorController.GetComponent<EditorController>();
     }
 
     // Update is called once per frame
@@ -26,10 +32,13 @@ public class NeuronController : MonoBehaviour
         
     }
 
+    void EditNeuronModeReceiver(bool mode){
+        editNeuronMode = mode;
+    }
+
     void NewSynapseModeReceiver(bool mode)
     {
         newSynapseMode = mode;
-        print("NEW SYNAPSE MODE");
     }
 
     void SynapseV1ModeReceiver(bool mode)
@@ -44,9 +53,10 @@ public class NeuronController : MonoBehaviour
 
     void OnMouseDrag()
     {
-    Vector3 cursorScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
-    Vector3 cursorPosition = Camera.main.ScreenToWorldPoint (cursorScreenPoint) + offset;
-    transform.position = cursorPosition;
+        Vector3 cursorScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+        Vector3 cursorPosition = Camera.main.ScreenToWorldPoint (cursorScreenPoint) + offset;
+        transform.position = cursorPosition;
+        // ec.Draw();
     }
 
 
@@ -70,6 +80,9 @@ public class NeuronController : MonoBehaviour
             Debug.Log("DOS");
             var x = new {position = gameObject.transform.position, name = gameObject.name};
             SendMessageUpwards("SynapseCoordinate2", gameObject);
+        }
+        else if(editNeuronMode){
+            SendMessageUpwards("EditNeuronTarget", gameObject);
         }
     }
 

@@ -9,25 +9,37 @@ public class EditorController : MonoBehaviour
     public GameObject NeuronPrefab;
     public GameObject Neurons;
     private bool newSynapseMode = false;
+    private bool editNeuronMode = false;
     private Vector3 synapseStart;
     private Vector3 synapseEnd;
 
     private List<int> neurons = new List<int>();
     private List<(int, int)> synapses = new List<(int, int)>();
 
+    public GameObject editNeuronMenu;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        editNeuronMenu.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        Draw();
+    }
+
+    public void Draw(){
         foreach ((int i, int j) in synapses)
-            {
-                DrawLine(GameObject.Find("Neurons/"+i.ToString()).transform.position, GameObject.Find("Neurons/"+j.ToString()).transform.position);
-            }
+        {
+            DrawLine(GameObject.Find("Neurons/"+i.ToString()).transform.position, GameObject.Find("Neurons/"+j.ToString()).transform.position);
+        }
+    }
+
+    private void OnMouseDrag()
+    {
+        
     }
 
     public bool isNewSynapseMode()
@@ -44,6 +56,14 @@ public class EditorController : MonoBehaviour
         neuronCount += 1;
     }
 
+    public void EditNeuronStart(){
+        editNeuronMode = true;
+        Neurons.GetComponent<NeuronsController>().EditNeuronMode(true);
+    }
+
+    public void EditNeuron(GameObject neuron){
+        editNeuronMenu.SetActive(true);
+    }
 
     public void NewSynapseStart()
     {  

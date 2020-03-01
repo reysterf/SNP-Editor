@@ -23,10 +23,13 @@ public class NeuronsController : MonoBehaviour
     }
 
     public void EditNeuronMode(bool mode){
+        print("Edit Neuron Mode");
         BroadcastMessage("EditNeuronModeReceiver", mode);
     }
 
     public void EditNeuronTarget(GameObject neuron){
+        print("EditNeuronTarget");
+        print(neuron.name);
         ec.EditNeuron(neuron);
     }
 

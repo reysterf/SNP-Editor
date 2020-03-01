@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class NeuronController : MonoBehaviour
@@ -24,6 +25,9 @@ public class NeuronController : MonoBehaviour
     {
         EditorController = GameObject.Find("EditorController");
         ec = EditorController.GetComponent<EditorController>();
+        rules.Add("a -> a;0");
+        rules.Add("a -> x");
+
     }
 
     // Update is called once per frame
@@ -34,6 +38,18 @@ public class NeuronController : MonoBehaviour
 
     void EditNeuronModeReceiver(bool mode){
         editNeuronMode = mode;
+    }
+
+    public int GetSpikes(){
+        return spikes;
+    }
+
+    public List<string> GetRules(){
+        return rules;
+    }
+
+    public void SetRules(string rulesNew){
+        rules = rulesNew.Split('\n').ToList();;
     }
 
     void NewSynapseModeReceiver(bool mode)

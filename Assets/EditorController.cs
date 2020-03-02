@@ -175,4 +175,12 @@ public class EditorController : MonoBehaviour
         GameObject.Destroy(myLine, duration);
         lineCount += 1;
     }
+
+    public void StartFire()
+    {
+        foreach ((int i, int j) in synapses)
+        {
+            Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()), GameObject.Find("Neurons/" + j.ToString()));
+        }
+    }
 }

@@ -52,4 +52,9 @@ public class NeuronsController : MonoBehaviour
         BroadcastMessage("NewSynapseModeReceiver", false);
         ec.NewSynapseEnd(v1, v2, sourceNeuronName, destNeuronName);
     }
+
+    public void Fire(GameObject shootingNeuron, GameObject targetNeuron)
+    {
+        shootingNeuron.GetComponent<NeuronController>().FireOneStep(targetNeuron);
+    }
 }

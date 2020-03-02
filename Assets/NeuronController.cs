@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 public class NeuronController : MonoBehaviour
 {
@@ -17,17 +18,22 @@ public class NeuronController : MonoBehaviour
     private Vector3 screenPoint;
     private Vector3 offset;
 
-    private int spikes = 0;
+    private int storedGive;
+    private int storedConsume;
+    private int timer = -1;
+    public string spikes = "";
     private List<string> rules = new List<string>();
 
     // Start is called before the first frame update
     void Start()
     {
+        spikes = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         EditorController = GameObject.Find("EditorController");
         ec = EditorController.GetComponent<EditorController>();
-        rules.Add("a -> a;0");
-        rules.Add("a -> x");
-
+        rules.Add("a+/a -> a;0");
+        rules.Add("(aaa)+/aaa -> aaa;0");
+        float scale = (float)spikes.Length / ((float)30);
+        transform.localScale = new Vector3(scale, scale, scale);
     }
 
     // Update is called once per frame
@@ -40,7 +46,7 @@ public class NeuronController : MonoBehaviour
         editNeuronMode = mode;
     }
 
-    public int GetSpikes(){
+    public string GetSpikes(){
         return spikes;
     }
 
@@ -113,5 +119,80 @@ public class NeuronController : MonoBehaviour
     {
         //The mouse is no longer hovering over the GameObject so output this message each frame
         // Debug.Log("Mouse is no longer on GameObject.");
+    }
+
+    public void FireOneStep(GameObject target)
+    {
+        Debug.Log(timer);
+        if (timer == -1)
+            CheckRules(target);
+        else if (timer == 0)
+            Fire(storedConsume, storedGive, target);
+        else if (timer > 0)
+            timer = timer - 1;
+    }
+
+    private void CheckRules(GameObject target)
+    {
+        int i = 0;
+        List<string> matches = new List<string>();
+        foreach (string rule in rules)
+        {
+            int slashInd = rule.IndexOf("/");
+            string reg = rule.Substring(0, slashInd);
+            if (Regex.IsMatch(spikes, reg))
+            {
+                matches.Add(rule);
+            }
+        }
+        
+        if (matches.Count > 0)
+        {
+            string chosenRule = matches[Random.Range(0, matches.Count)];
+            Debug.Log(chosenRule);
+            int slashInd = chosenRule.IndexOf("/");
+            string reg = chosenRule.Substring(0, slashInd);
+            int arrowInd = chosenRule.IndexOf(">") + 1;
+            int semicolInd = chosenRule.IndexOf(";");
+            int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 4)).Length;
+            int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
+            int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
+            Debug.Log("c" + consume + "g" + give + "d" + delay);
+            timer = delay;
+            if (delay == 0)
+                Fire(consume, give, target);
+            else
+                CloseNeuron(consume, give);
+        }
+    }
+
+    private void CloseNeuron(int consumed, int give)
+    {
+        storedGive = give;
+        storedConsume = consumed;
+    }
+
+    private void Fire(int consumed, int give, GameObject target)
+    {
+        Debug.Log("Fire!");
+        int i = 0;
+        spikes = spikes.Substring(consumed);
+        //for (i = 0; i < connexion.Length; i++)
+        //{
+        //    Neuron target = connexion[i];
+        //    DrawMovingSpike(transform.position, target.transform.position);
+        target.GetComponent<NeuronController>().Receive(give);
+        //}
+        float scale = (float)spikes.Length / ((float)30);
+        transform.localScale = new Vector3(scale, scale, scale);
+        timer = timer - 1;
+    }
+
+    public void Receive(int received)
+    {
+        string recStr = new string('a', received);
+        spikes = string.Concat(spikes, recStr);
+        float scale = (float)spikes.Length / ((float)30);
+        transform.localScale = new Vector3(scale, scale, scale);
     }
 }

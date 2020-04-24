@@ -9,11 +9,12 @@ public class NeuronController : MonoBehaviour
     public GameObject neuron;
     public GameObject EditorController;
     public EditorController ec;
+
     private bool newSynapseMode = false;
     private bool synapseV1Mode = false;
     private bool synapseV2Mode = false;
-
     private bool editNeuronMode = false;
+    private bool deleteNeuronMode = false;
 
     private Vector3 screenPoint;
     private Vector3 offset;
@@ -73,6 +74,11 @@ public class NeuronController : MonoBehaviour
         synapseV2Mode = mode;
     }
 
+    void DeleteNeuronModeReceiver(bool mode)
+    {
+        deleteNeuronMode = mode;
+    }
+
     void OnMouseDrag()
     {
         Vector3 cursorScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
@@ -80,7 +86,6 @@ public class NeuronController : MonoBehaviour
         transform.position = cursorPosition;
         // ec.Draw();
     }
-
 
 
     void OnMouseDown()
@@ -92,6 +97,8 @@ public class NeuronController : MonoBehaviour
         // EditorController ec = EditorController.GetComponent<EditorController>();
         // Debug.Log("OOF");
         // ec.nemu();
+
+        // Handles clicks received depending on editing mode
         if(newSynapseMode && synapseV1Mode){
             Debug.Log("UNO");
             var x = new {position = gameObject.transform.position, name = gameObject.name};
@@ -105,6 +112,9 @@ public class NeuronController : MonoBehaviour
         }
         else if(editNeuronMode){
             SendMessageUpwards("EditNeuronTarget", gameObject);
+        }
+        else if(deleteNeuronMode){
+            SendMessageUpwards("DeleteNeuronTarget", gameObject);
         }
     }
 

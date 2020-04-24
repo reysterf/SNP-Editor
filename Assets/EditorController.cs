@@ -15,6 +15,7 @@ public class EditorController : MonoBehaviour
     private bool newSynapseMode = false;
     private bool editNeuronMode = false;
     private bool editRulesMode = false;
+    private bool deleteNeuronMode = false;
 
     private Vector3 synapseStart;
     private Vector3 synapseEnd;
@@ -38,6 +39,11 @@ public class EditorController : MonoBehaviour
     {
         editNeuronMenu.SetActive(false);
         editRulesMenu.SetActive(false);
+
+        foreach ((int i, int j) in synapses)
+        {
+            print(i.ToString() + ", " + j.ToString());
+        }
     }
 
     // Update is called once per frame
@@ -63,8 +69,46 @@ public class EditorController : MonoBehaviour
         GameObject newron = Instantiate(NeuronPrefab, new Vector3(neuronCount * 2f - 5, Random.Range(-5f, 5f), 0), Quaternion.identity);
         newron.name = neuronCount.ToString();
         newron.transform.parent = Neurons.transform;
-        neurons.Add(neuronCount);
+        neurons.Add(neuronCount); //neuronCount
         neuronCount += 1;
+    }
+
+    public void DeleteNeuronStart(){
+        deleteNeuronMode = true;
+        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
+    }
+
+    public void DeleteNeuron(GameObject neuron){
+        removeConnectedSynapses(neuron);
+        neurons.Remove(int.Parse(neuron.name));
+        Destroy(neuron);
+        DeleteNeuronEnd();
+    }
+
+    public void DeleteNeuronEnd(){
+        deleteNeuronMode = false;
+        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);        
+    }
+
+    private void removeConnectedSynapses(GameObject neuron){
+        int n = int.Parse(neuron.name);
+        int k = 0;
+
+        List<int> indexToRemove = new List<int>();
+
+        foreach ((int i, int j) in synapses)
+        {
+            if (i == n || j == n){
+                indexToRemove.Add(k);
+            }
+            k += 1;
+        }
+        
+        int indexOffset = 0;
+        foreach (int i in indexToRemove){
+            synapses.RemoveAt(i - indexOffset);
+            indexOffset += 1;
+        }
     }
 
     public void EditNeuronStart(){

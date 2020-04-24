@@ -22,14 +22,23 @@ public class NeuronsController : MonoBehaviour
         
     }
 
+    public void DeleteNeuronMode(bool mode){
+        print("Delete Neuron Mode");
+        BroadcastMessage("DeleteNeuronModeReceiver", mode);
+    }
+
+    public void DeleteNeuronTarget(GameObject neuron){
+        print("DeleteNeuronTarget: " + neuron.name);
+        ec.DeleteNeuron(neuron);
+    }
+
     public void EditNeuronMode(bool mode){
         print("Edit Neuron Mode");
         BroadcastMessage("EditNeuronModeReceiver", mode);
     }
 
     public void EditNeuronTarget(GameObject neuron){
-        print("EditNeuronTarget");
-        print(neuron.name);
+        print("EditNeuronTarget: " + neuron.name);
         ec.EditNeuron(neuron);
     }
 

@@ -11,11 +11,13 @@ public class EditorController : MonoBehaviour
 
     public GameObject NeuronPrefab;
     public GameObject Neurons;
+    public GameObject Synapses;
 
     private bool newSynapseMode = false;
     private bool editNeuronMode = false;
     private bool editRulesMode = false;
     private bool deleteNeuronMode = false;
+    private bool deleteSynapseMode = false;
 
     private Vector3 synapseStart;
     private Vector3 synapseEnd;
@@ -34,6 +36,8 @@ public class EditorController : MonoBehaviour
     private GameObject initialGameObject;
     private GameObject modifiedGameObject;
 
+    public GameObject deleteSynapseButton;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,19 +53,25 @@ public class EditorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Draw();
+        if(!deleteSynapseMode){
+            Draw();        
+        }
     }
 
     public void Draw(){
         foreach ((int i, int j) in synapses)
         {
-            DrawLine(GameObject.Find("Neurons/"+i.ToString()).transform.position, GameObject.Find("Neurons/"+j.ToString()).transform.position);
+            DrawLine(GameObject.Find("Neurons/"+i.ToString()).transform.position, GameObject.Find("Neurons/"+j.ToString()).transform.position, i.ToString(), j.ToString());
         }
     }
 
     public bool isNewSynapseMode()
     {
         return newSynapseMode;
+    }
+
+    public bool isDeleteSynapseMode(){
+        return deleteSynapseMode;
     }
 
     public void NewNeuron()
@@ -71,6 +81,38 @@ public class EditorController : MonoBehaviour
         newron.transform.parent = Neurons.transform;
         neurons.Add(neuronCount); //neuronCount
         neuronCount += 1;
+    }
+
+    public void DeleteSynapseStart(){
+        deleteSynapseMode = true;
+        Draw();
+        Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
+    }
+
+    public void DeleteSynapse(string synapseName){
+        print("Deleting synapse: " + synapseName);
+        GameObject targetSynapse = GameObject.Find(synapseName);
+
+        string sourceNeuron = targetSynapse.GetComponent<SynapseController>().GetSourceNeuron();
+        string destNeuron = targetSynapse.GetComponent<SynapseController>().GetDestNeuron();
+
+        synapses.Remove((int.Parse(sourceNeuron), int.Parse(destNeuron)));
+
+        Destroy(targetSynapse);
+
+        deleteSynapseMode = false;
+        Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(false);
+
+        GameObject[] deleteButtons = GameObject.FindGameObjectsWithTag("Delete Button");
+        foreach(GameObject delBut in deleteButtons){
+            Destroy(delBut);
+        }
+
+        //Synapse reset
+        GameObject[] synapsesDelete = GameObject.FindGameObjectsWithTag("Synapse");
+        foreach(GameObject synapse in synapsesDelete){
+            Destroy(synapse);
+        }
     }
 
     public void DeleteNeuronStart(){
@@ -194,7 +236,7 @@ public class EditorController : MonoBehaviour
         synapseStart = v1;
         synapseEnd = v2;
         synapses.Add((int.Parse(sourceNeuronName), int.Parse(destNeuronName)));
-        DrawLine(v1, v2);
+        DrawLine(v1, v2, sourceNeuronName, destNeuronName);
         newSynapseMode = false;
     }
 
@@ -206,17 +248,33 @@ public class EditorController : MonoBehaviour
             }
     }
 
-    public void DrawLine(Vector3 start, Vector3 end, float duration = 0.03f)
+    public void DrawLine(Vector3 start, Vector3 end, string sourceNeuronName, string destNeuronName, float duration = 0.03f)
     {
-        GameObject myLine = new GameObject();
-        myLine.transform.position = start;
-        myLine.AddComponent<LineRenderer>();
-        LineRenderer lr = myLine.GetComponent<LineRenderer>();
+        GameObject newSynapse = new GameObject();
+        newSynapse.transform.position = start;
+        newSynapse.transform.parent = Synapses.transform;
+        newSynapse.transform.tag = "Synapse";
+        newSynapse.name = sourceNeuronName + destNeuronName;
+        newSynapse.AddComponent<LineRenderer>();
+        newSynapse.AddComponent<SynapseController>();
+        newSynapse.GetComponent<SynapseController>().SetSourceNeuron(sourceNeuronName);
+        newSynapse.GetComponent<SynapseController>().SetDestNeuron(destNeuronName);
+        LineRenderer lr = newSynapse.GetComponent<LineRenderer>();
         // lr.SetColors(color, color);
-        lr.SetWidth(0.1f, 0.1f);
+        // lr.SetWidth(0.1f, 0.1f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
-        GameObject.Destroy(myLine, duration);
+        lr.startWidth = 0.5f;
+        lr.endWidth = 0.5f;
+        if(deleteSynapseMode){
+            GameObject delbut = Instantiate(deleteSynapseButton, (start + end) * 0.5f, Quaternion.identity);
+            delbut.transform.localScale = new Vector3(.03f, .03f, 0);
+            delbut.transform.SetParent(newSynapse.transform);
+            delbut.transform.tag = "Delete Button";
+        }
+        if(!deleteSynapseMode){
+            GameObject.Destroy(newSynapse, duration);
+        }
         lineCount += 1;
     }
 

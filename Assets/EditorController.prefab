@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3000603469988135874
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3000603469988135872}
+  - component: {fileID: 3000603469988135875}
+  - component: {fileID: 3000603469988135873}
+  - component: {fileID: 4319445626964287762}
+  m_Layer: 0
+  m_Name: EditorController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3000603469988135872
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000603469988135874}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3000603469988135875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000603469988135874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d5856ec4d255404da5e9fedcb40259f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NeuronPrefab: {fileID: 7766130607654995561, guid: db35df9b32030f14294a9f316156ebbf,
+    type: 3}
+  Neurons: {fileID: 0}
+  Synapses: {fileID: 0}
+  editNeuronMenu: {fileID: 0}
+  editRulesMenu: {fileID: 0}
+  deleteSynapseButton: {fileID: 2663394240239927686, guid: afc53d384066db3468743d9f2739aacf,
+    type: 3}
+--- !u!114 &3000603469988135873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000603469988135874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5e9d2f65f07cc74ea702a13f5d56a42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  someButton: {fileID: 0}
+--- !u!114 &4319445626964287762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000603469988135874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a104298f7506d246b567898cf5c7086, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

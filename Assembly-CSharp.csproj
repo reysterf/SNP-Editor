@@ -45,10 +45,14 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\AnxillaryFunctions.cs" />
+     <Compile Include="Assets\DeleteButtonController.cs" />
      <Compile Include="Assets\Drawer.cs" />
      <Compile Include="Assets\EditorController.cs" />
      <Compile Include="Assets\NeuronController.cs" />
      <Compile Include="Assets\NeuronsController.cs" />
+     <Compile Include="Assets\SynapseController.cs" />
+     <Compile Include="Assets\SynapsesController.cs" />
      <Compile Include="Assets\testScript.cs" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.0f6/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

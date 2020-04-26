@@ -81,9 +81,11 @@ public class NeuronController : MonoBehaviour
 
     void OnMouseDrag()
     {
-        Vector3 cursorScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
-        Vector3 cursorPosition = Camera.main.ScreenToWorldPoint (cursorScreenPoint) + offset;
-        transform.position = cursorPosition;
+        if(!ec.isDeleteSynapseMode()){
+            Vector3 cursorScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint (cursorScreenPoint) + offset;
+            transform.position = cursorPosition;
+        }
         // ec.Draw();
     }
 

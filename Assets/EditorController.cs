@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
+using System.IO;
+using System.Text.RegularExpressions;
 
 public class EditorController : MonoBehaviour
 {
@@ -97,6 +100,8 @@ public class EditorController : MonoBehaviour
         string destNeuron = targetSynapse.GetComponent<SynapseController>().GetDestNeuron();
 
         synapses.Remove((int.Parse(sourceNeuron), int.Parse(destNeuron)));
+        
+        GameObject.Find(sourceNeuron).GetComponent<NeuronController>().DeleteOutSynapse(int.Parse(destNeuron));
 
         Destroy(targetSynapse);
 
@@ -236,16 +241,27 @@ public class EditorController : MonoBehaviour
         synapseStart = v1;
         synapseEnd = v2;
         synapses.Add((int.Parse(sourceNeuronName), int.Parse(destNeuronName)));
+
+        //add outsynapse to source neuron
+        GameObject.Find(sourceNeuronName).GetComponent<NeuronController>().AddOutSynapse(int.Parse(sourceNeuronName));
+
         DrawLine(v1, v2, sourceNeuronName, destNeuronName);
         newSynapseMode = false;
     }
 
     public void testPrintSynapse(){
+        print("[Synapses]");
         foreach ((int i, int j) in synapses)
-            {
-                print(i.ToString() + " " + j.ToString());
-                
-            }
+        {
+            print(i.ToString() + " " + j.ToString());            
+        }
+    }
+
+    public void testPrintNeurons(){
+        print("[Neurons]");
+        foreach(int i in neurons){
+            print(i.ToString());
+        }
     }
 
     public void DrawLine(Vector3 start, Vector3 end, string sourceNeuronName, string destNeuronName, float duration = 0.03f)
@@ -284,5 +300,127 @@ public class EditorController : MonoBehaviour
         {
             Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()), GameObject.Find("Neurons/" + j.ToString()));
         }
+    }
+
+    public void Save(){
+        var path = EditorUtility.SaveFilePanel(
+        "Save as",
+        "",
+        "Untitled.snapse",
+        "snapse");
+
+        if (path.Length != 0)
+        {
+            var configData = System.Text.Encoding.UTF8.GetBytes(EncodeToFormat());
+            if (configData != null)
+                File.WriteAllBytes(path, configData);
+        }
+    }
+
+    public void Load(){
+        string path = EditorUtility.OpenFilePanel("Load snapse file", "", "snapse");
+        if (path.Length != 0)
+        {
+            var fileContent = File.ReadAllBytes(path);
+            string formatData = System.Text.Encoding.UTF8.GetString(fileContent);
+            DecodeFromFormat(formatData);
+        }
+    }
+
+    public string EncodeToFormat(){
+        string format = "";
+        
+        string neuronsDeclaration = "neurons = [";
+        int i = 0;
+        foreach (int neuron in neurons){
+            neuronsDeclaration += "N" + neuron.ToString();
+            i += 1;
+            if (i < neurons.Count){
+                neuronsDeclaration += ", ";
+            }
+        }
+        neuronsDeclaration += "]";
+
+        format += neuronsDeclaration;
+
+        format += "\n";
+
+        string neuronsDefinition = "";
+
+        foreach (int neuron in neurons){
+            string neuronDefinition = "";
+            GameObject neuronToEncode = GameObject.Find(neuron.ToString());
+
+            neuronDefinition += "N" + neuron.ToString() + "{\n";
+
+            //spikes
+            int neuronSpikes = neuronToEncode.GetComponent<NeuronController>().GetSpikesNum();
+            neuronDefinition += "\tspikes = " + neuronSpikes.ToString();
+
+            neuronDefinition += "\n";
+
+            //rules
+            string neuronRules = "[";
+            List<string> rules = neuronToEncode.GetComponent<NeuronController>().GetRules();
+
+            i = 0;
+            foreach (string rule in rules){
+                neuronRules += "[" + rule + "]";
+                i+=1;
+                if (i < rules.Count){
+                    neuronRules += ", ";
+                }
+            }
+            neuronRules += "]";
+
+            neuronDefinition += "\trules = " + neuronRules;
+
+            neuronDefinition += "\n";
+
+            //outsynapses
+            List<int> outSynapses = neuronToEncode.GetComponent<NeuronController>().GetOutSynapses();
+            string neuronOutSynapses = "[";
+
+            i = 0;
+            foreach (int outSynapse in outSynapses){
+                neuronOutSynapses += "N" + outSynapse.ToString();
+                i += 1;
+                if (i < outSynapses.Count){
+                    neuronOutSynapses += ", ";
+                }
+            }
+
+            neuronOutSynapses += "]";
+
+            neuronDefinition += "\toutsynapses = " + neuronOutSynapses;
+
+            neuronDefinition += "\n";
+
+            neuronDefinition += "}";
+
+            neuronDefinition += "\n";
+
+            //add neuron definition to neurons definition
+            neuronsDefinition += neuronDefinition;
+
+            // print(neuronDefinition);
+        }
+
+        format += neuronsDefinition;
+
+        return format;
+    }
+
+    public void testEncodeToFormat(){
+        print(EncodeToFormat());        
+    }
+
+    public void DecodeFromFormat(string formatData){
+        Regex.Replace(formatData, @"\s+", "");
+        print(formatData);
+    }
+
+    public void testDecodeFromFormat(){
+        Load();
     }
 }

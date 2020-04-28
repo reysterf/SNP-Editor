@@ -1,0 +1,11 @@
+neurons = [N1, N2]
+N1{
+    spikes = 2
+    rules = [[a^2 > a;0], [a > x]]
+    outsynapses = [N2]
+}
+N2{
+    spikes = 0
+    rules = [[a > a; 0]]
+    outsynapses = [ENV]
+}

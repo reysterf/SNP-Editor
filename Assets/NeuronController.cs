@@ -16,6 +16,8 @@ public class NeuronController : MonoBehaviour
     private bool editNeuronMode = false;
     private bool deleteNeuronMode = false;
 
+    private List<int> outSynapses = new List<int>();
+
     private Vector3 screenPoint;
     private Vector3 offset;
 
@@ -51,12 +53,28 @@ public class NeuronController : MonoBehaviour
         return spikes;
     }
 
+    public int GetSpikesNum(){
+        return spikes.Length;
+    }
+
     public List<string> GetRules(){
         return rules;
     }
 
     public void SetRules(string rulesNew){
         rules = rulesNew.Split('\n').ToList();;
+    }
+
+    public void AddOutSynapse(int neuron){
+        outSynapses.Add(neuron);
+    }
+
+    public void DeleteOutSynapse(int neuron){
+        outSynapses.Remove(neuron);
+    }
+
+    public List<int> GetOutSynapses(){
+        return outSynapses;
     }
 
     void NewSynapseModeReceiver(bool mode)
@@ -103,13 +121,13 @@ public class NeuronController : MonoBehaviour
         // Handles clicks received depending on editing mode
         if(newSynapseMode && synapseV1Mode){
             Debug.Log("UNO");
-            var x = new {position = gameObject.transform.position, name = gameObject.name};
+            // var x = new {position = gameObject.transform.position, name = gameObject.name};
             SendMessageUpwards("SynapseCoordinate1", gameObject);
 
         }
         else if(newSynapseMode && synapseV2Mode){
             Debug.Log("DOS");
-            var x = new {position = gameObject.transform.position, name = gameObject.name};
+            // var x = new {position = gameObject.transform.position, name = gameObject.name};
             SendMessageUpwards("SynapseCoordinate2", gameObject);
         }
         else if(editNeuronMode){
@@ -207,4 +225,5 @@ public class NeuronController : MonoBehaviour
         float scale = (float)spikes.Length / ((float)30);
         transform.localScale = new Vector3(scale, scale, scale);
     }
+
 }

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Delete Button
   - Synapse
+  - Neuron
   layers:
   - Default
   - TransparentFX

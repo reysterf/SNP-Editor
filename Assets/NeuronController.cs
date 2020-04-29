@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Text;
 
 public class NeuronController : MonoBehaviour
 {
@@ -49,6 +50,10 @@ public class NeuronController : MonoBehaviour
         editNeuronMode = mode;
     }
 
+    public void SetSpikes(int num){
+        spikes = RepeatString("a", num);
+    }
+
     public string GetSpikes(){
         return spikes;
     }
@@ -65,8 +70,14 @@ public class NeuronController : MonoBehaviour
         rules = rulesNew.Split('\n').ToList();;
     }
 
+
+
     public void AddOutSynapse(int neuron){
         outSynapses.Add(neuron);
+    }
+
+    public void SetOutSynapses(List<int> outSynapsesList){
+        outSynapses = outSynapsesList;
     }
 
     public void DeleteOutSynapse(int neuron){
@@ -226,4 +237,8 @@ public class NeuronController : MonoBehaviour
         transform.localScale = new Vector3(scale, scale, scale);
     }
 
+    public static string RepeatString(string s, int n)
+    {
+        return string.Concat(Enumerable.Repeat(s, n));
+    }
 }

@@ -3543,7 +3543,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1182110173}
-        m_MethodName: testEncodeToFormat
+        m_MethodName: testDecodeFromFormat
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

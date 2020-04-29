@@ -59,7 +59,7 @@ public class NeuronsController : MonoBehaviour
         destNeuronName = neuron.name;
         BroadcastMessage("SynapseV2ModeReceiver", false);
         BroadcastMessage("NewSynapseModeReceiver", false);
-        ec.NewSynapseEnd(v1, v2, sourceNeuronName, destNeuronName);
+        ec.NewSynapse(sourceNeuronName, destNeuronName);
     }
 
     public void Fire(GameObject shootingNeuron, GameObject targetNeuron)

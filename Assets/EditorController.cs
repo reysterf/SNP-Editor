@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using System.IO;
 using System.Text.RegularExpressions;
+using System;
 
 public class EditorController : MonoBehaviour
 {
@@ -64,8 +65,13 @@ public class EditorController : MonoBehaviour
     public void Draw(){
         foreach ((int i, int j) in synapses)
         {
-            DrawLine(GameObject.Find("Neurons/"+i.ToString()).transform.position, GameObject.Find("Neurons/"+j.ToString()).transform.position, i.ToString(), j.ToString());
+            DrawLine(i.ToString(), j.ToString());
         }
+    }
+
+    private void BlankSlate(){
+        //Reset the program state into a blank slate
+        DeleteAllNeurons();
     }
 
     public bool isNewSynapseMode()
@@ -79,11 +85,24 @@ public class EditorController : MonoBehaviour
 
     public void NewNeuron()
     {
-        GameObject newron = Instantiate(NeuronPrefab, new Vector3(neuronCount * 2f - 5, Random.Range(-5f, 5f), 0), Quaternion.identity);
+        GameObject newron = Instantiate(NeuronPrefab, new Vector3(neuronCount * 2f - 5, UnityEngine.Random.Range(-5f, 5f), 0), Quaternion.identity);
         newron.name = neuronCount.ToString();
         newron.transform.parent = Neurons.transform;
+        newron.transform.tag = "Neuron";
         neurons.Add(neuronCount); //neuronCount
         neuronCount += 1;
+    }
+
+    public GameObject NewNeuron(int number, bool setActive)
+    {
+        GameObject newron = Instantiate(NeuronPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        newron.SetActive(setActive);
+        newron.name = number.ToString();
+        newron.transform.parent = Neurons.transform;
+        newron.transform.tag = "Neuron";
+        neurons.Add(number); //neuronCount
+        neuronCount += 1;
+        return newron;
     }
 
     public void DeleteSynapseStart(){
@@ -135,6 +154,13 @@ public class EditorController : MonoBehaviour
     public void DeleteNeuronEnd(){
         deleteNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);        
+    }
+
+    public void DeleteAllNeurons(){
+        GameObject[] neurons = GameObject.FindGameObjectsWithTag("Neuron");
+        foreach(GameObject neuron in neurons){
+            DeleteNeuron(neuron);
+        }
     }
 
     private void removeConnectedSynapses(GameObject neuron){
@@ -237,15 +263,21 @@ public class EditorController : MonoBehaviour
         Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
     }
 
-    public void NewSynapseEnd(Vector3 v1, Vector3 v2, string sourceNeuronName, string destNeuronName){
-        synapseStart = v1;
-        synapseEnd = v2;
+    
+
+    public void NewSynapse(string sourceNeuronName, string destNeuronName){
+        // synapseStart = v1;
+        // synapseEnd = v2;
         synapses.Add((int.Parse(sourceNeuronName), int.Parse(destNeuronName)));
 
-        //add outsynapse to source neuron
-        GameObject.Find(sourceNeuronName).GetComponent<NeuronController>().AddOutSynapse(int.Parse(sourceNeuronName));
+        //add outSynapse to source neuron
+        GameObject.Find(sourceNeuronName).GetComponent<NeuronController>().AddOutSynapse(int.Parse(destNeuronName));
 
-        DrawLine(v1, v2, sourceNeuronName, destNeuronName);
+        DrawLine(sourceNeuronName, destNeuronName);
+        NewSynapseEnd();
+    }
+
+    public void NewSynapseEnd(){
         newSynapseMode = false;
     }
 
@@ -264,8 +296,11 @@ public class EditorController : MonoBehaviour
         }
     }
 
-    public void DrawLine(Vector3 start, Vector3 end, string sourceNeuronName, string destNeuronName, float duration = 0.03f)
+    public void DrawLine(string sourceNeuronName, string destNeuronName, float duration = 0.03f)
     {
+        Vector3 start = GameObject.Find(sourceNeuronName).transform.position;
+        Vector3 end = GameObject.Find(destNeuronName).transform.position;
+
         GameObject newSynapse = new GameObject();
         newSynapse.transform.position = start;
         newSynapse.transform.parent = Synapses.transform;
@@ -275,6 +310,8 @@ public class EditorController : MonoBehaviour
         newSynapse.AddComponent<SynapseController>();
         newSynapse.GetComponent<SynapseController>().SetSourceNeuron(sourceNeuronName);
         newSynapse.GetComponent<SynapseController>().SetDestNeuron(destNeuronName);
+
+
         LineRenderer lr = newSynapse.GetComponent<LineRenderer>();
         // lr.SetColors(color, color);
         // lr.SetWidth(0.1f, 0.1f);
@@ -327,7 +364,9 @@ public class EditorController : MonoBehaviour
         }
     }
 
+
     public string EncodeToFormat(){
+        string lineEnder = ":";
         string format = "";
         
         string neuronsDeclaration = "neurons = [";
@@ -341,7 +380,7 @@ public class EditorController : MonoBehaviour
         }
         neuronsDeclaration += "]";
 
-        format += neuronsDeclaration;
+        format += neuronsDeclaration + lineEnder;
 
         format += "\n";
 
@@ -355,12 +394,12 @@ public class EditorController : MonoBehaviour
 
             //spikes
             int neuronSpikes = neuronToEncode.GetComponent<NeuronController>().GetSpikesNum();
-            neuronDefinition += "\tspikes = " + neuronSpikes.ToString();
+            neuronDefinition += "\tspikes = " + neuronSpikes.ToString() + lineEnder;
 
             neuronDefinition += "\n";
 
             //rules
-            string neuronRules = "[";
+            string neuronRules = "{";
             List<string> rules = neuronToEncode.GetComponent<NeuronController>().GetRules();
 
             i = 0;
@@ -371,9 +410,9 @@ public class EditorController : MonoBehaviour
                     neuronRules += ", ";
                 }
             }
-            neuronRules += "]";
+            neuronRules += "}";
 
-            neuronDefinition += "\trules = " + neuronRules;
+            neuronDefinition += "\trules = " + neuronRules + lineEnder;
 
             neuronDefinition += "\n";
 
@@ -392,7 +431,7 @@ public class EditorController : MonoBehaviour
 
             neuronOutSynapses += "]";
 
-            neuronDefinition += "\toutsynapses = " + neuronOutSynapses;
+            neuronDefinition += "\toutsynapses = " + neuronOutSynapses + lineEnder;
 
             neuronDefinition += "\n";
 
@@ -416,8 +455,50 @@ public class EditorController : MonoBehaviour
     }
 
     public void DecodeFromFormat(string formatData){
-        Regex.Replace(formatData, @"\s+", "");
-        print(formatData);
+        BlankSlate();
+        formatData = Regex.Replace(formatData, @"\s+", "");
+
+        char[] separators = {'{', '}', '=', ':' };
+        string[] strValues = formatData.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+        int i = 0;
+        foreach(string str in strValues)
+        {
+            print(i.ToString() + ": " + str);
+            i+=1;
+        }
+
+        //Parse neuron declaration
+        string[] neuronDeclarations = strValues[1].Split(new char[] {'[', ']', ',', 'N'}, StringSplitOptions.RemoveEmptyEntries);
+
+        List<GameObject> neurons = new List<GameObject>();
+
+        foreach(string neuronDeclaration in neuronDeclarations){
+            neurons.Add(NewNeuron(int.Parse(neuronDeclaration), true));
+            print(neuronDeclaration);
+        }
+
+        int n = 0;
+        foreach(GameObject neuron in neurons){
+            neuron.GetComponent<NeuronController>().SetSpikes(int.Parse(strValues[4 + 7*n]));
+
+            //parse rules
+            string rules = strValues[6 + 7*n];
+            rules = string.Join("\n", rules.Split(new char[] {'[', ']', ','}, StringSplitOptions.RemoveEmptyEntries));
+            neuron.GetComponent<NeuronController>().SetRules(rules);
+
+            //parse outsynapses
+            string outSynapses = strValues[8 + 7*n];
+            string[] outSynapsesArray = outSynapses.Split(new char[] {'[', ']', ',', 'N'}, StringSplitOptions.RemoveEmptyEntries);
+            List<int> outSynapsesList = new List<int>();
+            foreach(string outSynapse in outSynapsesArray){
+                NewSynapse(neuron.name, outSynapse);
+                outSynapsesList.Add(int.Parse(outSynapse));
+            }
+            neuron.GetComponent<NeuronController>().SetOutSynapses(outSynapsesList);
+
+            n+=1;
+        }
     }
 
     public void testDecodeFromFormat(){

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -8799722160389117288}
   m_Layer: 0
   m_Name: Neuron
-  m_TagString: Untagged
+  m_TagString: Neuron
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -97,6 +97,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   neuron: {fileID: 7766130607654995561}
+  EditorController: {fileID: 0}
+  ec: {fileID: 0}
+  spikes: 
 --- !u!50 &4421282501855175864
 Rigidbody2D:
   serializedVersion: 4

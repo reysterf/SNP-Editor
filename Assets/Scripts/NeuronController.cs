@@ -17,6 +17,10 @@ public class NeuronController : MonoBehaviour
 
     public GameObject rulesUI;
     public GameObject spikesUI;
+    public GameObject neuronLabel;
+    public Text rulesText;
+    public Text spikesText;
+    public Text neuronLabelText;
 
     private bool newSynapseMode = false;
     private bool synapseV1Mode = false;
@@ -49,6 +53,8 @@ public class NeuronController : MonoBehaviour
         float scale = (float)spikes.Length / ((float)30);
         transform.localScale = new Vector3(scale, scale, scale);
 
+        neuronLabelText.text = gameObject.name;
+
         showRules = ec.isShowRulesMode();
         showLabel = ec.isShowLabelsMode();
     }
@@ -57,9 +63,9 @@ public class NeuronController : MonoBehaviour
     void Update()
     {
         //Rules Text
-        gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(0).gameObject.GetComponent<Text>().text = string.Join("\n", rules.ToArray());
+        rulesText.text = string.Join("\n", rules.ToArray());
         //Spikes Text
-        gameObject.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).gameObject.GetComponent<Text>().text = GetSpikesNum().ToString();
+        spikesText.text = GetSpikesNum().ToString();
 
         if(showRules){
             ShowRules();
@@ -82,6 +88,14 @@ public class NeuronController : MonoBehaviour
         editNeuronMode = mode;
     }
 
+    public void EditRules(){        //Called by clicking the rules box of a neuron
+        ec.EditNeuron(gameObject, "rules");
+    }
+
+    public void EditSpikes(){       //Called by clicking the spikes box of a neuron
+        ec.EditNeuron(gameObject, "spikes");
+    }
+
     public void ShowRules(){
         showRules = true;
         // gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
@@ -96,12 +110,12 @@ public class NeuronController : MonoBehaviour
 
     public void ShowLabel(){
         showLabel = true;
-        gameObject.transform.GetChild(1).gameObject.SetActive(true); //GetChild(1) gets the transform of the label gameobject
+        neuronLabel.SetActive(true); //GetChild(1) gets the transform of the label gameobject
     }
 
     public void HideLabel(){
         showLabel = false;
-        gameObject.transform.GetChild(1).gameObject.SetActive(false); //GetChild(1) gets the transform of the label gameobject
+        neuronLabel.SetActive(false); //GetChild(1) gets the transform of the label gameobject
     }
 
     public void SetSpikes(int num){

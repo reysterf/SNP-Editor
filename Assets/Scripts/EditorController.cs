@@ -22,6 +22,7 @@ public class EditorController : MonoBehaviour
     private bool newSynapseMode = false;
     private bool editNeuronMode = false;
     private bool editRulesMode = false;
+    private bool editSpikesMode = false;
     private bool deleteNeuronMode = false;
     private bool deleteSynapseMode = false;
 
@@ -33,6 +34,7 @@ public class EditorController : MonoBehaviour
 
     public GameObject editNeuronMenu;
     public GameObject editRulesMenu;
+    public GameObject editSpikesMenu;
     public GameObject neuronLabel;
 
     private GameObject activeNeuronForEditing;
@@ -55,6 +57,7 @@ public class EditorController : MonoBehaviour
         editNeuronMenu.SetActive(false);
         editRulesMenu.SetActive(false);
 
+
         foreach ((int i, int j) in synapses)
         {
             print(i.ToString() + ", " + j.ToString());
@@ -64,6 +67,7 @@ public class EditorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if(!deleteSynapseMode){
             Draw();
         }
@@ -130,15 +134,22 @@ public class EditorController : MonoBehaviour
         return deleteSynapseMode;
     }
 
+    public void neuronsRefresh(){
+        Neurons.SetActive(false);
+        Neurons.SetActive(true);
+    }
+
+
     public void NewNeuron()
     {
         GameObject newron = Instantiate(NeuronPrefab, new Vector3(neuronCount * 2f - 5, UnityEngine.Random.Range(-5f, 5f), 0), Quaternion.identity);
         newron.name = neuronCount.ToString();
-        newron.transform.parent = Neurons.transform;
+        newron.transform.SetParent(Neurons.transform);
         newron.transform.tag = "Neuron";
         neurons.Add(neuronCount); //neuronCount
         neuronCount += 1;
 
+        neuronsRefresh();
         // if(showRules){
         //     GameObject newron = Instantiate(NeuronWithRules, new Vector3(neuronCount * 2f - 5, UnityEngine.Random.Range(-5f, 5f), 0), Quaternion.identity);
         //     newron.name = neuronCount.ToString();
@@ -292,14 +303,27 @@ public class EditorController : MonoBehaviour
 
         activeNeuronForEditing = neuron;
 
-        Text spikesText = editNeuronMenu.transform.Find("Spikes").transform.Find("Spikes Text").GetComponent<Text>();
-        spikesText.text = "Spikes: " + neuron.GetComponent<NeuronController>().GetSpikes().ToString();
-        
-        List<string> rules = neuron.GetComponent<NeuronController>().GetRules();
-        string rulesString = string.Join("\n", rules.ToArray());
+        /// EDIT NEURON WILL BE REPURPOSED TO JUST GET THE ACTIVE NEURON FOR EDITING
+        /// UNCOMMENT BELOW TO RETURN TO OLD FUNCTIONALITY
 
-        Text rulesText = editNeuronMenu.transform.Find("Rules").transform.Find("Rules Text").GetComponent<Text>();
-        rulesText.text = rulesString;
+        // Text spikesText = editNeuronMenu.transform.Find("Spikes").transform.Find("Spikes Text").GetComponent<Text>();
+        // spikesText.text = "Spikes: " + neuron.GetComponent<NeuronController>().GetSpikes().ToString();
+        
+        // List<string> rules = neuron.GetComponent<NeuronController>().GetRules();
+        // string rulesString = string.Join("\n", rules.ToArray());
+
+        // Text rulesText = editNeuronMenu.transform.Find("Rules").transform.Find("Rules Text").GetComponent<Text>();
+        // rulesText.text = rulesString;
+    }
+
+    public void EditNeuron(GameObject neuron, string mode){
+        activeNeuronForEditing = neuron;
+        if(mode == "spikes"){
+            EditSpikesStart();
+        }  
+        else if(mode == "rules"){
+            EditRulesStart();
+        }
     }
 
     public void EditNeuronCancel(){
@@ -321,6 +345,7 @@ public class EditorController : MonoBehaviour
     public void EditRulesStart(){
         editRulesMode = true;
         editRulesMenu.SetActive(true);
+        editRulesMenu.transform.position = activeNeuronForEditing.transform.position;
 
         EditRules();
     }
@@ -330,7 +355,7 @@ public class EditorController : MonoBehaviour
         initialGameObject.SetActive(false);
         GameObject neuron = activeNeuronForEditing;
 
-        InputField rulesInputField = editRulesMenu.transform.Find("Rules").transform.Find("Rules InputField").GetComponent<InputField>();
+        InputField rulesInputField = editRulesMenu.transform.Find("Rules InputField").GetComponent<InputField>();
 
         List<string> rules = neuron.GetComponent<NeuronController>().GetRules();
         string rulesString = string.Join("\n", rules.ToArray());
@@ -340,11 +365,11 @@ public class EditorController : MonoBehaviour
         rulesInputField.text = rulesString;
     }
 
-    public void EditRulesSave(){
+    public void EditRulesConfirm(){
         editRulesMode = false;
         editRulesMenu.SetActive(false);
 
-        InputField rulesInputField = editRulesMenu.transform.Find("Rules").transform.Find("Rules InputField").GetComponent<InputField>();
+        InputField rulesInputField = editRulesMenu.transform.Find("Rules InputField").GetComponent<InputField>();
 
         activeNeuronForEditing.GetComponent<NeuronController>().SetRules(rulesInputField.text);
     }
@@ -352,6 +377,39 @@ public class EditorController : MonoBehaviour
     public void EditRulesCancel(){
         editRulesMode = false;
         editRulesMenu.SetActive(false);
+    }
+
+    public void EditSpikesStart(){
+        editSpikesMode = true;
+        editSpikesMenu.SetActive(true);
+        editSpikesMenu.transform.position = activeNeuronForEditing.transform.position;
+
+        EditSpikes();
+    }
+
+    public void EditSpikes(){
+        print("EditorController EditSpikes");
+        InputField spikesInputField = editSpikesMenu.transform.Find("Spikes InputField").GetComponent<InputField>();
+
+        // List<string> rules = neuron.GetComponent<NeuronController>().GetRules();
+        // string rulesString = string.Join("\n", rules.ToArray());
+
+        spikesInputField.text = activeNeuronForEditing.GetComponent<NeuronController>().GetSpikesNum().ToString();
+        print(spikesInputField.text);
+    }
+
+    public void EditSpikesConfirm(){
+        InputField spikesInputField = editSpikesMenu.transform.Find("Spikes InputField").GetComponent<InputField>();
+
+        editSpikesMode = false;
+        editSpikesMenu.SetActive(false);
+
+        activeNeuronForEditing.GetComponent<NeuronController>().SetSpikes(int.Parse(spikesInputField.text));
+    }
+
+    public void EditSpikesCancel(){
+        editSpikesMode = false;
+        editSpikesMenu.SetActive(false);
 
     }
 
@@ -366,7 +424,20 @@ public class EditorController : MonoBehaviour
     public void NewSynapse(string sourceNeuronName, string destNeuronName){
         // synapseStart = v1;
         // synapseEnd = v2;
-        synapses.Add((int.Parse(sourceNeuronName), int.Parse(destNeuronName)));
+        int sourceNeuron = int.Parse(sourceNeuronName);
+        int destNeuron = int.Parse(destNeuronName);
+
+        bool synapseExists = false;
+        foreach ((int i, int j) in synapses)
+        {
+            if(i == sourceNeuron && j == destNeuron){
+                synapseExists = true;
+            }
+        }
+
+        if(!synapseExists){
+            synapses.Add((sourceNeuron, destNeuron));
+        }
 
         //add outSynapse to source neuron
         GameObject.Find(sourceNeuronName).GetComponent<NeuronController>().AddOutSynapse(int.Parse(destNeuronName));

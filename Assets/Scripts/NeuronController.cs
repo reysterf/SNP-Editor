@@ -18,6 +18,7 @@ public class NeuronController : MonoBehaviour
     public GameObject rulesUI;
     public GameObject spikesUI;
     public GameObject neuronLabel;
+
     public Text rulesText;
     public Text spikesText;
     public Text neuronLabelText;
@@ -27,6 +28,8 @@ public class NeuronController : MonoBehaviour
     private bool synapseV2Mode = false;
     private bool editNeuronMode = false;
     private bool deleteNeuronMode = false;
+
+    private bool dragMode = false;
 
     private bool showRules = true;
     private bool showLabel = true;
@@ -45,13 +48,13 @@ public class NeuronController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spikes = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        spikes = "";
         EditorController = GameObject.Find("EditorController");
         ec = EditorController.GetComponent<EditorController>();
-        rules.Add("a+/a -> a;0");
-        rules.Add("(aaa)+/aaa -> aaa;0");
+        // rules.Add("a+/a -> a;0");
+        // rules.Add("(aaa)+/aaa -> aaa;0");
         float scale = (float)spikes.Length / ((float)30);
-        transform.localScale = new Vector3(scale, scale, scale);
+        transform.localScale = new Vector3(1, 1, 1);
 
         neuronLabelText.text = gameObject.name;
 
@@ -81,7 +84,7 @@ public class NeuronController : MonoBehaviour
             HideLabel();
         }
 
-        collider.size = neuronContainer.GetComponent<RectTransform>().sizeDelta;
+        collider.size = gameObject.GetComponent<RectTransform>().sizeDelta;
     }
 
     void EditNeuronModeReceiver(bool mode){
@@ -89,11 +92,16 @@ public class NeuronController : MonoBehaviour
     }
 
     public void EditRules(){        //Called by clicking the rules box of a neuron
-        ec.EditNeuron(gameObject, "rules");
+        if(ec.isFreeMode() && !dragMode){
+            print("WOO");
+            ec.EditNeuron(gameObject, "rules");
+        }
     }
 
     public void EditSpikes(){       //Called by clicking the spikes box of a neuron
-        ec.EditNeuron(gameObject, "spikes");
+        if(ec.isFreeMode() && !dragMode){
+            ec.EditNeuron(gameObject, "spikes");
+        }
     }
 
     public void ShowRules(){
@@ -183,6 +191,9 @@ public class NeuronController : MonoBehaviour
             transform.position = cursorPosition;
         }
         // ec.Draw();
+    }
+
+    void OnMouseUp(){
     }
 
 
@@ -292,7 +303,7 @@ public class NeuronController : MonoBehaviour
         target.GetComponent<NeuronController>().Receive(give);
         //}
         float scale = (float)spikes.Length / ((float)30);
-        transform.localScale = new Vector3(scale, scale, scale);
+        // transform.localScale = new Vector3(scale, scale, scale);
         timer = timer - 1;
     }
 
@@ -301,7 +312,7 @@ public class NeuronController : MonoBehaviour
         string recStr = new string('a', received);
         spikes = string.Concat(spikes, recStr);
         float scale = (float)spikes.Length / ((float)30);
-        transform.localScale = new Vector3(scale, scale, scale);
+        // transform.localScale = new Vector3(scale, scale, scale);
     }
 
     public static string RepeatString(string s, int n)

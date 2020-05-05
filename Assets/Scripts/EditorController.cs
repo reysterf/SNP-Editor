@@ -12,13 +12,13 @@ public class EditorController : MonoBehaviour
     private int neuronCount = 0;
     private int lineCount = 0;
 
-
     public GameObject NeuronPrefab;
     public GameObject NeuronWithRules;
     public GameObject NeuronWithoutRules;
     public GameObject Neurons;
     public GameObject Synapses;
 
+    private bool freeMode = true;
     private bool newSynapseMode = false;
     private bool editNeuronMode = false;
     private bool editRulesMode = false;
@@ -50,6 +50,8 @@ public class EditorController : MonoBehaviour
     private bool showModeChanged = false;
 
     public GameObject deleteSynapseButton;
+
+    public Material white;
 
     // Start is called before the first frame update
     void Start()
@@ -107,14 +109,26 @@ public class EditorController : MonoBehaviour
         DeleteAllNeurons();
     }
 
+    public bool isFreeMode(){
+        return freeMode;
+    }
+
+    public void SetFreeMode(bool mode){
+        freeMode = mode;
+    }
+
     public void ChangeShowLabelMode(){
-        showModeChanged = true;
-        showLabels = !showLabels;
+        if(freeMode){
+            showModeChanged = true;
+            showLabels = !showLabels;
+        }
     }
 
     public void ChangeShowRulesMode(){
-        showModeChanged = true;
-        showRules = !showRules;
+        if(freeMode){
+            showModeChanged = true;
+            showRules = !showRules;
+        }
     }
 
     public bool isShowRulesMode(){
@@ -142,14 +156,15 @@ public class EditorController : MonoBehaviour
 
     public void NewNeuron()
     {
-        GameObject newron = Instantiate(NeuronPrefab, new Vector3(neuronCount * 2f - 5, UnityEngine.Random.Range(-5f, 5f), 0), Quaternion.identity);
-        newron.name = neuronCount.ToString();
-        newron.transform.SetParent(Neurons.transform);
-        newron.transform.tag = "Neuron";
-        neurons.Add(neuronCount); //neuronCount
-        neuronCount += 1;
-
-        neuronsRefresh();
+        if(freeMode){
+            GameObject newron = Instantiate(NeuronPrefab, new Vector3(neuronCount * 2f - 5, UnityEngine.Random.Range(-5f, 5f), 0), Quaternion.identity);
+            newron.name = neuronCount.ToString();
+            newron.transform.SetParent(Neurons.transform);
+            newron.transform.tag = "Neuron";
+            neurons.Add(neuronCount); //neuronCount
+            neuronCount += 1;
+        }
+        // neuronsRefresh();
         // if(showRules){
         //     GameObject newron = Instantiate(NeuronWithRules, new Vector3(neuronCount * 2f - 5, UnityEngine.Random.Range(-5f, 5f), 0), Quaternion.identity);
         //     newron.name = neuronCount.ToString();
@@ -175,12 +190,13 @@ public class EditorController : MonoBehaviour
         // newronLabel.transform.GetChild(0).gameObject.GetComponent<Text>().text = newron.name;
     }
 
-    public GameObject NewNeuron(int number, bool setActive)
+    public GameObject NewNeuron(int number, bool setActive) //Used by load function
     {
         GameObject newron = Instantiate(NeuronPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        newron.transform.localScale = new Vector3(1, 1, 1);
         newron.SetActive(setActive);
         newron.name = number.ToString();
-        newron.transform.parent = Neurons.transform;
+        newron.transform.SetParent(Neurons.transform);
         newron.transform.tag = "Neuron";
         neurons.Add(number); //neuronCount
         neuronCount += 1;
@@ -215,9 +231,12 @@ public class EditorController : MonoBehaviour
     }
 
     public void DeleteSynapseStart(){
-        deleteSynapseMode = true;
-        Draw();
-        Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
+        if(freeMode){
+            freeMode = false;
+            deleteSynapseMode = true;
+            Draw();
+            Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
+        }
     }
 
     public void DeleteSynapse(string synapseName){
@@ -233,6 +252,7 @@ public class EditorController : MonoBehaviour
 
         Destroy(targetSynapse);
 
+        freeMode = true;
         deleteSynapseMode = false;
         Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(false);
 
@@ -249,8 +269,11 @@ public class EditorController : MonoBehaviour
     }
 
     public void DeleteNeuronStart(){
-        deleteNeuronMode = true;
-        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
+        if(freeMode){
+            freeMode = false;
+            deleteNeuronMode = true;
+            Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
+        }
     }
 
     public void DeleteNeuron(GameObject neuron){
@@ -261,6 +284,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void DeleteNeuronEnd(){
+        freeMode = true;
         deleteNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);        
     }
@@ -343,6 +367,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditRulesStart(){
+        freeMode = false;
         editRulesMode = true;
         editRulesMenu.SetActive(true);
         editRulesMenu.transform.position = activeNeuronForEditing.transform.position;
@@ -366,6 +391,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditRulesConfirm(){
+        freeMode = true;
         editRulesMode = false;
         editRulesMenu.SetActive(false);
 
@@ -375,11 +401,13 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditRulesCancel(){
+        freeMode = true;
         editRulesMode = false;
         editRulesMenu.SetActive(false);
     }
 
     public void EditSpikesStart(){
+        freeMode = false;
         editSpikesMode = true;
         editSpikesMenu.SetActive(true);
         editSpikesMenu.transform.position = activeNeuronForEditing.transform.position;
@@ -399,6 +427,8 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditSpikesConfirm(){
+        freeMode = true;
+
         InputField spikesInputField = editSpikesMenu.transform.Find("Spikes InputField").GetComponent<InputField>();
 
         editSpikesMode = false;
@@ -408,15 +438,19 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditSpikesCancel(){
+        freeMode = true;
+
         editSpikesMode = false;
         editSpikesMenu.SetActive(false);
 
     }
 
-    public void NewSynapseStart()
-    {  
-        newSynapseMode = true; 
-        Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
+    public void NewSynapseStart(){
+        if(freeMode){
+            newSynapseMode = true;
+            freeMode = false;
+            Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
+        }
     }
 
     
@@ -448,6 +482,7 @@ public class EditorController : MonoBehaviour
 
     public void NewSynapseEnd(){
         newSynapseMode = false;
+        freeMode = true;
     }
 
     public void testPrintSynapse(){
@@ -486,8 +521,11 @@ public class EditorController : MonoBehaviour
         // lr.SetWidth(0.1f, 0.1f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
-        lr.startWidth = 0.5f;
-        lr.endWidth = 0.5f;
+        lr.startWidth = 1f;
+        lr.endWidth = 0.05f;
+        lr.material = new Material(white);
+        lr.startColor = Color.white;
+        
         if(deleteSynapseMode){
             GameObject delbut = Instantiate(deleteSynapseButton, (start + end) * 0.5f, Quaternion.identity);
             delbut.transform.localScale = new Vector3(.03f, .03f, 0);
@@ -530,6 +568,10 @@ public class EditorController : MonoBehaviour
             var fileContent = File.ReadAllBytes(path);
             string formatData = System.Text.Encoding.UTF8.GetString(fileContent);
             DecodeFromFormat(formatData);
+
+            //Auto Layout
+            Neurons.GetComponent<GridLayoutGroup>().enabled = true;
+            // Neurons.GetComponent<GridLayoutGroup>().enabled = false;
         }
     }
 
@@ -655,6 +697,7 @@ public class EditorController : MonoBehaviour
             string rules = strValues[6 + 7*n];
             rules = string.Join("\n", rules.Split(new char[] {'[', ']', ','}, StringSplitOptions.RemoveEmptyEntries));
             neuron.GetComponent<NeuronController>().SetRules(rules);
+            print(rules);
 
             //parse outsynapses
             string outSynapses = strValues[8 + 7*n];

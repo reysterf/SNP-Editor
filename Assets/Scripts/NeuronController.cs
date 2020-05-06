@@ -60,6 +60,10 @@ public class NeuronController : MonoBehaviour
 
         showRules = ec.isShowRulesMode();
         showLabel = ec.isShowLabelsMode();
+
+        rulesUI.transform.Find("Rules Container").GetComponent<Button>().interactable = false;
+        spikesUI.transform.Find("Spikes Container").GetComponent<Button>().interactable = false;            
+        
     }
 
     // Update is called once per frame
@@ -70,36 +74,44 @@ public class NeuronController : MonoBehaviour
         //Spikes Text
         spikesText.text = GetSpikesNum().ToString();
 
-        if(showRules){
-            ShowRules();
-        }
-        else if(!showRules){
-            HideRules();
-        }
+        // if(showRules){
+        //     ShowRules();
+        // }
+        // else if(!showRules){
+        //     HideRules();
+        // }
 
-        if(showLabel){
-            ShowLabel();
-        }
-        else if(!showLabel){
-            HideLabel();
-        }
+        // if(showLabel){
+        //     ShowLabel();
+        // }
+        // else if(!showLabel){
+        //     HideLabel();
+        // }
 
         collider.size = gameObject.GetComponent<RectTransform>().sizeDelta;
     }
 
     void EditNeuronModeReceiver(bool mode){
         editNeuronMode = mode;
+        if(editNeuronMode){
+            rulesUI.transform.Find("Rules Container").GetComponent<Button>().interactable = true;
+            spikesUI.transform.Find("Spikes Container").GetComponent<Button>().interactable = true;
+        }
+        else if(!editNeuronMode){
+            rulesUI.transform.Find("Rules Container").GetComponent<Button>().interactable = false;
+            spikesUI.transform.Find("Spikes Container").GetComponent<Button>().interactable = false;            
+        }
     }
 
     public void EditRules(){        //Called by clicking the rules box of a neuron
-        if(ec.isFreeMode() && !dragMode){
+        if(ec.isFreeMode()){
             print("WOO");
             ec.EditNeuron(gameObject, "rules");
         }
     }
 
     public void EditSpikes(){       //Called by clicking the spikes box of a neuron
-        if(ec.isFreeMode() && !dragMode){
+        if(ec.isFreeMode()){
             ec.EditNeuron(gameObject, "spikes");
         }
     }
@@ -219,9 +231,9 @@ public class NeuronController : MonoBehaviour
             // var x = new {position = gameObject.transform.position, name = gameObject.name};
             SendMessageUpwards("SynapseCoordinate2", gameObject);
         }
-        else if(editNeuronMode){
-            SendMessageUpwards("EditNeuronTarget", gameObject);
-        }
+        // else if(editNeuronMode){
+        //     SendMessageUpwards("EditNeuronTarget", gameObject);
+        // }
         else if(deleteNeuronMode){
             SendMessageUpwards("DeleteNeuronTarget", gameObject);
         }

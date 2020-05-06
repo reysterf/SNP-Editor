@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 4996268116056448270}
   - component: {fileID: 5952565564901042471}
   m_Layer: 5
-  m_Name: Spikes Text
+  m_Name: Spikes Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1372,7 +1372,7 @@ GameObject:
   - component: {fileID: 6733929199303209264}
   - component: {fileID: 4808235464559351127}
   m_Layer: 5
-  m_Name: Rules Text
+  m_Name: Rules Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

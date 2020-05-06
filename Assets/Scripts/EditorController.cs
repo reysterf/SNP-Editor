@@ -12,6 +12,15 @@ public class EditorController : MonoBehaviour
     private int neuronCount = 0;
     private int lineCount = 0;
 
+    public GameObject MainCamera;
+
+    private Vector3 screenPoint;
+    private Vector3 offset;
+    private Vector3 prevPosition;
+    private float panSensitivity = 1;
+
+    public GameObject Buttons;
+
     public GameObject NeuronPrefab;
     public GameObject NeuronWithRules;
     public GameObject NeuronWithoutRules;
@@ -19,12 +28,15 @@ public class EditorController : MonoBehaviour
     public GameObject Synapses;
 
     private bool freeMode = true;
+    private bool freeModeChanged = false;
     private bool newSynapseMode = false;
     private bool editNeuronMode = false;
     private bool editRulesMode = false;
     private bool editSpikesMode = false;
     private bool deleteNeuronMode = false;
     private bool deleteSynapseMode = false;
+
+    private bool panMode = false;
 
     private Vector3 synapseStart;
     private Vector3 synapseEnd;
@@ -49,6 +61,9 @@ public class EditorController : MonoBehaviour
     private bool showLabels = true;
     private bool showModeChanged = false;
 
+    public Text showRulesText;
+    public Text showLabelsText;
+
     public GameObject deleteSynapseButton;
 
     public Material white;
@@ -58,7 +73,10 @@ public class EditorController : MonoBehaviour
     {
         editNeuronMenu.SetActive(false);
         editRulesMenu.SetActive(false);
+        editSpikesMenu.SetActive(false);
 
+        showLabelsText.text = "Hide Labels";
+        showRulesText.text = "Hide Rules";
 
         foreach ((int i, int j) in synapses)
         {
@@ -69,7 +87,14 @@ public class EditorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if(freeModeChanged){
+            if(!freeMode){
+                DisableButtons();
+            }
+            else if(freeMode){
+                EnableButtons();
+            }
+        }
         if(!deleteSynapseMode){
             Draw();
         }
@@ -77,23 +102,49 @@ public class EditorController : MonoBehaviour
             if(showLabels){
                 //Broadcast show labels
                 Neurons.GetComponent<NeuronsController>().ShowLabelMode();
+                showLabelsText.text = "Hide Labels";
                 showModeChanged = false;
             }
             else if(!showLabels){
                 //Broadcast hide labels
                 Neurons.GetComponent<NeuronsController>().HideLabelMode();
+                showLabelsText.text = "Show Labels";
                 showModeChanged = false;
             }
             if(showRules){
                 //Broadcast show rules
                 Neurons.GetComponent<NeuronsController>().ShowRulesMode();
+                showRulesText.text = "Hide Rules";
                 showModeChanged = false;
             }
             else if(!showRules){
                 //Broadcast hide rules
                 Neurons.GetComponent<NeuronsController>().HideRulesMode();
+                showRulesText.text = "Show Rules";
                 showModeChanged = false;
             }
+        }
+    }
+
+    void OnMouseDown()
+    {
+        screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+        offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z)) ;
+    }
+
+    void OnMouseDrag()
+    {
+        if(panMode){
+            Vector3 cursorScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint (cursorScreenPoint) + offset;
+            MainCamera.transform.position = new Vector3(prevPosition.x-cursorPosition.x/panSensitivity, prevPosition.y-cursorPosition.y/panSensitivity, -10);
+            prevPosition = MainCamera.transform.position;
+        }
+    }
+
+    void OnMouseUp(){
+        if(panMode){
+            prevPosition = MainCamera.transform.position;
         }
     }
 
@@ -115,6 +166,28 @@ public class EditorController : MonoBehaviour
 
     public void SetFreeMode(bool mode){
         freeMode = mode;
+        freeModeChanged = true;
+    }
+
+    public void DisableButtons(){
+        Button[] buttons = Buttons.transform.GetComponentsInChildren<Button>();
+
+        foreach(Button button in buttons){
+            button.interactable = false;
+        }
+    }
+
+    public void EnableButtons(){
+        Button[] buttons = Buttons.transform.GetComponentsInChildren<Button>();
+
+        foreach(Button button in buttons){
+            button.interactable = true;
+        }
+    }
+
+    public void ChangePanMode(){
+        SetFreeMode(!freeMode);
+        panMode = !panMode;
     }
 
     public void ChangeShowLabelMode(){
@@ -232,7 +305,7 @@ public class EditorController : MonoBehaviour
 
     public void DeleteSynapseStart(){
         if(freeMode){
-            freeMode = false;
+            SetFreeMode(false);
             deleteSynapseMode = true;
             Draw();
             Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
@@ -252,7 +325,7 @@ public class EditorController : MonoBehaviour
 
         Destroy(targetSynapse);
 
-        freeMode = true;
+        SetFreeMode(true);
         deleteSynapseMode = false;
         Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(false);
 
@@ -270,7 +343,7 @@ public class EditorController : MonoBehaviour
 
     public void DeleteNeuronStart(){
         if(freeMode){
-            freeMode = false;
+            SetFreeMode(false);
             deleteNeuronMode = true;
             Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
         }
@@ -284,7 +357,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void DeleteNeuronEnd(){
-        freeMode = true;
+        SetFreeMode(true);
         deleteNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);        
     }
@@ -367,7 +440,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditRulesStart(){
-        freeMode = false;
+        SetFreeMode(false);
         editRulesMode = true;
         editRulesMenu.SetActive(true);
         editRulesMenu.transform.position = activeNeuronForEditing.transform.position;
@@ -391,23 +464,28 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditRulesConfirm(){
-        freeMode = true;
+        SetFreeMode(true);
         editRulesMode = false;
         editRulesMenu.SetActive(false);
 
         InputField rulesInputField = editRulesMenu.transform.Find("Rules InputField").GetComponent<InputField>();
 
         activeNeuronForEditing.GetComponent<NeuronController>().SetRules(rulesInputField.text);
+
+        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
     }
 
     public void EditRulesCancel(){
-        freeMode = true;
+        SetFreeMode(true);
         editRulesMode = false;
         editRulesMenu.SetActive(false);
+
+        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
     }
 
     public void EditSpikesStart(){
-        freeMode = false;
+        SetFreeMode(false);
+        // freeMode = false;
         editSpikesMode = true;
         editSpikesMenu.SetActive(true);
         editSpikesMenu.transform.position = activeNeuronForEditing.transform.position;
@@ -427,7 +505,8 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditSpikesConfirm(){
-        freeMode = true;
+        SetFreeMode(true);
+        // freeMode = true;
 
         InputField spikesInputField = editSpikesMenu.transform.Find("Spikes InputField").GetComponent<InputField>();
 
@@ -435,20 +514,25 @@ public class EditorController : MonoBehaviour
         editSpikesMenu.SetActive(false);
 
         activeNeuronForEditing.GetComponent<NeuronController>().SetSpikes(int.Parse(spikesInputField.text));
+
+        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
     }
 
     public void EditSpikesCancel(){
-        freeMode = true;
+        SetFreeMode(true);
+        // freeMode = true;
 
         editSpikesMode = false;
         editSpikesMenu.SetActive(false);
 
+        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
     }
 
     public void NewSynapseStart(){
         if(freeMode){
             newSynapseMode = true;
-            freeMode = false;
+            SetFreeMode(false);
+            // freeMode = false;
             Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
         }
     }
@@ -482,7 +566,8 @@ public class EditorController : MonoBehaviour
 
     public void NewSynapseEnd(){
         newSynapseMode = false;
-        freeMode = true;
+        SetFreeMode(true);
+        // freeMode = true;
     }
 
     public void testPrintSynapse(){
@@ -521,7 +606,7 @@ public class EditorController : MonoBehaviour
         // lr.SetWidth(0.1f, 0.1f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
-        lr.startWidth = 1f;
+        lr.startWidth = 0.05f;
         lr.endWidth = 0.05f;
         lr.material = new Material(white);
         lr.startColor = Color.white;
@@ -570,8 +655,8 @@ public class EditorController : MonoBehaviour
             DecodeFromFormat(formatData);
 
             //Auto Layout
-            Neurons.GetComponent<GridLayoutGroup>().enabled = true;
-            // Neurons.GetComponent<GridLayoutGroup>().enabled = false;
+            Neurons.AddComponent<GridLayoutGroup>().cellSize = new Vector2(200, 200);
+            Destroy(GetComponent<GridLayoutGroup>());
         }
     }
 
@@ -613,14 +698,20 @@ public class EditorController : MonoBehaviour
             string neuronRules = "{";
             List<string> rules = neuronToEncode.GetComponent<NeuronController>().GetRules();
 
+            if(rules.Count == 0){
+                neuronRules += "[]";
+            }
+            else{
             i = 0;
-            foreach (string rule in rules){
-                neuronRules += "[" + rule + "]";
-                i+=1;
-                if (i < rules.Count){
-                    neuronRules += ", ";
+                foreach (string rule in rules){
+                    neuronRules += "[" + rule + "]";
+                    i+=1;
+                    if (i < rules.Count){
+                        neuronRules += ", ";
+                    }
                 }
             }
+
             neuronRules += "}";
 
             neuronDefinition += "\trules = " + neuronRules + lineEnder;
@@ -667,6 +758,7 @@ public class EditorController : MonoBehaviour
 
     public void DecodeFromFormat(string formatData){
         BlankSlate();
+        print(formatData);
         formatData = Regex.Replace(formatData, @"\s+", "");
 
         char[] separators = {'{', '}', '=', ':' };

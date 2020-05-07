@@ -34,6 +34,8 @@ public class NeuronController : MonoBehaviour
     private bool showRules = true;
     private bool showLabel = true;
 
+    private bool UIChanged = false;
+
     private List<int> outSynapses = new List<int>();
 
     private Vector3 screenPoint;
@@ -61,6 +63,20 @@ public class NeuronController : MonoBehaviour
         showRules = ec.isShowRulesMode();
         showLabel = ec.isShowLabelsMode();
 
+        if(showRules){
+            ShowRules();
+        }
+        else if(!showRules){
+            HideRules();
+        }
+
+        if(showLabel){
+            ShowLabel();
+        }
+        else if(!showLabel){
+            HideLabel();
+        }
+
         rulesUI.transform.Find("Rules Container").GetComponent<Button>().interactable = false;
         spikesUI.transform.Find("Spikes Container").GetComponent<Button>().interactable = false;            
         
@@ -69,10 +85,14 @@ public class NeuronController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Rules Text
-        rulesText.text = string.Join("\n", rules.ToArray());
-        //Spikes Text
-        spikesText.text = GetSpikesNum().ToString();
+        if(UIChanged){
+            //Rules Text
+            rulesText.text = string.Join("\n", rules.ToArray());
+            //Spikes Text
+            spikesText.text = GetSpikesNum().ToString();
+            collider.size = gameObject.GetComponent<RectTransform>().sizeDelta;
+            UIChanged = false;
+        }
 
         // if(showRules){
         //     ShowRules();
@@ -88,7 +108,6 @@ public class NeuronController : MonoBehaviour
         //     HideLabel();
         // }
 
-        collider.size = gameObject.GetComponent<RectTransform>().sizeDelta;
     }
 
     void EditNeuronModeReceiver(bool mode){
@@ -105,7 +124,6 @@ public class NeuronController : MonoBehaviour
 
     public void EditRules(){        //Called by clicking the rules box of a neuron
         if(ec.isFreeMode()){
-            print("WOO");
             ec.EditNeuron(gameObject, "rules");
         }
     }
@@ -120,26 +138,31 @@ public class NeuronController : MonoBehaviour
         showRules = true;
         // gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
         rulesUI.SetActive(true);
+        UIChanged = true;
     }
 
     public void HideRules(){
         showRules = false;
         // gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
         rulesUI.SetActive(false);
+        UIChanged = true;
     }
 
     public void ShowLabel(){
         showLabel = true;
         neuronLabel.SetActive(true); //GetChild(1) gets the transform of the label gameobject
+        UIChanged = true;
     }
 
     public void HideLabel(){
         showLabel = false;
         neuronLabel.SetActive(false); //GetChild(1) gets the transform of the label gameobject
+        UIChanged = true;
     }
 
     public void SetSpikes(int num){
         spikes = RepeatString("a", num);
+        UIChanged = true;
     }
 
     public string GetSpikes(){
@@ -156,6 +179,7 @@ public class NeuronController : MonoBehaviour
 
     public void SetRules(string rulesNew){
         rules = rulesNew.Split('\n').ToList();;
+        UIChanged = true;
     }
 
 
@@ -261,6 +285,8 @@ public class NeuronController : MonoBehaviour
             Fire(storedConsume, storedGive, target);
         else if (timer > 0)
             timer = timer - 1;
+
+        UIChanged = true;
     }
 
     private void CheckRules(GameObject target)
@@ -301,6 +327,8 @@ public class NeuronController : MonoBehaviour
     {
         storedGive = give;
         storedConsume = consumed;
+
+        UIChanged = true;
     }
 
     private void Fire(int consumed, int give, GameObject target)
@@ -317,6 +345,8 @@ public class NeuronController : MonoBehaviour
         float scale = (float)spikes.Length / ((float)30);
         // transform.localScale = new Vector3(scale, scale, scale);
         timer = timer - 1;
+
+        UIChanged = true;
     }
 
     public void Receive(int received)
@@ -325,6 +355,7 @@ public class NeuronController : MonoBehaviour
         spikes = string.Concat(spikes, recStr);
         float scale = (float)spikes.Length / ((float)30);
         // transform.localScale = new Vector3(scale, scale, scale);
+        UIChanged = true;
     }
 
     public static string RepeatString(string s, int n)

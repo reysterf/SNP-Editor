@@ -625,10 +625,25 @@ public class EditorController : MonoBehaviour
 
     public void StartFire()
     {
+        synapses.Sort();
+        List<GameObject> receivingNeurons = new List<GameObject>();
+        int shootingNeuron = 0;
         foreach ((int i, int j) in synapses)
         {
-            Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()), GameObject.Find("Neurons/" + j.ToString()));
+            print(i.ToString() + j.ToString());
+            if (shootingNeuron != i && receivingNeurons != null)
+            {
+                print("Firing " + i.ToString());
+                Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()), receivingNeurons);
+                receivingNeurons.Clear();
+            }
+            receivingNeurons.Add(GameObject.Find("Neurons/" + j.ToString()));
+            shootingNeuron = i;
         }
+        //Takes the last neuron and fires
+        var lastElement = synapses[synapses.Count - 1];
+        int lastNeuron = lastElement.Item1;
+        Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + lastNeuron.ToString()), receivingNeurons);
     }
 
     public void Save(){

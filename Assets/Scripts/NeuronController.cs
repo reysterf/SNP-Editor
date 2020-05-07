@@ -252,18 +252,18 @@ public class NeuronController : MonoBehaviour
         // Debug.Log("Mouse is no longer on GameObject.");
     }
 
-    public void FireOneStep(GameObject target)
+    public void FireOneStep(List<GameObject> targets)
     {
         Debug.Log(timer);
         if (timer == -1)
-            CheckRules(target);
+            CheckRules(targets);
         else if (timer == 0)
-            Fire(storedConsume, storedGive, target);
+            Fire(storedConsume, storedGive, targets);
         else if (timer > 0)
             timer = timer - 1;
     }
 
-    private void CheckRules(GameObject target)
+    private void CheckRules(List<GameObject> targets)
     {
         int i = 0;
         List<string> matches = new List<string>();
@@ -291,7 +291,7 @@ public class NeuronController : MonoBehaviour
             Debug.Log("c" + consume + "g" + give + "d" + delay);
             timer = delay;
             if (delay == 0)
-                Fire(consume, give, target);
+                Fire(consume, give, targets);
             else
                 CloseNeuron(consume, give);
         }
@@ -303,7 +303,7 @@ public class NeuronController : MonoBehaviour
         storedConsume = consumed;
     }
 
-    private void Fire(int consumed, int give, GameObject target)
+    private void Fire(int consumed, int give, List<GameObject> targets)
     {
         Debug.Log("Fire!");
         int i = 0;
@@ -312,7 +312,8 @@ public class NeuronController : MonoBehaviour
         //{
         //    Neuron target = connexion[i];
         //    DrawMovingSpike(transform.position, target.transform.position);
-        target.GetComponent<NeuronController>().Receive(give);
+        foreach(GameObject target in targets)
+            target.GetComponent<NeuronController>().Receive(give);
         //}
         float scale = (float)spikes.Length / ((float)30);
         // transform.localScale = new Vector3(scale, scale, scale);
@@ -321,6 +322,7 @@ public class NeuronController : MonoBehaviour
 
     public void Receive(int received)
     {
+        print("receiving");
         string recStr = new string('a', received);
         spikes = string.Concat(spikes, recStr);
         float scale = (float)spikes.Length / ((float)30);

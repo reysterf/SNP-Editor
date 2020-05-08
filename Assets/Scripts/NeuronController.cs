@@ -48,7 +48,7 @@ public class NeuronController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spikes = "";
+        //spikes = "";
         EditorController = GameObject.Find("EditorController");
         ec = EditorController.GetComponent<EditorController>();
         // rules.Add("a+/a -> a;0");
@@ -315,17 +315,16 @@ public class NeuronController : MonoBehaviour
         foreach(GameObject target in targets)
             target.GetComponent<NeuronController>().Receive(give);
         //}
-        float scale = (float)spikes.Length / ((float)30);
+        //float scale = (float)spikes.Length / ((float)30);
         // transform.localScale = new Vector3(scale, scale, scale);
         timer = timer - 1;
     }
 
     public void Receive(int received)
     {
-        print("receiving");
         string recStr = new string('a', received);
         spikes = string.Concat(spikes, recStr);
-        float scale = (float)spikes.Length / ((float)30);
+        //float scale = (float)spikes.Length / ((float)30);
         // transform.localScale = new Vector3(scale, scale, scale);
     }
 

@@ -68,12 +68,19 @@ public class EditorController : MonoBehaviour
 
     public Material white;
 
+    private string lastData;
+    public HistoryNode root;
+    public List<List<int>> configHistory;
+
     // Start is called before the first frame update
     void Start()
     {
         editNeuronMenu.SetActive(false);
         editRulesMenu.SetActive(false);
         editSpikesMenu.SetActive(false);
+        lastData = null;
+        root = null;
+        configHistory = new List<List<int>>();
 
         showLabelsText.text = "Hide Labels";
         showRulesText.text = "Hide Rules";
@@ -625,6 +632,8 @@ public class EditorController : MonoBehaviour
 
     public void StartFire()
     {
+        //lastData = EncodeToFormat();
+        configHistory.Add(GetAllSpikes());
         synapses.Sort();
         List<GameObject> receivingNeurons = new List<GameObject>();
         int shootingNeuron = 0;
@@ -644,6 +653,15 @@ public class EditorController : MonoBehaviour
         var lastElement = synapses[synapses.Count - 1];
         int lastNeuron = lastElement.Item1;
         Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + lastNeuron.ToString()), receivingNeurons);
+    }
+
+    public void GoBackOne()
+    {
+        if(configHistory.Count > 0)
+        {
+            SetAllSpikes(configHistory[configHistory.Count - 1]);
+            configHistory.RemoveAt(configHistory.Count - 1);
+        }     
     }
 
     public void Save(){
@@ -674,7 +692,27 @@ public class EditorController : MonoBehaviour
             Destroy(GetComponent<GridLayoutGroup>());
         }
     }
+    
+    public List<int> GetAllSpikes()
+    {
+        List<int> config = new List<int>();
+        foreach (int i in neurons)
+        {
+            GameObject neuronObject = GameObject.Find(i.ToString());
+            int spike = neuronObject.GetComponent<NeuronController>().GetSpikesNum();
+            config.Add(spike);
+        }
+        return config;
+    }
 
+    public void SetAllSpikes(List<int> config)
+    {
+        foreach (int i in neurons)
+        {
+            GameObject neuronObject = GameObject.Find(i.ToString());
+            neuronObject.GetComponent<NeuronController>().SetSpikes(config[i]);
+        }
+    }
 
     public string EncodeToFormat(){
         string lineEnder = ":";

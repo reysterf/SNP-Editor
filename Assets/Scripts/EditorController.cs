@@ -152,6 +152,7 @@ public class EditorController : MonoBehaviour
             MainCamera.transform.position = new Vector3(prevPosition.x-cursorPosition.x/panSensitivity, prevPosition.y-cursorPosition.y/panSensitivity, -10);
             prevPosition = MainCamera.transform.position;
         }
+
     }
 
     void OnMouseUp(){
@@ -638,22 +639,45 @@ public class EditorController : MonoBehaviour
         newSynapse.transform.parent = Synapses.transform;
         newSynapse.transform.tag = "Synapse";
         newSynapse.name = sourceNeuronName + destNeuronName;
-        newSynapse.AddComponent<LineRenderer>();
+        // newSynapse.AddComponent<LineRenderer>();
         newSynapse.AddComponent<SynapseController>();
         newSynapse.GetComponent<SynapseController>().SetSourceNeuron(sourceNeuronName);
         newSynapse.GetComponent<SynapseController>().SetDestNeuron(destNeuronName);
 
+        GameObject line1 = new GameObject();
+        line1.transform.position = start;
+        line1.transform.SetParent(newSynapse.transform);
+        line1.name = "Line 1";
+        line1.AddComponent<LineRenderer>();
 
-        LineRenderer lr = newSynapse.GetComponent<LineRenderer>();
+        Vector3 segmentPosition = (0.4f * start) + (.6f * end);
+
+        LineRenderer lr1 = line1.GetComponent<LineRenderer>();
         // lr.SetColors(color, color);
         // lr.SetWidth(0.1f, 0.1f);
-        lr.SetPosition(0, start);
-        lr.SetPosition(1, end);
-        lr.startWidth = 0.5f;
-        lr.endWidth = 0.01f;
-        lr.material = new Material(white);
-        lr.startColor = Color.white;
-        
+        lr1.SetPosition(0, start);
+        lr1.SetPosition(1, segmentPosition);
+        lr1.startWidth = 0.01f;
+        lr1.endWidth = 0.01f;
+        lr1.material = new Material(white);
+        lr1.startColor = Color.white;
+
+        GameObject line2 = new GameObject();
+        line2.transform.position = segmentPosition;
+        line2.transform.SetParent(newSynapse.transform);
+        line2.name = "Line 2";
+        line2.AddComponent<LineRenderer>();
+
+        LineRenderer lr2 = line2.GetComponent<LineRenderer>();
+        // lr.SetColors(color, color);
+        // lr.SetWidth(0.1f, 0.1f);
+        lr2.SetPosition(0, segmentPosition);
+        lr2.SetPosition(1, end);
+        lr2.startWidth = 0.2f;
+        lr2.endWidth = 0.05f;
+        lr2.material = new Material(white);
+        lr2.startColor = Color.white;
+
         if(deleteSynapseMode){
             GameObject delbut = Instantiate(deleteSynapseButton, (start + end) * 0.5f, Quaternion.identity);
             delbut.transform.localScale = new Vector3(.015f, .015f, 0);

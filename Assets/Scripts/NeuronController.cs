@@ -174,7 +174,7 @@ public class NeuronController : MonoBehaviour
     }
 
     public List<string> GetRules(){
-        return rules;
+            return rules;
     }
 
     public void SetRules(string rulesNew){

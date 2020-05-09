@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NeuronsController : MonoBehaviour
 {
@@ -14,12 +15,17 @@ public class NeuronsController : MonoBehaviour
     void Start()
     {
         ec = EditorController.GetComponent<EditorController>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void LoadedFile(){
+        Destroy(GetComponent<GridLayoutGroup>()); // For auto layout;
     }
 
     public void DeleteNeuronMode(bool mode){
@@ -45,6 +51,7 @@ public class NeuronsController : MonoBehaviour
     public void NewSynapseMode(bool mode){
         BroadcastMessage("NewSynapseModeReceiver", mode);
         BroadcastMessage("SynapseV1ModeReceiver", true);
+        ec.SetStatusText("New Synapse: Click source neuron");
     }
 
     public void SynapseCoordinate1(GameObject neuron){
@@ -52,6 +59,7 @@ public class NeuronsController : MonoBehaviour
         sourceNeuronName = neuron.name;
         BroadcastMessage("SynapseV1ModeReceiver", false);
         BroadcastMessage("SynapseV2ModeReceiver", true);
+        ec.SetStatusText("New Synapse: Click destination neuron");
     }
 
     public void SynapseCoordinate2(GameObject neuron){

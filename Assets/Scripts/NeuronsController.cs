@@ -78,8 +78,8 @@ public class NeuronsController : MonoBehaviour
         BroadcastMessage("HideRules");
     }
 
-    public void Fire(GameObject shootingNeuron, List<GameObject> targetNeurons)
+    public (List<string>, string) Fire(GameObject shootingNeuron, List<GameObject> targetNeurons)
     {
-        shootingNeuron.GetComponent<NeuronController>().FireOneStep(targetNeurons);
+        return shootingNeuron.GetComponent<NeuronController>().FireOneStep(targetNeurons);
     }
 }

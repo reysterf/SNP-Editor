@@ -21,6 +21,7 @@ public class EditorController : MonoBehaviour
 
     public GameObject Buttons;
 
+    public GameObject choiceButtonPrefab;
     public GameObject NeuronPrefab;
     public GameObject NeuronWithRules;
     public GameObject NeuronWithoutRules;
@@ -44,6 +45,8 @@ public class EditorController : MonoBehaviour
     private List<int> neurons = new List<int>();
     private List<(int, int)> synapses = new List<(int, int)>();
 
+    public GameObject ChoiceMenu;
+    public GameObject choiceContent;
     public GameObject editNeuronMenu;
     public GameObject editRulesMenu;
     public GameObject editSpikesMenu;
@@ -69,7 +72,8 @@ public class EditorController : MonoBehaviour
     public Material white;
 
     private string lastData;
-    public HistoryNode root;
+    public ChoiceNode root;
+    public ChoiceNode last;
     public List<List<int>> configHistory;
 
     // Start is called before the first frame update
@@ -209,6 +213,18 @@ public class EditorController : MonoBehaviour
             showModeChanged = true;
             showRules = !showRules;
         }
+    }
+
+    public void ShowChoiceMenu()
+    {
+        ChoiceMenu.transform.position = new Vector3(0, 0, 0);
+        ChoiceMenu.GetComponent<CanvasGroup>().alpha = 1;
+    }
+
+    public void HideChoiceMenu()
+    {
+        ChoiceMenu.transform.position = new Vector3(10000, 0, 0);
+        ChoiceMenu.GetComponent<CanvasGroup>().alpha = 0;
     }
 
     public bool isShowRulesMode(){
@@ -633,6 +649,17 @@ public class EditorController : MonoBehaviour
     public void StartFire()
     {
         //lastData = EncodeToFormat();
+        if (root == null)
+        {
+            root = new ChoiceNode(root, GetAllSpikes());
+            GameObject newChoiceButton = Instantiate(choiceButtonPrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity, choiceContent.transform);
+            newChoiceButton.transform.localScale = new Vector3(1, 1, 1);
+            newChoiceButton.name = "root";
+            newChoiceButton.GetComponentInChildren<Text>().text = "Root";
+            last = root;
+        }           
+        List<(List<string>, string ,int)> nondeterministicList = new List<(List<string>, string, int)>();
+        (List<string>, string) determinismCheck = (new List<string>(), "");
         configHistory.Add(GetAllSpikes());
         synapses.Sort();
         List<GameObject> receivingNeurons = new List<GameObject>();
@@ -642,8 +669,14 @@ public class EditorController : MonoBehaviour
             print(i.ToString() + j.ToString());
             if (shootingNeuron != i && receivingNeurons != null)
             {
-                print("Firing " + i.ToString());
-                Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()), receivingNeurons);
+                print("Firing " + shootingNeuron.ToString());
+                //determinismCheck receives a tuple of a list of applicable rules and the chosen rules, respectively
+                determinismCheck = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + shootingNeuron.ToString()), receivingNeurons);
+                if (determinismCheck.Item1.Count > 1)
+                {
+                    nondeterministicList.Add((determinismCheck.Item1, determinismCheck.Item2, i));
+                    print((determinismCheck.Item1, determinismCheck.Item2, i)); 
+                }   
                 receivingNeurons.Clear();
             }
             receivingNeurons.Add(GameObject.Find("Neurons/" + j.ToString()));
@@ -652,7 +685,25 @@ public class EditorController : MonoBehaviour
         //Takes the last neuron and fires
         var lastElement = synapses[synapses.Count - 1];
         int lastNeuron = lastElement.Item1;
-        Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + lastNeuron.ToString()), receivingNeurons);
+        determinismCheck = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + lastNeuron.ToString()), receivingNeurons);
+        if (determinismCheck.Item1.Count > 1)
+        {
+            nondeterministicList.Add((determinismCheck.Item1, determinismCheck.Item2, lastNeuron));
+            print((determinismCheck.Item1, determinismCheck.Item2, lastNeuron));
+        }        
+
+        if (nondeterministicList.Count > 0)
+        {
+            ChoiceNode newChoice = new ChoiceNode(root, GetAllSpikes(), nondeterministicList);
+            newChoice.SetFather(last);
+
+            GameObject newChoiceButton = Instantiate(choiceButtonPrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity, choiceContent.transform);
+            newChoiceButton.transform.localScale = new Vector3(1, 1, 1);
+            newChoiceButton.GetComponentInChildren<Text>().text = newChoice.GetChosen();
+
+            last = newChoice;
+            last.PrintNondetRules();
+        }
     }
 
     public void GoBackOne()
@@ -662,6 +713,11 @@ public class EditorController : MonoBehaviour
             SetAllSpikes(configHistory[configHistory.Count - 1]);
             configHistory.RemoveAt(configHistory.Count - 1);
         }     
+    }
+
+    public void GoToChoice()
+    {
+
     }
 
     public void Save(){

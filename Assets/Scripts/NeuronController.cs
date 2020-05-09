@@ -50,7 +50,7 @@ public class NeuronController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spikes = "";
+        // spikes = "";
         EditorController = GameObject.Find("EditorController");
         ec = EditorController.GetComponent<EditorController>();
         // rules.Add("a+/a -> a;0");

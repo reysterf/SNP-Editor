@@ -355,6 +355,8 @@ public class EditorController : MonoBehaviour
         deleteSynapseMode = false;
         Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(false);
 
+        SetStatusText("Synapse deleted");
+
         GameObject[] deleteButtons = GameObject.FindGameObjectsWithTag("Delete Button");
         foreach(GameObject delBut in deleteButtons){
             Destroy(delBut);
@@ -386,7 +388,8 @@ public class EditorController : MonoBehaviour
     public void DeleteNeuronEnd(){
         SetFreeMode(true);
         deleteNeuronMode = false;
-        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);        
+        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);   
+        SetStatusText("Neuron deleted");     
     }
 
     public void DeleteAllNeurons(){
@@ -500,6 +503,7 @@ public class EditorController : MonoBehaviour
         activeNeuronForEditing.GetComponent<NeuronController>().SetRules(rulesInputField.text);
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
+        SetStatusText("Rules successfully edited");
     }
 
     public void EditRulesCancel(){
@@ -508,6 +512,8 @@ public class EditorController : MonoBehaviour
         editRulesMenu.SetActive(false);
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
+
+        SetStatusText("Rules edit cancelled");
     }
 
     public void EditSpikesStart(){
@@ -521,7 +527,6 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditSpikes(){
-        print("EditorController EditSpikes");
         InputField spikesInputField = editSpikesMenu.transform.Find("Spikes InputField").GetComponent<InputField>();
 
         // List<string> rules = neuron.GetComponent<NeuronController>().GetRules();
@@ -543,6 +548,7 @@ public class EditorController : MonoBehaviour
         activeNeuronForEditing.GetComponent<NeuronController>().SetSpikes(int.Parse(spikesInputField.text));
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
+        SetStatusText("Spikes successfully edited");
     }
 
     public void EditSpikesCancel(){
@@ -553,6 +559,7 @@ public class EditorController : MonoBehaviour
         editSpikesMenu.SetActive(false);
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
+        SetStatusText("Spikes edit cancelled");
     }
 
     public void NewSynapseStart(){

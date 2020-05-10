@@ -12,6 +12,8 @@ public class NeuronController : MonoBehaviour
     public GameObject EditorController;
     public EditorController ec;
 
+    public GameObject simulationCanvas;
+
     public BoxCollider2D collider;
     public GameObject neuronContainer;
 
@@ -22,6 +24,8 @@ public class NeuronController : MonoBehaviour
     public Text rulesText;
     public Text spikesText;
     public Text neuronLabelText;
+
+    public GameObject spikeSprite;
 
     private bool newSynapseMode = false;
     private bool synapseV1Mode = false;
@@ -340,8 +344,12 @@ public class NeuronController : MonoBehaviour
         //{
         //    Neuron target = connexion[i];
         //    DrawMovingSpike(transform.position, target.transform.position);
-        foreach(GameObject target in targets)
+        foreach(GameObject target in targets){
             target.GetComponent<NeuronController>().Receive(give);
+            IEnumerator animate = AnimateFire(transform.position, target.transform.position);
+            StartCoroutine(animate);
+        }
+
         //}
         //float scale = (float)spikes.Length / ((float)30);
         // transform.localScale = new Vector3(scale, scale, scale);
@@ -362,5 +370,21 @@ public class NeuronController : MonoBehaviour
     public static string RepeatString(string s, int n)
     {
         return string.Concat(Enumerable.Repeat(s, n));
+    }
+
+    private IEnumerator AnimateFire(Vector3 startPosition, Vector3 endPosition)
+    {
+        print("Animate Fire");
+        GameObject sprite = Instantiate(spikeSprite, startPosition, Quaternion.identity);
+        sprite.transform.SetParent(GameObject.Find("Neurons and Synapses").transform);
+        sprite.transform.SetAsFirstSibling();
+        sprite.transform.localScale = Vector3.one;
+
+        float frames = 32f;
+        for(int i = 0; i < frames; i++){
+            sprite.transform.position = (i/frames * endPosition + (1-i/frames) * startPosition);
+            yield return new WaitForSeconds(0.01f);
+        }
+        Destroy(sprite);
     }
 }

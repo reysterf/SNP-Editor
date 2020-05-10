@@ -1019,6 +1019,8 @@ MonoBehaviour:
   rulesText: {fileID: 7679941308577557134}
   spikesText: {fileID: 7698068905339814093}
   neuronLabelText: {fileID: 5146768599326644864}
+  spikeSprite: {fileID: 3820815688872467544, guid: b0591aa192beb654db0a5d6df1256d1a,
+    type: 3}
   spikes: 
 --- !u!61 &7628045825308284011
 BoxCollider2D:

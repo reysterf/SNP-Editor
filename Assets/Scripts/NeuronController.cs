@@ -182,7 +182,8 @@ public class NeuronController : MonoBehaviour
     }
 
     public void SetRules(string rulesNew){
-        rules = rulesNew.Split('\n').ToList();;
+        print(ec.ValidateRules(rulesNew));
+        rules = rulesNew.Split('\n').ToList();
         UIChanged = true;
     }
 
@@ -280,23 +281,28 @@ public class NeuronController : MonoBehaviour
         // Debug.Log("Mouse is no longer on GameObject.");
     }
 
-    public void FireOneStep(List<GameObject> targets)
+    public (List<string>, string) FireOneStep(List<GameObject> targets)
     {
         Debug.Log(timer);
+        (List<string>, string) rules = (new List<string>(),"");
         if (timer == -1)
-            CheckRules(targets);
+            rules = CheckRules(targets);
         else if (timer == 0)
             Fire(storedConsume, storedGive, targets);
         else if (timer > 0)
             timer = timer - 1;
 
         UIChanged = true;
+        print("Adding " + gameObject.name);
+        ec.appliedRulesStorage.Add((rules.Item1, rules.Item2, gameObject.name));
+        return rules;
     }
 
-    private void CheckRules(List<GameObject> targets)
+    private (List<string>, string) CheckRules(List<GameObject> targets)
     {
         int i = 0;
         List<string> matches = new List<string>();
+        string chosenRule = "";
         foreach (string rule in rules)
         {
             int slashInd = rule.IndexOf("/");
@@ -309,15 +315,19 @@ public class NeuronController : MonoBehaviour
         
         if (matches.Count > 0)
         {
-            string chosenRule = matches[Random.Range(0, matches.Count)];
-            Debug.Log(chosenRule);
+            chosenRule = matches[Random.Range(0, matches.Count)];
+            chosenRule = chosenRule.Replace(" ", "");
             int slashInd = chosenRule.IndexOf("/");
             string reg = chosenRule.Substring(0, slashInd);
-            int arrowInd = chosenRule.IndexOf(">") + 1;
+            int arrowInd = chosenRule.IndexOf(">");
             int semicolInd = chosenRule.IndexOf(";");
-            int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 4)).Length;
+            int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
             int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
             int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
+            Debug.Log(chosenRule);
+            Debug.Log(chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2) + "g" +
+                chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1) + "d" +
+                chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
             Debug.Log("c" + consume + "g" + give + "d" + delay);
             timer = delay;
             if (delay == 0)
@@ -325,10 +335,13 @@ public class NeuronController : MonoBehaviour
             else
                 CloseNeuron(consume, give);
         }
+
+        return (matches, chosenRule);
     }
 
     private void CloseNeuron(int consumed, int give)
     {
+        timer = timer - 1;
         storedGive = give;
         storedConsume = consumed;
 

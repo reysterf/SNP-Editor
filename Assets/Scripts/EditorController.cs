@@ -77,6 +77,7 @@ public class EditorController : MonoBehaviour
     public Material white;
 
     private string lastData;
+    public List<(List<string>, string, string)> appliedRulesStorage;
     public ChoiceNode root;
     public ChoiceNode last;
     public List<int> choiceTimes;
@@ -92,6 +93,7 @@ public class EditorController : MonoBehaviour
         root = null;
         configHistory = new List<List<int>>();
         choiceTimes = new List<int>();
+        appliedRulesStorage = new List<(List<string>, string, string)>();
 
         showLabelsText.text = "Hide Labels";
         showRulesText.text = "Hide Rules";
@@ -723,7 +725,8 @@ public class EditorController : MonoBehaviour
             newChoiceButton.GetComponentInChildren<Text>().text = "Go to Root";
             last = root;
             choiceTimes.Add(globalTime);
-        }           
+        }
+        appliedRulesStorage.Clear();
         List<(List<string>, string ,int)> nondeterministicList = new List<(List<string>, string, int)>();
         (List<string>, string) determinismCheck = (new List<string>(), "");
         configHistory.Add(GetAllSpikes());
@@ -757,7 +760,9 @@ public class EditorController : MonoBehaviour
         {
             nondeterministicList.Add((determinismCheck.Item1, determinismCheck.Item2, lastNeuron));
             print((determinismCheck.Item1, determinismCheck.Item2, lastNeuron));
-        }        
+        }
+
+        LogAppliedRules();
 
         if (nondeterministicList.Count > 0)
         {
@@ -798,6 +803,22 @@ public class EditorController : MonoBehaviour
                 globalTime = 0;
             }       
         }
+    }
+
+    public void LogAppliedRules()
+    {
+        string appliedRules = "Matched Rules: ";
+        foreach ((List<string> matchedRules, string chosen, string name) in appliedRulesStorage)
+        {
+            foreach(string rule in matchedRules)
+            {
+                appliedRules += rule + ", ";
+            }
+            appliedRules += "|| The Chosen: " + chosen;
+            appliedRules += "|| NeuronNo: " + name;
+            appliedRules += "\n";
+        }
+        print(appliedRules);
     }
 
     public void Save(){
@@ -854,8 +875,11 @@ public class EditorController : MonoBehaviour
     {
         foreach (int i in neurons)
         {
-            GameObject neuronObject = GameObject.Find(i.ToString());
-            neuronObject.GetComponent<NeuronController>().SetSpikes(config[i]);
+            if (i < config.Count)
+            {
+                GameObject neuronObject = GameObject.Find(i.ToString());
+                neuronObject.GetComponent<NeuronController>().SetSpikes(config[i]);
+            }               
         }
     }
 

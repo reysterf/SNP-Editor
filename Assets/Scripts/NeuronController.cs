@@ -292,6 +292,8 @@ public class NeuronController : MonoBehaviour
             timer = timer - 1;
 
         UIChanged = true;
+        print("Adding " + gameObject.name);
+        ec.appliedRulesStorage.Add((rules.Item1, rules.Item2, gameObject.name));
         return rules;
     }
 

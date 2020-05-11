@@ -182,7 +182,8 @@ public class NeuronController : MonoBehaviour
     }
 
     public void SetRules(string rulesNew){
-        rules = rulesNew.Split('\n').ToList();;
+        print(ec.ValidateRules(rulesNew));
+        rules = rulesNew.Split('\n').ToList();
         UIChanged = true;
     }
 
@@ -315,13 +316,18 @@ public class NeuronController : MonoBehaviour
         if (matches.Count > 0)
         {
             chosenRule = matches[Random.Range(0, matches.Count)];
+            chosenRule = chosenRule.Replace(" ", "");
             int slashInd = chosenRule.IndexOf("/");
             string reg = chosenRule.Substring(0, slashInd);
-            int arrowInd = chosenRule.IndexOf(">") + 1;
+            int arrowInd = chosenRule.IndexOf(">");
             int semicolInd = chosenRule.IndexOf(";");
-            int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 4)).Length;
+            int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
             int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
             int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
+            Debug.Log(chosenRule);
+            Debug.Log(chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2) + "g" +
+                chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1) + "d" +
+                chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
             Debug.Log("c" + consume + "g" + give + "d" + delay);
             timer = delay;
             if (delay == 0)
@@ -335,6 +341,7 @@ public class NeuronController : MonoBehaviour
 
     private void CloseNeuron(int consumed, int give)
     {
+        timer = timer - 1;
         storedGive = give;
         storedConsume = consumed;
 

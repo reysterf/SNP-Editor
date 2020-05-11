@@ -883,6 +883,34 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    public bool ValidateRules(string rules)
+    {
+        string[] newLine = new string[1] { "\n" };
+        string[] rulesArr = rules.Split(newLine, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string rule in rulesArr)
+        {
+            string[] separators = new string[3] { "/", "->", ";" };
+            string[] parts = rule.Split(separators, 4, StringSplitOptions.RemoveEmptyEntries);
+
+            try
+            {
+                if(!Regex.Match("a", parts[0]).Success)
+                    return false;
+                if(!Regex.Match(parts[1], " *a+ *").Success)
+                    return false;
+                if(!Regex.Match(parts[2], " *a+ *").Success)
+                    return false;
+                if(!Regex.Match(parts[3], " *[0-9]+ *").Success)
+                    return false;
+            }
+            catch(ArgumentException)
+            {
+                return false;
+            }           
+        }
+        return true;
+    }
+
     public string EncodeToFormat(){
         string lineEnder = ":";
         string format = "";

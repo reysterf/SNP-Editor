@@ -5,10 +5,12 @@ using UnityEngine;
 public class ChoiceNode
 {
     private ChoiceNode father;
+    private List<ChoiceNode> siblings;
     private ChoiceNode root;
     private List<ChoiceNode> children;
     private List<int> config;
     private List<(List<string>, string, int)> nondetRules;
+    public int time;
 
     public ChoiceNode GetRoot()
     {
@@ -42,10 +44,12 @@ public class ChoiceNode
 
     public string GetChosen()
     {
-        string chosenFormatted = "";
+        string chosenFormatted = "t = ";
+        chosenFormatted += time.ToString() + "\n";
         foreach((List<string> matched, string chosen, int neuronNo) in nondetRules)
         {
-            chosenFormatted += neuronNo.ToString();
+            chosenFormatted += "N";
+            chosenFormatted += neuronNo.ToString() + ": ";
             chosenFormatted += chosen + "\n";
         }
         return chosenFormatted;
@@ -61,12 +65,14 @@ public class ChoiceNode
         this.root = root;
         this.father = null;
         this.config = config;
+        this.time = 0;
     }
 
-    public ChoiceNode(ChoiceNode root, List<int> config, List<(List<string>, string, int)> rules)
+    public ChoiceNode(ChoiceNode root, List<int> config, List<(List<string>, string, int)> rules, int globalTime)
     {
         this.root = root;
         this.config = config;
         this.nondetRules = rules;
+        this.time = globalTime;
     }
 }

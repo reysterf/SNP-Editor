@@ -747,16 +747,20 @@ public class EditorController : MonoBehaviour
         {
             var fileContent = File.ReadAllBytes(path);
             string formatData = System.Text.Encoding.UTF8.GetString(fileContent);
-            DecodeFromFormat(formatData);
 
-            //Auto Layout
-            Neurons.AddComponent<GridLayoutGroup>().cellSize = new Vector2(200, 200);
-            Neurons.GetComponent<GridLayoutGroup>().enabled = true;
-            Neurons.GetComponent<GridLayoutGroup>().CalculateLayoutInputHorizontal();
-            Neurons.GetComponent<GridLayoutGroup>().CalculateLayoutInputVertical();
-            Neurons.GetComponent<GridLayoutGroup>().SetLayoutHorizontal();
-            Neurons.GetComponent<GridLayoutGroup>().SetLayoutVertical();
-            Neurons.GetComponent<GridLayoutGroup>().enabled = false;
+            bool hasPositionData = false;
+            hasPositionData = DecodeFromFormat(formatData);
+
+            if(!hasPositionData){
+                //Auto Layout
+                Neurons.GetComponent<GridLayoutGroup>().cellSize = new Vector2(200, 200);
+                Neurons.GetComponent<GridLayoutGroup>().enabled = true;
+                Neurons.GetComponent<GridLayoutGroup>().CalculateLayoutInputHorizontal();
+                Neurons.GetComponent<GridLayoutGroup>().CalculateLayoutInputVertical();
+                Neurons.GetComponent<GridLayoutGroup>().SetLayoutHorizontal();
+                Neurons.GetComponent<GridLayoutGroup>().SetLayoutVertical();
+                Neurons.GetComponent<GridLayoutGroup>().enabled = false;
+            }
 
             SetStatusText("Loaded");
         }
@@ -859,6 +863,19 @@ public class EditorController : MonoBehaviour
 
             neuronDefinition += "\n";
 
+            //positions
+            string neuronPosition = "(";
+            neuronPosition += neuronToEncode.transform.position.x.ToString();
+            neuronPosition += ",";
+            neuronPosition += neuronToEncode.transform.position.y.ToString();
+            neuronPosition += ",";
+            neuronPosition += neuronToEncode.transform.position.z.ToString();
+            neuronPosition += ")";
+
+            neuronDefinition += "\tposition = " + neuronPosition + lineEnder;
+
+            neuronDefinition += "\n";
+
             neuronDefinition += "}";
 
             neuronDefinition += "\n";
@@ -870,7 +887,7 @@ public class EditorController : MonoBehaviour
         }
 
         format += neuronsDefinition;
-
+        
         return format;
     }
 
@@ -878,12 +895,14 @@ public class EditorController : MonoBehaviour
         print(EncodeToFormat());        
     }
 
-    public void DecodeFromFormat(string formatData){
+    public bool DecodeFromFormat(string formatData){
         BlankSlate();
         print(formatData);
-        formatData = Regex.Replace(formatData, @"\s+", "");
+        formatData = Regex.Replace(formatData, @"\s+", ""); //Remove all whitespace
 
-        char[] separators = {'{', '}', '=', ':' };
+        bool hasPositionData = false;
+
+        char[] separators = {'{', '}', '=', ':' }; //Remove delimiters
         string[] strValues = formatData.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
         int i = 0;
@@ -904,17 +923,50 @@ public class EditorController : MonoBehaviour
         }
 
         int n = 0;
+
+        int searchArea = 6;
+
+        int spikesIndex = 0;
+        int spikesSearchIndex = 0;
+
+        int rulesIndex = 0;
+        int rulesSearchIndex = 0;
+
+        int outSynapsesIndex = 0;
+        int outSynapsesSearchIndex = 0;
+
+        int positionIndex = 0;
+        int positionSearchIndex = 0;
+
         foreach(GameObject neuron in neurons){
-            neuron.GetComponent<NeuronController>().SetSpikes(int.Parse(strValues[4 + 7*n]));
+            //parse spikes
+            spikesIndex = Array.IndexOf(strValues, "spikes", spikesSearchIndex, Mathf.Min(searchArea, strValues.Length-spikesSearchIndex));
+            print("Yeet: " + spikesIndex.ToString() + strValues[spikesIndex + 1]);
+            neuron.GetComponent<NeuronController>().SetSpikes(int.Parse(strValues[spikesIndex + 1]));
+            spikesSearchIndex = spikesIndex + 1;
+            rulesSearchIndex = spikesIndex;
 
             //parse rules
-            string rules = strValues[6 + 7*n];
+            print("Yoot: " + rulesSearchIndex.ToString() + " " + rulesIndex.ToString());
+            rulesIndex = Array.IndexOf(strValues, "rules", rulesSearchIndex, Mathf.Min(searchArea, strValues.Length-rulesSearchIndex));
+            print("Yoot: " + rulesSearchIndex.ToString() + " " + rulesIndex.ToString() + " " + strValues[rulesIndex + 1]);
+            rulesSearchIndex = rulesIndex + 1;
+            outSynapsesSearchIndex = rulesIndex;
+
+            rulesSearchIndex = rulesIndex + 1;
+
+            string rules = strValues[rulesIndex + 1];
             rules = string.Join("\n", rules.Split(new char[] {'[', ']', ','}, StringSplitOptions.RemoveEmptyEntries));
             neuron.GetComponent<NeuronController>().SetRules(rules);
-            print(rules);
+            // print(rules);
 
             //parse outsynapses
-            string outSynapses = strValues[8 + 7*n];
+            outSynapsesIndex = Array.IndexOf(strValues, "outsynapses", outSynapsesSearchIndex, Mathf.Min(searchArea, strValues.Length-outSynapsesSearchIndex));
+            outSynapsesSearchIndex = outSynapsesIndex + 1;
+            positionSearchIndex = outSynapsesIndex;
+            spikesSearchIndex = outSynapsesIndex;
+
+            string outSynapses = strValues[outSynapsesIndex + 1];
             string[] outSynapsesArray = outSynapses.Split(new char[] {'[', ']', ',', 'N'}, StringSplitOptions.RemoveEmptyEntries);
             List<int> outSynapsesList = new List<int>();
             foreach(string outSynapse in outSynapsesArray){
@@ -923,8 +975,47 @@ public class EditorController : MonoBehaviour
             }
             neuron.GetComponent<NeuronController>().SetOutSynapses(outSynapsesList);
 
-            n+=1;
+            //parse positions
+            positionIndex = Array.IndexOf(strValues, "position", positionSearchIndex, Mathf.Min(searchArea, strValues.Length-positionSearchIndex));
+            if(positionIndex >= 0){
+                hasPositionData = true;
+                positionSearchIndex = positionIndex + 1;
+                string[] values = strValues[positionIndex + 1].Split(new char[] {',', '(', ')'}, StringSplitOptions.RemoveEmptyEntries);
+                neuron.transform.position = new Vector3(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]));
+                print(strValues[positionIndex + 1]);
+                spikesSearchIndex = positionIndex;
+            }
+
+            // //parse spikes
+            // spikesIndex = Array.IndexOf(strValues, "spikes", spikesSearchIndex);
+            // neuron.GetComponent<NeuronController>().SetSpikes(int.Parse(strValues[4 + 7*n]));
+            // spikesSearchIndex = spikesIndex + 1;
+
+            // //parse rules
+            // rulesIndex = Array.IndexOf(strValues, "rules", rulesSearchIndex);
+            // rulesSearchIndex = rulesIndex + 1;
+            // string rules = strValues[6 + 7*n];
+            // rules = string.Join("\n", rules.Split(new char[] {'[', ']', ','}, StringSplitOptions.RemoveEmptyEntries));
+            // neuron.GetComponent<NeuronController>().SetRules(rules);
+            // print(rules);
+
+            // //parse outsynapses
+            // outSynapsesIndex = Array.IndexOf(strValues, "outsynapses", outSynapsesSearchIndex);
+            // outSynapsesSearchIndex = outSynapsesIndex + 1;
+
+            // string outSynapses = strValues[8 + 7*n];
+            // string[] outSynapsesArray = outSynapses.Split(new char[] {'[', ']', ',', 'N'}, StringSplitOptions.RemoveEmptyEntries);
+            // List<int> outSynapsesList = new List<int>();
+            // foreach(string outSynapse in outSynapsesArray){
+            //     NewSynapse(neuron.name, outSynapse);
+            //     outSynapsesList.Add(int.Parse(outSynapse));
+            // }
+            // neuron.GetComponent<NeuronController>().SetOutSynapses(outSynapsesList);
+
+            // n+=1;
         }
+
+        return hasPositionData;
     }
 
     public void testDecodeFromFormat(){

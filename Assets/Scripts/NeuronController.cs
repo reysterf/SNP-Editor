@@ -280,23 +280,26 @@ public class NeuronController : MonoBehaviour
         // Debug.Log("Mouse is no longer on GameObject.");
     }
 
-    public void FireOneStep(List<GameObject> targets)
+    public (List<string>, string) FireOneStep(List<GameObject> targets)
     {
         Debug.Log(timer);
+        (List<string>, string) rules = (new List<string>(),"");
         if (timer == -1)
-            CheckRules(targets);
+            rules = CheckRules(targets);
         else if (timer == 0)
             Fire(storedConsume, storedGive, targets);
         else if (timer > 0)
             timer = timer - 1;
 
         UIChanged = true;
+        return rules;
     }
 
-    private void CheckRules(List<GameObject> targets)
+    private (List<string>, string) CheckRules(List<GameObject> targets)
     {
         int i = 0;
         List<string> matches = new List<string>();
+        string chosenRule = "";
         foreach (string rule in rules)
         {
             int slashInd = rule.IndexOf("/");
@@ -309,8 +312,7 @@ public class NeuronController : MonoBehaviour
         
         if (matches.Count > 0)
         {
-            string chosenRule = matches[Random.Range(0, matches.Count)];
-            Debug.Log(chosenRule);
+            chosenRule = matches[Random.Range(0, matches.Count)];
             int slashInd = chosenRule.IndexOf("/");
             string reg = chosenRule.Substring(0, slashInd);
             int arrowInd = chosenRule.IndexOf(">") + 1;
@@ -325,6 +327,8 @@ public class NeuronController : MonoBehaviour
             else
                 CloseNeuron(consume, give);
         }
+
+        return (matches, chosenRule);
     }
 
     private void CloseNeuron(int consumed, int give)

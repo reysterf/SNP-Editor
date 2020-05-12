@@ -324,7 +324,6 @@ public class NeuronController : MonoBehaviour
         }
 
         UIChanged = true;
-        print("Adding " + gameObject.name);
         ec.appliedRulesStorage.Add((rules.Item1, rules.Item2, gameObject.name));
         return rules;
     }
@@ -355,11 +354,6 @@ public class NeuronController : MonoBehaviour
             int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
             int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
             int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
-            Debug.Log(chosenRule);
-            Debug.Log(chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2) + "g" +
-                chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1) + "d" +
-                chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
-            Debug.Log("c" + consume + "g" + give + "d" + delay);
             timer = delay;
             if (delay == 0)
                 Fire(consume, give, targets);

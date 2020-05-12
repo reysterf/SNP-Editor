@@ -760,7 +760,7 @@ public class EditorController : MonoBehaviour
                 determinismCheck = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + shootingNeuron.ToString()), receivingNeurons);
                 if (determinismCheck.Item1.Count > 1)
                 {
-                    nondeterministicList.Add((determinismCheck.Item1, determinismCheck.Item2, i));
+                    nondeterministicList.Add((determinismCheck.Item1, determinismCheck.Item2, shootingNeuron));
                     print((determinismCheck.Item1, determinismCheck.Item2, i)); 
                 }   
                 receivingNeurons.Clear();
@@ -834,12 +834,6 @@ public class EditorController : MonoBehaviour
         //newChoiceButton.GetComponentInChildren<Text>().text = newChoice.GetChosen();
         //newChoiceButton.name = "Choice" + newChoice.time.ToString();
 
-        print(newChoiceElement.transform.Find("Time"));
-        print(newChoiceElement.transform.Find("Time").Find("TimeText"));
-        print(newChoiceElement.transform.Find("Time").Find("TimeText").gameObject);
-        print(newChoiceElement.transform.Find("Time").Find("TimeText").gameObject.GetComponent<Text>().text);
-
-
         newChoiceElement.transform.Find("Time").Find("TimeText").gameObject.GetComponent<Text>().text = "t=" + globalTime.ToString();
         Transform perNeuronContainer = newChoiceElement.transform.Find("PerNeuron Container");
 
@@ -848,7 +842,6 @@ public class EditorController : MonoBehaviour
             matched.Remove(chosen);
             GameObject newChoicePerNeuron = Instantiate(choicePerNeuron, new Vector3(transform.position.x, transform.position.y, transform.position.z),
                Quaternion.identity, perNeuronContainer.transform);
-            print(neuronNo.ToString());
             newChoicePerNeuron.transform.Find("NeuronNo").Find("NeuronNoText").GetComponent<Text>().text = "N" + neuronNo.ToString();
             newChoicePerNeuron.transform.Find("Chosen").Find("ChosenText").GetComponent<Text>().text = chosen;
             string ignoredRules = "";

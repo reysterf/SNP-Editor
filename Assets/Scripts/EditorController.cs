@@ -26,6 +26,7 @@ public class EditorController : MonoBehaviour
 
     public GameObject choiceButtonPrefab;
     public GameObject NeuronPrefab;
+    public GameObject OutputNeuronPrefab;
     public GameObject NeuronWithRules;
     public GameObject NeuronWithoutRules;
     public GameObject Neurons;
@@ -46,6 +47,7 @@ public class EditorController : MonoBehaviour
     private Vector3 synapseEnd;
 
     private List<int> neurons = new List<int>();
+    private List<int> outputneurons = new List<int>();
     private List<(int, int)> synapses = new List<(int, int)>();
 
 
@@ -109,37 +111,37 @@ public class EditorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(freeModeChanged){
-            if(!freeMode){
+        if (freeModeChanged) {
+            if (!freeMode) {
                 DisableButtons();
             }
-            else if(freeMode){
+            else if (freeMode) {
                 EnableButtons();
             }
         }
-        if(!deleteSynapseMode){
+        if (!deleteSynapseMode) {
             Draw();
         }
-        if(showModeChanged){
-            if(showLabels){
+        if (showModeChanged) {
+            if (showLabels) {
                 //Broadcast show labels
                 Neurons.GetComponent<NeuronsController>().ShowLabelMode();
                 showLabelsText.text = "Hide Labels";
                 showModeChanged = false;
             }
-            else if(!showLabels){
+            else if (!showLabels) {
                 //Broadcast hide labels
                 Neurons.GetComponent<NeuronsController>().HideLabelMode();
                 showLabelsText.text = "Show Labels";
                 showModeChanged = false;
             }
-            if(showRules){
+            if (showRules) {
                 //Broadcast show rules
                 Neurons.GetComponent<NeuronsController>().ShowRulesMode();
                 showRulesText.text = "Hide Rules";
                 showModeChanged = false;
             }
-            else if(!showRules){
+            else if (!showRules) {
                 //Broadcast hide rules
                 Neurons.GetComponent<NeuronsController>().HideRulesMode();
                 showRulesText.text = "Show Rules";
@@ -151,86 +153,86 @@ public class EditorController : MonoBehaviour
     void OnMouseDown()
     {
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-        offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z)) ;
+        offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
     }
 
     void OnMouseDrag()
     {
-        if(panMode){
-            Vector3 cursorScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
-            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint (cursorScreenPoint) + offset;
-            MainCamera.transform.position = new Vector3(prevPosition.x-cursorPosition.x/panSensitivity, prevPosition.y-cursorPosition.y/panSensitivity, -10);
+        if (panMode) {
+            Vector3 cursorScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorScreenPoint) + offset;
+            MainCamera.transform.position = new Vector3(prevPosition.x - cursorPosition.x / panSensitivity, prevPosition.y - cursorPosition.y / panSensitivity, -10);
             prevPosition = MainCamera.transform.position;
         }
 
     }
 
-    void OnMouseUp(){
-        if(panMode){
+    void OnMouseUp() {
+        if (panMode) {
             prevPosition = MainCamera.transform.position;
         }
     }
 
-    public void Draw(){
+    public void Draw() {
         foreach ((int i, int j) in synapses)
         {
             DrawLine(i.ToString(), j.ToString());
         }
     }
 
-    private void BlankSlate(){
+    private void BlankSlate() {
         //Reset the program state into a blank slate
         DeleteAllNeurons();
     }
 
-    public void SetStatusText(string statusText){
+    public void SetStatusText(string statusText) {
         statusBar.transform.GetChild(0).GetComponent<Text>().text = statusText;
     }
 
-    public bool isFreeMode(){
+    public bool isFreeMode() {
         return freeMode;
     }
 
-    public void SetFreeMode(bool mode){
+    public void SetFreeMode(bool mode) {
         freeMode = mode;
         freeModeChanged = true;
     }
 
-    public void DisableButtons(){
+    public void DisableButtons() {
         Button[] buttons = Buttons.transform.GetComponentsInChildren<Button>();
 
-        foreach(Button button in buttons){
+        foreach (Button button in buttons) {
             button.interactable = false;
         }
     }
 
-    public void EnableButtons(){
+    public void EnableButtons() {
         Button[] buttons = Buttons.transform.GetComponentsInChildren<Button>();
 
-        foreach(Button button in buttons){
+        foreach (Button button in buttons) {
             button.interactable = true;
         }
     }
 
-    public void ChangePanMode(){
+    public void ChangePanMode() {
         SetFreeMode(!freeMode);
         panMode = !panMode;
-        if(panMode){
+        if (panMode) {
             SetStatusText("Pan Mode");
         }
     }
 
-    public void ChangeShowLabelMode(){
+    public void ChangeShowLabelMode() {
         // if(freeMode){
-            showModeChanged = true;
-            showLabels = !showLabels;
+        showModeChanged = true;
+        showLabels = !showLabels;
         // }
     }
 
-    public void ChangeShowRulesMode(){
+    public void ChangeShowRulesMode() {
         // if(freeMode){
-            showModeChanged = true;
-            showRules = !showRules;
+        showModeChanged = true;
+        showRules = !showRules;
         // }
     }
 
@@ -246,24 +248,24 @@ public class EditorController : MonoBehaviour
         ChoiceMenu.GetComponent<CanvasGroup>().alpha = 0;
     }
 
-    public bool isShowRulesMode(){
+    public bool isShowRulesMode() {
         return showRules;
     }
 
-    public bool isShowLabelsMode(){
+    public bool isShowLabelsMode() {
         return showLabels;
-    }    
+    }
 
     public bool isNewSynapseMode()
     {
         return newSynapseMode;
     }
 
-    public bool isDeleteSynapseMode(){
+    public bool isDeleteSynapseMode() {
         return deleteSynapseMode;
     }
 
-    public void neuronsRefresh(){
+    public void neuronsRefresh() {
         Neurons.SetActive(false);
         Neurons.SetActive(true);
     }
@@ -271,7 +273,7 @@ public class EditorController : MonoBehaviour
 
     public void NewNeuron()
     {
-        if(freeMode){
+        if (freeMode) {
             Vector3[] neuronsBounds = new Vector3[4];
             cameraCenterArea.GetComponent<RectTransform>().GetWorldCorners(neuronsBounds);
 
@@ -308,6 +310,25 @@ public class EditorController : MonoBehaviour
         // newronLabel.transform.SetParent(newron.transform);
         // newronLabel.transform.localScale = new Vector3(.03f, .03f, 0);
         // newronLabel.transform.GetChild(0).gameObject.GetComponent<Text>().text = newron.name;
+    }
+
+    public void NewOutputNeuron()
+    {
+        if (freeMode)
+        {
+            Vector3[] neuronsBounds = new Vector3[4];
+            cameraCenterArea.GetComponent<RectTransform>().GetWorldCorners(neuronsBounds);
+
+            Vector3 initialPosition = new Vector3(UnityEngine.Random.Range(neuronsBounds[0].x, neuronsBounds[3].x), UnityEngine.Random.Range(neuronsBounds[0].y, neuronsBounds[1].y), 0);
+            GameObject newron = Instantiate(OutputNeuronPrefab, initialPosition, Quaternion.identity);
+            newron.name = neuronCount.ToString();
+            newron.transform.SetParent(Neurons.transform);
+            newron.transform.tag = "OutputNeuron";
+            neurons.Add(neuronCount); //neuronCount
+            outputneurons.Add(neuronCount);
+            neuronCount += 1;
+            SetStatusText("New neuron created");
+        }
     }
 
     private int GetAvailableNeuronName(){
@@ -763,6 +784,7 @@ public class EditorController : MonoBehaviour
         }
 
         LogAppliedRules();
+        EndFire();
 
         if (nondeterministicList.Count > 0)
         {
@@ -781,6 +803,17 @@ public class EditorController : MonoBehaviour
             last = newChoice;
             last.PrintNondetRules();
         }
+    }
+
+    public void EndFire()
+    {
+        if(outputneurons.Count > 0)
+        {
+            foreach (int i in outputneurons)
+            {
+                Neurons.GetComponent<NeuronsController>().EndFire(GameObject.Find("Neurons/" + i.ToString()));
+            }
+        }      
     }
 
     public void GoBackOne()

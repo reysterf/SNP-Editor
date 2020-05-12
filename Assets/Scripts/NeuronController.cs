@@ -24,6 +24,7 @@ public class NeuronController : MonoBehaviour
     public Text rulesText;
     public Text spikesText;
     public Text neuronLabelText;
+    public Text outputText;
 
     public GameObject spikeSprite;
 
@@ -47,6 +48,7 @@ public class NeuronController : MonoBehaviour
 
     private int storedGive;
     private int storedConsume;
+    private int storedReceived;
     private int timer = -1;
     public string spikes = "";
     private List<string> rules = new List<string>();
@@ -68,6 +70,9 @@ public class NeuronController : MonoBehaviour
 
         showRules = ec.isShowRulesMode();
         showLabel = ec.isShowLabelsMode();
+
+        if (gameObject.tag == "OutputNeuron")
+            showRules = false;
 
         if(showRules){
             ShowRules();
@@ -147,10 +152,13 @@ public class NeuronController : MonoBehaviour
     }
 
     public void ShowRules(){
-        showRules = true;
-        // gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
-        rulesUI.SetActive(true);
-        UIChanged = true;
+        if(gameObject.tag == "OutputNeuron")
+        {
+            showRules = true;
+            // gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+            rulesUI.SetActive(true);
+            UIChanged = true;
+        }       
     }
 
     public void HideRules(){
@@ -399,9 +407,28 @@ public class NeuronController : MonoBehaviour
     {
         string recStr = new string('a', received);
         spikes = string.Concat(spikes, recStr);
+        storedReceived += received;
         //float scale = (float)spikes.Length / ((float)30);
         // transform.localScale = new Vector3(scale, scale, scale);
         UIChanged = true;
+    }
+
+    public void SignalEnd()
+    {
+        try
+        {
+            int.Parse(outputText.text);
+            outputText.text += storedReceived.ToString();
+        }
+        catch (System.FormatException e)
+        {
+            outputText.text = storedReceived.ToString();
+        }
+        catch (System.OverflowException e)
+        {
+            outputText.text += storedReceived.ToString();
+        }
+        storedReceived = 0;        
     }
 
     public static string RepeatString(string s, int n)

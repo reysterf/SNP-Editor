@@ -21,40 +21,40 @@ public class NeuronsController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    public void LoadedFile(){
+    public void LoadedFile() {
         Destroy(GetComponent<GridLayoutGroup>()); // For auto layout;
     }
 
-    public void DeleteNeuronMode(bool mode){
+    public void DeleteNeuronMode(bool mode) {
         print("Delete Neuron Mode");
         BroadcastMessage("DeleteNeuronModeReceiver", mode);
     }
 
-    public void DeleteNeuronTarget(GameObject neuron){
+    public void DeleteNeuronTarget(GameObject neuron) {
         print("DeleteNeuronTarget: " + neuron.name);
         ec.DeleteNeuron(neuron);
     }
 
-    public void EditNeuronMode(bool mode){
+    public void EditNeuronMode(bool mode) {
         print("Edit Neuron Mode");
         BroadcastMessage("EditNeuronModeReceiver", mode);
     }
 
-    public void EditNeuronTarget(GameObject neuron){
+    public void EditNeuronTarget(GameObject neuron) {
         print("EditNeuronTarget: " + neuron.name);
         ec.EditNeuron(neuron);
     }
 
-    public void NewSynapseMode(bool mode){
+    public void NewSynapseMode(bool mode) {
         BroadcastMessage("NewSynapseModeReceiver", mode);
         BroadcastMessage("SynapseV1ModeReceiver", true);
         ec.SetStatusText("New Synapse: Click source neuron");
     }
 
-    public void SynapseCoordinate1(GameObject neuron){
+    public void SynapseCoordinate1(GameObject neuron) {
         v1 = neuron.transform.position;
         sourceNeuronName = neuron.name;
         BroadcastMessage("SynapseV1ModeReceiver", false);
@@ -62,7 +62,7 @@ public class NeuronsController : MonoBehaviour
         ec.SetStatusText("New Synapse: Click destination neuron");
     }
 
-    public void SynapseCoordinate2(GameObject neuron){
+    public void SynapseCoordinate2(GameObject neuron) {
         v2 = neuron.transform.position;
         destNeuronName = neuron.name;
         BroadcastMessage("SynapseV2ModeReceiver", false);
@@ -70,24 +70,28 @@ public class NeuronsController : MonoBehaviour
         ec.NewSynapse(sourceNeuronName, destNeuronName);
     }
 
-    public void ShowLabelMode(){
+    public void ShowLabelMode() {
         BroadcastMessage("ShowLabel");
     }
 
-    public void HideLabelMode(){
+    public void HideLabelMode() {
         BroadcastMessage("HideLabel");
     }
 
-    public void ShowRulesMode(){
+    public void ShowRulesMode() {
         BroadcastMessage("ShowRules");
     }
 
-    public void HideRulesMode(){
+    public void HideRulesMode() {
         BroadcastMessage("HideRules");
     }
 
     public (List<string>, string) Fire(GameObject shootingNeuron, List<GameObject> targetNeurons)
     {
         return shootingNeuron.GetComponent<NeuronController>().FireOneStep(targetNeurons);
+    }
+
+    public void EndFire(GameObject outputNeuron){
+        outputNeuron.GetComponent<NeuronController>().SignalEnd();
     }
 }

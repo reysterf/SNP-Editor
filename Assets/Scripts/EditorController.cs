@@ -889,6 +889,9 @@ public class EditorController : MonoBehaviour
 
     public bool ValidateRules(string rules)
     {
+        if(rules == ""){
+            return false;
+        }
         string[] newLine = new string[1] { "\n" };
         string[] rulesArr = rules.Split(newLine, StringSplitOptions.RemoveEmptyEntries);
         foreach (string rule in rulesArr)
@@ -1004,6 +1007,11 @@ public class EditorController : MonoBehaviour
 
             neuronDefinition += "\n";
 
+            //delay
+            string neuronDelay = neuronToEncode.GetComponent<NeuronController>().GetDelay().ToString();
+            neuronDefinition +="\tdelay = " + neuronDelay + lineEnder;
+            neuronDefinition += "\n";
+
             neuronDefinition += "}";
 
             neuronDefinition += "\n";
@@ -1063,21 +1071,24 @@ public class EditorController : MonoBehaviour
         int outSynapsesIndex = 0;
         int outSynapsesSearchIndex = 0;
 
+        int delayIndex = 0;
+        int delaySearchIndex = 0;
+
         int positionIndex = 0;
         int positionSearchIndex = 0;
 
         foreach(GameObject neuron in neurons){
             //parse spikes
             spikesIndex = Array.IndexOf(strValues, "spikes", spikesSearchIndex, Mathf.Min(searchArea, strValues.Length-spikesSearchIndex));
-            print("Yeet: " + spikesIndex.ToString() + strValues[spikesIndex + 1]);
+            // print("Yeet: " + spikesIndex.ToString() + strValues[spikesIndex + 1]);
             neuron.GetComponent<NeuronController>().SetSpikes(int.Parse(strValues[spikesIndex + 1]));
             spikesSearchIndex = spikesIndex + 1;
             rulesSearchIndex = spikesIndex;
 
             //parse rules
-            print("Yoot: " + rulesSearchIndex.ToString() + " " + rulesIndex.ToString());
+            // print("Yoot: " + rulesSearchIndex.ToString() + " " + rulesIndex.ToString());
             rulesIndex = Array.IndexOf(strValues, "rules", rulesSearchIndex, Mathf.Min(searchArea, strValues.Length-rulesSearchIndex));
-            print("Yoot: " + rulesSearchIndex.ToString() + " " + rulesIndex.ToString() + " " + strValues[rulesIndex + 1]);
+            // print("Yoot: " + rulesSearchIndex.ToString() + " " + rulesIndex.ToString() + " " + strValues[rulesIndex + 1]);
             rulesSearchIndex = rulesIndex + 1;
             outSynapsesSearchIndex = rulesIndex;
 
@@ -1085,12 +1096,16 @@ public class EditorController : MonoBehaviour
 
             string rules = strValues[rulesIndex + 1];
             rules = string.Join("\n", rules.Split(new char[] {'[', ']', ','}, StringSplitOptions.RemoveEmptyEntries));
-            neuron.GetComponent<NeuronController>().SetRules(rules);
+            print(rules);
+            if(rules != ""){
+                neuron.GetComponent<NeuronController>().SetRules(rules);
+            }
             // print(rules);
 
             //parse outsynapses
             outSynapsesIndex = Array.IndexOf(strValues, "outsynapses", outSynapsesSearchIndex, Mathf.Min(searchArea, strValues.Length-outSynapsesSearchIndex));
             outSynapsesSearchIndex = outSynapsesIndex + 1;
+            delaySearchIndex = outSynapsesIndex;
             positionSearchIndex = outSynapsesIndex;
             spikesSearchIndex = outSynapsesIndex;
 
@@ -1102,6 +1117,15 @@ public class EditorController : MonoBehaviour
                 outSynapsesList.Add(int.Parse(outSynapse));
             }
             neuron.GetComponent<NeuronController>().SetOutSynapses(outSynapsesList);
+
+            //parse delay
+            delayIndex = Array.IndexOf(strValues, "delay", delaySearchIndex, Mathf.Min(searchArea, strValues.Length-delaySearchIndex));
+            if(delayIndex >= 0){
+                neuron.GetComponent<NeuronController>().SetDelay(int.Parse(strValues[delayIndex + 1]));
+            }
+
+            //parse activatedRule
+
 
             //parse positions
             positionIndex = Array.IndexOf(strValues, "position", positionSearchIndex, Mathf.Min(searchArea, strValues.Length-positionSearchIndex));

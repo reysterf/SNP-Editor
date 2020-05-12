@@ -51,6 +51,8 @@ public class NeuronController : MonoBehaviour
     public string spikes = "";
     private List<string> rules = new List<string>();
 
+    private bool isClosed = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -95,6 +97,12 @@ public class NeuronController : MonoBehaviour
             //Spikes Text
             spikesText.text = GetSpikesNum().ToString();
             collider.size = gameObject.GetComponent<RectTransform>().sizeDelta;
+            if(isClosed){
+                neuronContainer.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
+            }
+            if(!isClosed){
+                neuronContainer.GetComponent<Image>().color = new Color(1f, 1f, 1f);
+            }
             UIChanged = false;
         }
 
@@ -187,6 +195,17 @@ public class NeuronController : MonoBehaviour
         UIChanged = true;
     }
 
+    public void SetDelay(int delay){
+        timer = delay;
+        if(timer >= 0){
+            isClosed = true;
+        }
+        UIChanged = true;
+    }
+
+    public int GetDelay(){
+        return timer;
+    }
 
     public void AddOutSynapse(int neuron){
         outSynapses.Add(neuron);
@@ -285,12 +304,16 @@ public class NeuronController : MonoBehaviour
     {
         Debug.Log(timer);
         (List<string>, string) rules = (new List<string>(),"");
-        if (timer == -1)
+        if (timer == -1){
             rules = CheckRules(targets);
-        else if (timer == 0)
+        }
+        else if (timer == 0){
             Fire(storedConsume, storedGive, targets);
-        else if (timer > 0)
+            isClosed = false;
+        }
+        else if (timer > 0){
             timer = timer - 1;
+        }
 
         UIChanged = true;
         print("Adding " + gameObject.name);
@@ -341,6 +364,7 @@ public class NeuronController : MonoBehaviour
 
     private void CloseNeuron(int consumed, int give)
     {
+        isClosed = true;
         timer = timer - 1;
         storedGive = give;
         storedConsume = consumed;
@@ -387,7 +411,7 @@ public class NeuronController : MonoBehaviour
 
     private IEnumerator AnimateFire(Vector3 startPosition, Vector3 endPosition)
     {
-        print("Animate Fire");
+        // print("Animate Fire");
         GameObject sprite = Instantiate(spikeSprite, startPosition, Quaternion.identity);
         sprite.transform.SetParent(GameObject.Find("Neurons and Synapses").transform);
         sprite.transform.SetAsFirstSibling();

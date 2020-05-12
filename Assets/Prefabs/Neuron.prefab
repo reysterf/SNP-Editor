@@ -321,7 +321,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 31, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5133810406019628106
@@ -661,7 +661,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 28, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7994793782150434398
@@ -1009,8 +1009,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   neuron: {fileID: 0}
-  EditorController: {fileID: 0}
-  ec: {fileID: 0}
+  EditorController: {fileID: 3000603469988135874, guid: d8601e10adbb44d42bff516828d2b7b0,
+    type: 3}
+  ec: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0, type: 3}
+  simulationCanvas: {fileID: 0}
   collider: {fileID: 7628045825308284011}
   neuronContainer: {fileID: 128261201446227102}
   rulesUI: {fileID: 1131865081776868504}

@@ -38,21 +38,19 @@ public class ChoiceNode
             }
             contents = contents + " || ";
             contents = contents + chosen;
+            contents = contents + "N" + neuronNo.ToString();
         }
         Debug.Log(contents);
     }
 
-    public string GetChosen()
+    public string GetTimeStep()
     {
-        string chosenFormatted = "t = ";
-        chosenFormatted += time.ToString() + "\n";
-        foreach((List<string> matched, string chosen, int neuronNo) in nondetRules)
-        {
-            chosenFormatted += "N";
-            chosenFormatted += neuronNo.ToString() + ": ";
-            chosenFormatted += chosen + "\n";
-        }
-        return chosenFormatted;
+        return ("t = " + time.ToString());
+    }
+
+    public List<(List<string>, string, int)> GetChoices()
+    {
+        return nondetRules;
     }
     
     public void SetFather(ChoiceNode father)

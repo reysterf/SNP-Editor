@@ -24,7 +24,6 @@ public class EditorController : MonoBehaviour
 
     public GameObject Buttons;
 
-    public GameObject choiceButtonPrefab;
     public GameObject NeuronPrefab;
     public GameObject OutputNeuronPrefab;
     public GameObject NeuronWithRules;
@@ -54,6 +53,8 @@ public class EditorController : MonoBehaviour
     public GameObject statusBar;
     public GameObject ChoiceMenu;
     public GameObject choiceContent;
+    public GameObject choiceElement;
+    public GameObject choicePerNeuron;
     public GameObject editNeuronMenu;
     public GameObject editRulesMenu;
     public GameObject editSpikesMenu;
@@ -739,11 +740,6 @@ public class EditorController : MonoBehaviour
         if (root == null)
         {
             root = new ChoiceNode(root, GetAllSpikes());
-            GameObject newChoiceButton = Instantiate(choiceButtonPrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), 
-                Quaternion.identity, choiceContent.transform);
-            newChoiceButton.transform.localScale = new Vector3(1, 1, 1);
-            newChoiceButton.name = "root";
-            newChoiceButton.GetComponentInChildren<Text>().text = "Go to Root";
             last = root;
             choiceTimes.Add(globalTime);
         }
@@ -788,20 +784,7 @@ public class EditorController : MonoBehaviour
 
         if (nondeterministicList.Count > 0)
         {
-            ChoiceNode newChoice = new ChoiceNode(root, GetAllSpikes(), nondeterministicList, globalTime);
-            newChoice.SetFather(last);
-            choiceTimes.Add(globalTime);
-            choiceContent.GetComponent<RectTransform>().sizeDelta = new Vector2(600, (choiceTimes.Count+1)* 80);
-
-            GameObject newChoiceButton = Instantiate(choiceButtonPrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), 
-                Quaternion.identity, choiceContent.transform);
-            newChoiceButton.GetComponent<Button>().interactable = false;
-            newChoiceButton.transform.localScale = new Vector3(1, 1, 1);
-            newChoiceButton.GetComponentInChildren<Text>().text = newChoice.GetChosen();
-            newChoiceButton.name = "Choice" + newChoice.time.ToString();
-
-            last = newChoice;
-            last.PrintNondetRules();
+            AddChoiceElement(nondeterministicList);
         }
     }
 
@@ -836,6 +819,49 @@ public class EditorController : MonoBehaviour
                 globalTime = 0;
             }       
         }
+    }
+
+    public void AddChoiceElement(List<(List<string>, string, int)> nondeterministicList)
+    {
+        ChoiceNode newChoice = new ChoiceNode(root, GetAllSpikes(), nondeterministicList, globalTime);
+        newChoice.SetFather(last);
+        choiceTimes.Add(globalTime);
+                
+        GameObject newChoiceElement = Instantiate(choiceElement, new Vector3(transform.position.x, transform.position.y, transform.position.z),
+               Quaternion.identity, choiceContent.transform);
+        //newChoiceButton.GetComponent<Button>().interactable = false;
+        //newChoiceButton.transform.localScale = new Vector3(1, 1, 1);
+        //newChoiceButton.GetComponentInChildren<Text>().text = newChoice.GetChosen();
+        //newChoiceButton.name = "Choice" + newChoice.time.ToString();
+
+        print(newChoiceElement.transform.Find("Time"));
+        print(newChoiceElement.transform.Find("Time").Find("TimeText"));
+        print(newChoiceElement.transform.Find("Time").Find("TimeText").gameObject);
+        print(newChoiceElement.transform.Find("Time").Find("TimeText").gameObject.GetComponent<Text>().text);
+
+
+        newChoiceElement.transform.Find("Time").Find("TimeText").gameObject.GetComponent<Text>().text = "t=" + globalTime.ToString();
+        Transform perNeuronContainer = newChoiceElement.transform.Find("PerNeuron Container");
+
+        foreach ((List<string> matched, string chosen, int neuronNo) in nondeterministicList)
+        {
+            matched.Remove(chosen);
+            GameObject newChoicePerNeuron = Instantiate(choicePerNeuron, new Vector3(transform.position.x, transform.position.y, transform.position.z),
+               Quaternion.identity, perNeuronContainer.transform);
+            print(neuronNo.ToString());
+            newChoicePerNeuron.transform.Find("NeuronNo").Find("NeuronNoText").GetComponent<Text>().text = "N" + neuronNo.ToString();
+            newChoicePerNeuron.transform.Find("Chosen").Find("ChosenText").GetComponent<Text>().text = chosen;
+            string ignoredRules = "";
+            foreach(string rule in matched)
+            {
+                ignoredRules += rule + "\n";
+            }
+            ignoredRules.TrimEnd('\n');
+            newChoicePerNeuron.transform.Find("Ignored").Find("IgnoredText").GetComponent<Text>().text = ignoredRules;
+        }
+
+        last = newChoice;
+        last.PrintNondetRules();
     }
 
     public void LogAppliedRules()

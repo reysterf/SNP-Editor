@@ -790,13 +790,18 @@ public class EditorController : MonoBehaviour
 
     public void EndFire()
     {
+        List<string> outputBitstrings = new List<string>();
         if(outputneurons.Count > 0)
         {
             foreach (int i in outputneurons)
             {
-                Neurons.GetComponent<NeuronsController>().EndFire(GameObject.Find("Neurons/" + i.ToString()));
+                string outputBitsring = i.ToString() + ":" + 
+                    Neurons.GetComponent<NeuronsController>().EndFire(GameObject.Find("Neurons/" + i.ToString()));
+                outputBitstrings.Add(outputBitsring);
             }
-        }      
+        }
+        if(outputBitstrings.Count > 0)
+            SaveOutput(outputBitstrings);
     }
 
     public void GoBackOne()
@@ -871,6 +876,16 @@ public class EditorController : MonoBehaviour
             appliedRules += "\n";
         }
         print(appliedRules);
+    }
+
+    public void SaveOutput(List<string> outputBitstrings)
+    {
+        string path = "Assets/output.txt";
+
+        StreamWriter writer = new StreamWriter(path, false);
+        foreach(string bitstring in outputBitstrings)
+            writer.WriteLine(bitstring);
+        writer.Close();
     }
 
     public void Save(){

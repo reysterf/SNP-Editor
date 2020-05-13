@@ -856,10 +856,19 @@ public class EditorController : MonoBehaviour
             }
             ignoredRules.TrimEnd('\n');
             newChoicePerNeuron.transform.Find("Ignored").Find("IgnoredText").GetComponent<Text>().text = ignoredRules;
-        }
+        }     
+        //Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(newChoiceElement.GetComponent<RectTransform>());
 
         last = newChoice;
         last.PrintNondetRules();
+
+        newChoiceElement.GetComponent<HorizontalLayoutGroup>().enabled = false;
+        newChoiceElement.GetComponent<HorizontalLayoutGroup>().CalculateLayoutInputHorizontal();
+        newChoiceElement.GetComponent<HorizontalLayoutGroup>().CalculateLayoutInputVertical();
+        newChoiceElement.GetComponent<HorizontalLayoutGroup>().SetLayoutHorizontal();
+        newChoiceElement.GetComponent<HorizontalLayoutGroup>().SetLayoutVertical();
+        newChoiceElement.GetComponent<HorizontalLayoutGroup>().enabled = true;
     }
 
     public void LogAppliedRules()

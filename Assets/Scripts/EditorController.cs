@@ -7,6 +7,7 @@ using UnityEditor;
 using System.IO;
 using System.Text.RegularExpressions;
 using System;
+using SFB;
 
 public class EditorController : MonoBehaviour
 {
@@ -1103,7 +1104,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void Save(){
-        var path = EditorUtility.SaveFilePanel(
+        var path = StandaloneFileBrowser.SaveFilePanel(
         "Save as",
         "",
         "Untitled.snapse",
@@ -1117,13 +1118,18 @@ public class EditorController : MonoBehaviour
             
             SetStatusText("Saved!");
         }
+
     }
 
     public void Load(){
-        string path = EditorUtility.OpenFilePanel("Load snapse file", "", "snapse");
+        string[] path = StandaloneFileBrowser.OpenFilePanel("Load snapse file", "", "snapse", false);
+
+        foreach (string p in path)
+            print(p);
+        
         if (path.Length != 0)
         {
-            var fileContent = File.ReadAllBytes(path);
+            var fileContent = File.ReadAllBytes(path[0]);
             string formatData = System.Text.Encoding.UTF8.GetString(fileContent);
 
             bool hasPositionData = false;
@@ -1140,9 +1146,9 @@ public class EditorController : MonoBehaviour
                 Neurons.GetComponent<GridLayoutGroup>().SetLayoutVertical();
                 Neurons.GetComponent<GridLayoutGroup>().enabled = false;
             }
-
             SetStatusText("Loaded");
         }
+
     }
     
     public List<int> GetAllSpikes()

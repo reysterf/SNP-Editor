@@ -20,11 +20,13 @@ public class NeuronController : MonoBehaviour
     public GameObject rulesUI;
     public GameObject spikesUI;
     public GameObject neuronLabel;
+    public GameObject timerUI;
 
     public Text rulesText;
     public Text spikesText;
     public Text neuronLabelText;
     public Text outputText;
+    public Text timerText;
 
     public GameObject spikeSprite;
 
@@ -58,6 +60,10 @@ public class NeuronController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(IsOutputNeuron()){
+            timerUI.SetActive(false);
+
+        }
         // spikes = "";
         EditorController = GameObject.Find("EditorController");
         ec = EditorController.GetComponent<EditorController>();
@@ -102,12 +108,20 @@ public class NeuronController : MonoBehaviour
             //Spikes Text
             spikesText.text = GetSpikesNum().ToString();
             collider.size = gameObject.GetComponent<RectTransform>().sizeDelta;
-            if(isClosed){
+            if(isClosed || IsOutputNeuron()){
                 neuronContainer.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
             }
             if(!isClosed){
                 neuronContainer.GetComponent<Image>().color = new Color(1f, 1f, 1f);
             }
+            if(timer >= 0){
+                // timerUI.SetActive(true);
+                timerText.text = timer.ToString();
+            }
+            if(timer < 0){
+                // timerUI.SetActive(false);
+            }
+
             UIChanged = false;
         }
 

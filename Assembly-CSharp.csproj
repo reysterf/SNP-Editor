@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\SynapseController.cs" />
      <Compile Include="Assets\Scripts\SynapsesController.cs" />
      <Compile Include="Assets\Scripts\testScript.cs" />
+     <None Include="Assets\output.txt" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.0f6/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>

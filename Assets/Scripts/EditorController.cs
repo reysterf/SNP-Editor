@@ -39,6 +39,7 @@ public class EditorController : MonoBehaviour
     private bool editSpikesMode = false;
     private bool deleteNeuronMode = false;
     private bool deleteSynapseMode = false;
+    private bool changeOutputMode = false;
 
     private bool panMode = false;
 
@@ -85,6 +86,8 @@ public class EditorController : MonoBehaviour
     public ChoiceNode last;
     public List<int> choiceTimes;
     public List<List<int>> configHistory;
+    private string outputPath;
+    List<string> outputBitstrings = new List<string>();
 
     // Start is called before the first frame update
     void Start()
@@ -97,6 +100,7 @@ public class EditorController : MonoBehaviour
         configHistory = new List<List<int>>();
         choiceTimes = new List<int>();
         appliedRulesStorage = new List<(List<string>, string, string)>();
+        outputPath = Application.dataPath + "/output.txt";
 
         showLabelsText.text = "Hide Labels";
         showRulesText.text = "Hide Rules";
@@ -790,8 +794,8 @@ public class EditorController : MonoBehaviour
 
     public void EndFire()
     {
-        List<string> outputBitstrings = new List<string>();
-        if(outputneurons.Count > 0)
+        outputBitstrings.Clear();
+        if (outputneurons.Count > 0)
         {
             foreach (int i in outputneurons)
             {
@@ -802,6 +806,7 @@ public class EditorController : MonoBehaviour
         }
         if(outputBitstrings.Count > 0)
             SaveOutput(outputBitstrings);
+        SetStatusText("Fired at t = " + globalTime);
     }
 
     public void GoBackOne()
@@ -822,6 +827,7 @@ public class EditorController : MonoBehaviour
             {
                 SetAllSpikes(configHistory[0]);
                 globalTime = 0;
+                SetStatusText("t = " + globalTime);
             }       
         }
     }
@@ -854,7 +860,7 @@ public class EditorController : MonoBehaviour
             {
                 ignoredRules += rule + "\n";
             }
-            ignoredRules.TrimEnd('\n');
+            ignoredRules.TrimEnd((new char[] { '\n' }));
             newChoicePerNeuron.transform.Find("Ignored").Find("IgnoredText").GetComponent<Text>().text = ignoredRules;
         }     
         //Canvas.ForceUpdateCanvases();
@@ -887,11 +893,86 @@ public class EditorController : MonoBehaviour
         print(appliedRules);
     }
 
+    public void ChangeOutputPath()
+    {
+        if (!changeOutputMode)
+        {
+            changeOutputMode = true;
+            EventSystem.current.currentSelectedGameObject.transform.Find("Text").GetComponent<Text>().text = "Confirm";
+            EventSystem.current.currentSelectedGameObject.transform.parent.Find("InputField").gameObject.SetActive(true);
+            EventSystem.current.currentSelectedGameObject.transform.parent.Find("Cancel").gameObject.SetActive(true);
+        }
+        else
+        {
+            try
+            {
+
+                string newPath = Application.dataPath + "/../";                  
+                string submittedPath = EventSystem.current.currentSelectedGameObject.transform.parent.Find("InputField").Find("Text").
+                    GetComponent<Text>().text;
+                if (submittedPath.StartsWith("/"))
+                    submittedPath = submittedPath.TrimStart((new char[] { '/' }));
+                if (submittedPath.EndsWith("/"))
+                    submittedPath = submittedPath.TrimEnd((new char[] { '/' }));
+
+                newPath += submittedPath;
+                print("1: "+ newPath);
+                if (String.Equals(newPath, Application.dataPath + "/../root", StringComparison.OrdinalIgnoreCase) ||
+                    String.Equals(newPath, Application.dataPath + "/../", StringComparison.OrdinalIgnoreCase))
+                    newPath = Application.dataPath;
+                print("2: "+newPath);
+                print(Application.dataPath);
+                newPath += "/output.txt";
+                try
+                {
+                    File.Delete(outputPath);
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    ;
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    ;
+                }
+                outputPath = newPath;
+                SaveOutput(outputBitstrings);
+                CloseChangeOutput();
+                SetStatusText("Saved to " + newPath);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                SetStatusText("No such directory");
+                print(e.ToString());
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                SetStatusText("Unauthorized Access to directory");
+                print(e.ToString());
+            }           
+        } 
+    }
+
+    public void CloseChangeOutput()
+    {
+        
+        EventSystem.current.currentSelectedGameObject.transform.parent.Find("InputField").gameObject.SetActive(false);
+        EventSystem.current.currentSelectedGameObject.transform.parent.Find("InputField").Find("Text").
+                GetComponent<Text>().text = "";
+        EventSystem.current.currentSelectedGameObject.transform.parent.Find("Change Output Button").
+                Find("Text").GetComponent<Text>().text = "Change Output Path";
+
+        if (EventSystem.current.currentSelectedGameObject.name == "Change Output Button")
+            EventSystem.current.currentSelectedGameObject.transform.parent.Find("Cancel").gameObject.SetActive(false);
+        else if(EventSystem.current.currentSelectedGameObject.name == "Cancel")
+            EventSystem.current.currentSelectedGameObject.SetActive(false);
+
+        changeOutputMode = false;
+    }
+
     public void SaveOutput(List<string> outputBitstrings)
     {
-        string path = "Assets/output.txt";
-
-        StreamWriter writer = new StreamWriter(path, false);
+        StreamWriter writer = new StreamWriter(outputPath, false);
         foreach(string bitstring in outputBitstrings)
             writer.WriteLine(bitstring);
         writer.Close();

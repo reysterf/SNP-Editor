@@ -31,6 +31,8 @@ public class EditorController : MonoBehaviour
     public GameObject Neurons;
     public GameObject Synapses;
 
+    public PanController panController;
+
     private bool freeMode = true;
     private bool freeModeChanged = false;
     private bool newSynapseMode = false;
@@ -59,6 +61,7 @@ public class EditorController : MonoBehaviour
     public GameObject editRulesMenu;
     public GameObject editSpikesMenu;
     public GameObject neuronLabel;
+    public GameObject cancelButton;
 
     private GameObject activeNeuronForEditing;
 
@@ -92,6 +95,8 @@ public class EditorController : MonoBehaviour
         editNeuronMenu.SetActive(false);
         editRulesMenu.SetActive(false);
         editSpikesMenu.SetActive(false);
+        cancelButton.SetActive(false);
+
         lastData = null;
         root = null;
         configHistory = new List<List<int>>();
@@ -151,28 +156,28 @@ public class EditorController : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
-    {
-        screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-        offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
-    }
+    // void OnMouseDown()
+    // {
+    //     screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+    //     offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+    // }
 
-    void OnMouseDrag()
-    {
-        if (panMode) {
-            Vector3 cursorScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
-            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorScreenPoint) + offset;
-            MainCamera.transform.position = new Vector3(prevPosition.x - cursorPosition.x / panSensitivity, prevPosition.y - cursorPosition.y / panSensitivity, -10);
-            prevPosition = MainCamera.transform.position;
-        }
+    // void OnMouseDrag()
+    // {
+    //     if (panMode) {
+    //         Vector3 cursorScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+    //         Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorScreenPoint) + offset;
+    //         MainCamera.transform.position = new Vector3(prevPosition.x - cursorPosition.x / panSensitivity, prevPosition.y - cursorPosition.y / panSensitivity, -10);
+    //         prevPosition = MainCamera.transform.position;
+    //     }
 
-    }
+    // }
 
-    void OnMouseUp() {
-        if (panMode) {
-            prevPosition = MainCamera.transform.position;
-        }
-    }
+    // void OnMouseUp() {
+    //     if (panMode) {
+    //         prevPosition = MainCamera.transform.position;
+    //     }
+    // }
 
     public void Draw() {
         foreach ((int i, int j) in synapses)
@@ -218,6 +223,7 @@ public class EditorController : MonoBehaviour
     public void ChangePanMode() {
         SetFreeMode(!freeMode);
         panMode = !panMode;
+        panController.SetPanMode(panMode);
         if (panMode) {
             SetStatusText("Pan Mode");
         }
@@ -264,6 +270,34 @@ public class EditorController : MonoBehaviour
 
     public bool isDeleteSynapseMode() {
         return deleteSynapseMode;
+    }
+
+    public void StartMode(){
+        cancelButton.SetActive(true);
+    }
+
+    public void CancelCurrentMode(){
+        if(newSynapseMode){
+            Neurons.GetComponent<NeuronsController>().NewSynapseMode(false);
+            NewSynapseCancel();
+            EndMode();
+        }
+        if(editNeuronMode){
+            EditNeuronCancel();
+            EndMode();
+        }
+        if(deleteNeuronMode){
+            DeleteNeuronCancel();
+            EndMode();
+        }
+        if(deleteSynapseMode){
+            DeleteSynapseCancel();
+            EndMode();
+        }
+    }
+
+    public void EndMode(){
+        cancelButton.SetActive(false);
     }
 
     public void neuronsRefresh() {
@@ -328,8 +362,25 @@ public class EditorController : MonoBehaviour
             neurons.Add(neuronCount); //neuronCount
             outputneurons.Add(neuronCount);
             neuronCount += 1;
-            SetStatusText("New neuron created");
+            SetStatusText("New output neuron created");
         }
+    }
+
+    public GameObject NewOutputNeuron(int neuronInt)
+    {
+        Vector3[] neuronsBounds = new Vector3[4];
+        cameraCenterArea.GetComponent<RectTransform>().GetWorldCorners(neuronsBounds);
+
+        Vector3 initialPosition = new Vector3(UnityEngine.Random.Range(neuronsBounds[0].x, neuronsBounds[3].x), UnityEngine.Random.Range(neuronsBounds[0].y, neuronsBounds[1].y), 0);
+        GameObject newron = Instantiate(OutputNeuronPrefab, initialPosition, Quaternion.identity);
+        newron.name = neuronInt.ToString();
+        newron.transform.SetParent(Neurons.transform);
+        newron.transform.tag = "OutputNeuron";
+        neurons.Add(neuronInt); //neuronCount
+        outputneurons.Add(neuronInt);
+        neuronCount += 1;
+
+        return newron;
     }
 
     private int GetAvailableNeuronName(){
@@ -387,6 +438,7 @@ public class EditorController : MonoBehaviour
             deleteSynapseMode = true;
             Draw();
             Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
+            StartMode();
         }
     }
 
@@ -403,11 +455,35 @@ public class EditorController : MonoBehaviour
 
         Destroy(targetSynapse);
 
+        DeleteSynapseEnd();
+    }
+
+    public void DeleteSynapseEnd(){
+        SetFreeMode(true);
+        deleteSynapseMode = false;
+        Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(false);
+        EndMode();
+
+        SetStatusText("Synapse deleted");
+
+        GameObject[] deleteButtons = GameObject.FindGameObjectsWithTag("Delete Button");
+        foreach(GameObject delBut in deleteButtons){
+            Destroy(delBut);
+        }
+
+        //Synapse reset
+        GameObject[] synapsesDelete = GameObject.FindGameObjectsWithTag("Synapse");
+        foreach(GameObject synapse in synapsesDelete){
+            Destroy(synapse);
+        }
+    }
+
+    public void DeleteSynapseCancel(){
         SetFreeMode(true);
         deleteSynapseMode = false;
         Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(false);
 
-        SetStatusText("Synapse deleted");
+        SetStatusText("Synapse deletion cancelled");
 
         GameObject[] deleteButtons = GameObject.FindGameObjectsWithTag("Delete Button");
         foreach(GameObject delBut in deleteButtons){
@@ -427,6 +503,7 @@ public class EditorController : MonoBehaviour
             SetFreeMode(false);
             deleteNeuronMode = true;
             Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
+            StartMode();
         }
     }
 
@@ -442,11 +519,23 @@ public class EditorController : MonoBehaviour
         deleteNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);   
         SetStatusText("Neuron deleted");     
+        EndMode();
+    }
+
+    public void DeleteNeuronCancel(){
+        SetFreeMode(true);
+        deleteNeuronMode = false;
+        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);   
+        SetStatusText("Neuron deletion cancelled");     
     }
 
     public void DeleteAllNeurons(){
         GameObject[] neuronsToDelete = GameObject.FindGameObjectsWithTag("Neuron");
+        GameObject[] outputNeuronsToDelete = GameObject.FindGameObjectsWithTag("OutputNeuron");
         foreach(GameObject neuron in neuronsToDelete){
+            DeleteNeuron(neuron);
+        }
+        foreach(GameObject neuron in outputNeuronsToDelete){
             DeleteNeuron(neuron);
         }
     }
@@ -475,6 +564,7 @@ public class EditorController : MonoBehaviour
     public void EditNeuronStart(){
         editNeuronMode = true;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(true);
+        StartMode();
     }
 
     public void EditNeuron(GameObject neuron){
@@ -511,6 +601,7 @@ public class EditorController : MonoBehaviour
         editNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         editNeuronMenu.SetActive(false);
+        SetStatusText("Neuron editting cancelled");
     }
 
     public void EditNeuronSave(){
@@ -556,6 +647,7 @@ public class EditorController : MonoBehaviour
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         SetStatusText("Rules successfully edited");
+        EndMode();
     }
 
     public void EditRulesCancel(){
@@ -566,6 +658,7 @@ public class EditorController : MonoBehaviour
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
 
         SetStatusText("Rules edit cancelled");
+        EndMode();
     }
 
     public void EditSpikesStart(){
@@ -601,6 +694,7 @@ public class EditorController : MonoBehaviour
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         SetStatusText("Spikes successfully edited");
+        EndMode();
     }
 
     public void EditSpikesCancel(){
@@ -612,6 +706,7 @@ public class EditorController : MonoBehaviour
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         SetStatusText("Spikes edit cancelled");
+        EndMode();
     }
 
     public void NewSynapseStart(){
@@ -621,6 +716,7 @@ public class EditorController : MonoBehaviour
             SetFreeMode(false);
             // freeMode = false;
             Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
+            StartMode();
         }
     }
 
@@ -640,22 +736,43 @@ public class EditorController : MonoBehaviour
             }
         }
 
-        if(!synapseExists){
-            synapses.Add((sourceNeuron, destNeuron));
+        bool invalidSynapse = false;
+        if(sourceNeuron == destNeuron){
+            SetStatusText("Can't create synapse with the same source and destination");
+            NewSynapseError();
+            invalidSynapse = true;
         }
 
-        //add outSynapse to source neuron
-        GameObject.Find(sourceNeuronName).GetComponent<NeuronController>().AddOutSynapse(int.Parse(destNeuronName));
+        if(!synapseExists && !invalidSynapse){
+            synapses.Add((sourceNeuron, destNeuron));
 
-        DrawLine(sourceNeuronName, destNeuronName);
-        NewSynapseEnd();
+            //add outSynapse to source neuron
+            GameObject.Find(sourceNeuronName).GetComponent<NeuronController>().AddOutSynapse(int.Parse(destNeuronName));
+
+            DrawLine(sourceNeuronName, destNeuronName);
+            NewSynapseEnd();
+        }
     }
 
     public void NewSynapseEnd(){
         newSynapseMode = false;
         SetFreeMode(true);
         SetStatusText("Synapse successfully created");
+        EndMode();
         // freeMode = true;
+    }
+
+    public void NewSynapseError(){
+        newSynapseMode = false;
+        SetFreeMode(true);
+        // SetStatusText("Synapse successfully created");
+        EndMode();
+    }
+
+    public void NewSynapseCancel(){
+        newSynapseMode = false;
+        SetFreeMode(true);
+        SetStatusText("Synapse creation cancelled");
     }
 
     public void testPrintSynapse(){
@@ -902,6 +1019,7 @@ public class EditorController : MonoBehaviour
 
             if(!hasPositionData){
                 //Auto Layout
+                print("NO POSITION DATA");
                 Neurons.GetComponent<GridLayoutGroup>().cellSize = new Vector2(200, 200);
                 Neurons.GetComponent<GridLayoutGroup>().enabled = true;
                 Neurons.GetComponent<GridLayoutGroup>().CalculateLayoutInputHorizontal();
@@ -977,7 +1095,12 @@ public class EditorController : MonoBehaviour
         string neuronsDeclaration = "neurons = [";
         int i = 0;
         foreach (int neuron in neurons){
-            neuronsDeclaration += "N" + neuron.ToString();
+            if(GameObject.Find(neuron.ToString()).GetComponent<NeuronController>().IsOutputNeuron()){
+                neuronsDeclaration += "O" + neuron.ToString();
+            }
+            else{
+                neuronsDeclaration += "N" + neuron.ToString();
+            }
             i += 1;
             if (i < neurons.Count){
                 neuronsDeclaration += ", ";
@@ -1033,7 +1156,12 @@ public class EditorController : MonoBehaviour
 
             i = 0;
             foreach (int outSynapse in outSynapses){
-                neuronOutSynapses += "N" + outSynapse.ToString();
+                if(GameObject.Find(outSynapse.ToString()).GetComponent<NeuronController>().IsOutputNeuron()){
+                    neuronOutSynapses += "O" + outSynapse.ToString();
+                }
+                else{
+                    neuronOutSynapses += "N" + outSynapse.ToString();
+                }
                 i += 1;
                 if (i < outSynapses.Count){
                     neuronOutSynapses += ", ";
@@ -1046,6 +1174,43 @@ public class EditorController : MonoBehaviour
 
             neuronDefinition += "\n";
 
+            //delay
+            string neuronDelay = neuronToEncode.GetComponent<NeuronController>().GetDelay().ToString();
+            neuronDefinition +="\tdelay = " + neuronDelay + lineEnder;
+            neuronDefinition += "\n";
+
+            //storedGive
+            string storedGive = neuronToEncode.GetComponent<NeuronController>().GetStoredGive().ToString();
+            neuronDefinition += "\tstoredGive = " + storedGive + lineEnder;
+            neuronDefinition += "\n";
+
+            //storedConsume
+            string storedConsume = neuronToEncode.GetComponent<NeuronController>().GetStoredConsume().ToString();
+            neuronDefinition += "\tstoredConsume = " + storedConsume + lineEnder;
+            neuronDefinition += "\n";
+
+            //outputNeuron
+            string outputNeuron = neuronToEncode.GetComponent<NeuronController>().IsOutputNeuron().ToString();
+            neuronDefinition += "\toutputNeuron = " + outputNeuron + lineEnder;
+            neuronDefinition += "\n";
+
+            //storedReceived
+            if(bool.Parse(outputNeuron)){
+                string storedReceived = neuronToEncode.GetComponent<NeuronController>().GetStoredReceived().ToString();
+                neuronDefinition += "\tstoredReceived = " + storedReceived + lineEnder;
+                neuronDefinition += "\n";
+            }
+
+            //bitString
+            if(bool.Parse(outputNeuron)){
+                string bitString = neuronToEncode.GetComponent<NeuronController>().GetBitString();
+                if(bitString == ""){
+                    bitString = "null";
+                }
+                neuronDefinition += "\tbitString = " + bitString + lineEnder;
+                neuronDefinition += "\n";
+            }
+
             //positions
             string neuronPosition = "(";
             neuronPosition += neuronToEncode.transform.position.x.ToString();
@@ -1057,11 +1222,6 @@ public class EditorController : MonoBehaviour
 
             neuronDefinition += "\tposition = " + neuronPosition + lineEnder;
 
-            neuronDefinition += "\n";
-
-            //delay
-            string neuronDelay = neuronToEncode.GetComponent<NeuronController>().GetDelay().ToString();
-            neuronDefinition +="\tdelay = " + neuronDelay + lineEnder;
             neuronDefinition += "\n";
 
             neuronDefinition += "}";
@@ -1090,6 +1250,7 @@ public class EditorController : MonoBehaviour
 
         bool hasPositionData = false;
 
+
         char[] separators = {'{', '}', '=', ':' }; //Remove delimiters
         string[] strValues = formatData.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
@@ -1100,13 +1261,20 @@ public class EditorController : MonoBehaviour
             i+=1;
         }
 
+        print("PARSING START");
+
         //Parse neuron declaration
-        string[] neuronDeclarations = strValues[1].Split(new char[] {'[', ']', ',', 'N'}, StringSplitOptions.RemoveEmptyEntries);
+        string[] neuronDeclarations = strValues[1].Split(new char[] {'[', ']', ','}, StringSplitOptions.RemoveEmptyEntries);
 
         List<GameObject> neurons = new List<GameObject>();
 
         foreach(string neuronDeclaration in neuronDeclarations){
-            neurons.Add(NewNeuron(int.Parse(neuronDeclaration), true));
+            if(neuronDeclaration[0] == 'N'){                
+                neurons.Add(NewNeuron(int.Parse(neuronDeclaration.Substring(1, neuronDeclaration.Length-1)), true));
+            }
+            else if(neuronDeclaration[0] == 'O'){
+                neurons.Add(NewOutputNeuron(int.Parse(neuronDeclaration.Substring(1, neuronDeclaration.Length-1))));
+            }
             // print(neuronDeclaration);
         }
 
@@ -1126,21 +1294,35 @@ public class EditorController : MonoBehaviour
         int delayIndex = 0;
         int delaySearchIndex = 0;
 
+        int storedGiveIndex = 0;
+        int storedGiveSearchIndex = 0;
+
+        int storedConsumeIndex = 0;
+        int storedConsumeSearchIndex = 0;
+
+        int outputNeuronIndex = 0;
+        int outputNeuronSearchIndex = 0;
+
+        int storedReceivedIndex = 0;
+        int storedReceivedSearchIndex = 0;
+
+        int bitStringIndex = 0;
+        int bitStringSearchIndex = 0;
+
         int positionIndex = 0;
         int positionSearchIndex = 0;
 
         foreach(GameObject neuron in neurons){
             //parse spikes
+            print("Parsing Spikes");
             spikesIndex = Array.IndexOf(strValues, "spikes", spikesSearchIndex, Mathf.Min(searchArea, strValues.Length-spikesSearchIndex));
-            // print("Yeet: " + spikesIndex.ToString() + strValues[spikesIndex + 1]);
             neuron.GetComponent<NeuronController>().SetSpikes(int.Parse(strValues[spikesIndex + 1]));
             spikesSearchIndex = spikesIndex + 1;
             rulesSearchIndex = spikesIndex;
 
             //parse rules
-            // print("Yoot: " + rulesSearchIndex.ToString() + " " + rulesIndex.ToString());
+            print("Parsing Rules");
             rulesIndex = Array.IndexOf(strValues, "rules", rulesSearchIndex, Mathf.Min(searchArea, strValues.Length-rulesSearchIndex));
-            // print("Yoot: " + rulesSearchIndex.ToString() + " " + rulesIndex.ToString() + " " + strValues[rulesIndex + 1]);
             rulesSearchIndex = rulesIndex + 1;
             outSynapsesSearchIndex = rulesIndex;
 
@@ -1155,6 +1337,7 @@ public class EditorController : MonoBehaviour
             // print(rules);
 
             //parse outsynapses
+            print("Parsing OutSynapses");
             outSynapsesIndex = Array.IndexOf(strValues, "outsynapses", outSynapsesSearchIndex, Mathf.Min(searchArea, strValues.Length-outSynapsesSearchIndex));
             outSynapsesSearchIndex = outSynapsesIndex + 1;
             delaySearchIndex = outSynapsesIndex;
@@ -1162,7 +1345,7 @@ public class EditorController : MonoBehaviour
             spikesSearchIndex = outSynapsesIndex;
 
             string outSynapses = strValues[outSynapsesIndex + 1];
-            string[] outSynapsesArray = outSynapses.Split(new char[] {'[', ']', ',', 'N'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] outSynapsesArray = outSynapses.Split(new char[] {'[', ']', ',', 'N', 'O'}, StringSplitOptions.RemoveEmptyEntries);
             List<int> outSynapsesList = new List<int>();
             foreach(string outSynapse in outSynapsesArray){
                 NewSynapse(neuron.name, outSynapse);
@@ -1173,15 +1356,71 @@ public class EditorController : MonoBehaviour
             //parse delay
             delayIndex = Array.IndexOf(strValues, "delay", delaySearchIndex, Mathf.Min(searchArea, strValues.Length-delaySearchIndex));
             if(delayIndex >= 0){
+                print("Parsing Delay");
+                positionSearchIndex = delayIndex;
+                storedGiveSearchIndex = delayIndex;
+                spikesSearchIndex = delayIndex;
                 neuron.GetComponent<NeuronController>().SetDelay(int.Parse(strValues[delayIndex + 1]));
             }
 
-            //parse activatedRule
+            //parse storedGive & storedConsume
+            storedGiveIndex = Array.IndexOf(strValues, "storedGive", storedGiveSearchIndex, Mathf.Min(searchArea, strValues.Length-storedGiveSearchIndex));
+            if(storedGiveIndex >= 0){
+                print("Parsing StoredGive");
+                positionSearchIndex = storedGiveIndex;
+                spikesSearchIndex = storedGiveIndex;
+                storedConsumeSearchIndex = storedGiveIndex;
+                neuron.GetComponent<NeuronController>().SetStoredGive(int.Parse(strValues[storedGiveIndex + 1]));
+            }
 
+            //storedConsume
+            storedConsumeIndex = Array.IndexOf(strValues, "storedConsume", storedConsumeSearchIndex, Mathf.Min(searchArea, strValues.Length-storedConsumeSearchIndex));
+            if(storedConsumeIndex >= 0){
+                print("Parsing StoredConsume");
+                positionSearchIndex = storedConsumeIndex;
+                spikesSearchIndex = storedConsumeIndex;
+                outputNeuronSearchIndex = storedConsumeIndex;
+                neuron.GetComponent<NeuronController>().SetStoredConsume(int.Parse(strValues[storedConsumeIndex + 1]));
+            }
+
+            //outputNeuron
+            outputNeuronIndex = Array.IndexOf(strValues, "outputNeuron", outputNeuronSearchIndex, Mathf.Min(searchArea, strValues.Length-outputNeuronSearchIndex));
+            if(outputNeuronIndex >= 0){
+                print("Parsing OutputNeuron");
+                positionSearchIndex = outputNeuronIndex;
+                spikesSearchIndex = outputNeuronIndex;
+                storedReceivedSearchIndex = outputNeuronIndex;
+                if(bool.Parse(strValues[outputNeuronIndex+1])){
+                    neuron.GetComponent<NeuronController>().SetToOutputNeuron();
+                }
+            }
+
+            storedReceivedIndex = Array.IndexOf(strValues, "storedReceived", storedReceivedSearchIndex, Mathf.Min(searchArea, strValues.Length-storedReceivedSearchIndex));
+            if(storedReceivedIndex >= 0){
+                print("Parsing StoredReceived");
+                positionSearchIndex = storedReceivedIndex;
+                spikesSearchIndex = storedReceivedIndex;
+                bitStringSearchIndex = storedReceivedIndex;
+                neuron.GetComponent<NeuronController>().SetStoredReceived(int.Parse(strValues[storedReceivedIndex + 1]));
+            }
+
+            bitStringIndex = Array.IndexOf(strValues, "bitString", bitStringSearchIndex, Mathf.Min(searchArea, strValues.Length-bitStringSearchIndex));
+            if(bitStringIndex >= 0){
+                print("Parsing BitString");
+                positionSearchIndex = bitStringIndex;
+                spikesSearchIndex = bitStringIndex;
+                if(strValues[bitStringIndex+1] == "null"){
+                    neuron.GetComponent<NeuronController>().SetBitString("");
+                }
+                else{
+                    neuron.GetComponent<NeuronController>().SetBitString(strValues[bitStringIndex+1]);
+                }
+            }
 
             //parse positions
             positionIndex = Array.IndexOf(strValues, "position", positionSearchIndex, Mathf.Min(searchArea, strValues.Length-positionSearchIndex));
             if(positionIndex >= 0){
+                print("Parsing Positions");
                 hasPositionData = true;
                 positionSearchIndex = positionIndex + 1;
                 string[] values = strValues[positionIndex + 1].Split(new char[] {',', '(', ')'}, StringSplitOptions.RemoveEmptyEntries);
@@ -1218,6 +1457,8 @@ public class EditorController : MonoBehaviour
 
             // n+=1;
         }
+
+        print("PARSING END");
 
         return hasPositionData;
     }

@@ -451,7 +451,7 @@ public class NeuronController : MonoBehaviour
         UIChanged = true;
     }
 
-    public void SignalEnd()
+    public string SignalEnd()
     {
         try
         {
@@ -466,7 +466,8 @@ public class NeuronController : MonoBehaviour
         {
             outputText.text += storedReceived.ToString();
         }
-        storedReceived = 0;        
+        storedReceived = 0;
+        return outputText.text;
     }
 
     public static string RepeatString(string s, int n)

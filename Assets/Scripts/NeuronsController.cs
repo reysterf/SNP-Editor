@@ -93,7 +93,7 @@ public class NeuronsController : MonoBehaviour
         return shootingNeuron.GetComponent<NeuronController>().FireOneStep(targetNeurons);
     }
 
-    public void EndFire(GameObject outputNeuron){
-        outputNeuron.GetComponent<NeuronController>().SignalEnd();
+    public string EndFire(GameObject outputNeuron){
+        return outputNeuron.GetComponent<NeuronController>().SignalEnd();
     }
 }

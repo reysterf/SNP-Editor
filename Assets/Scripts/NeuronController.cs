@@ -211,10 +211,12 @@ public class NeuronController : MonoBehaviour
             return rules;
     }
 
-    public void SetRules(string rulesNew){
-        print(ec.ValidateRules(rulesNew));
-        rules = rulesNew.Split('\n').ToList();
+    public bool SetRules(string rulesNew){
+        if (ec.ValidateRules(rulesNew))
+            rules = rulesNew.Split('\n').ToList();
+
         UIChanged = true;
+        return (ec.ValidateRules(rulesNew));
     }
 
     public void SetDelay(int delay){

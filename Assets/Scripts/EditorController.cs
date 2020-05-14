@@ -649,10 +649,12 @@ public class EditorController : MonoBehaviour
 
         InputField rulesInputField = editRulesMenu.transform.Find("Rules InputField").GetComponent<InputField>();
 
-        activeNeuronForEditing.GetComponent<NeuronController>().SetRules(rulesInputField.text);
+        if(activeNeuronForEditing.GetComponent<NeuronController>().SetRules(rulesInputField.text))
+            SetStatusText("Rules successfully edited");
+        else
+            SetStatusText("Invalid rule format");
 
-        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
-        SetStatusText("Rules successfully edited");
+        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);       
         EndMode();
     }
 
@@ -1197,7 +1199,7 @@ public class EditorController : MonoBehaviour
     public bool ValidateRules(string rules)
     {
         if(rules == ""){
-            return false;
+            return true;
         }
         string[] newLine = new string[1] { "\n" };
         string[] rulesArr = rules.Split(newLine, StringSplitOptions.RemoveEmptyEntries);
@@ -1217,8 +1219,9 @@ public class EditorController : MonoBehaviour
                 if(!Regex.Match(parts[3], " *[0-9]+ *").Success)
                     return false;
             }
-            catch(ArgumentException)
+            catch(ArgumentException e)
             {
+                print(e);
                 return false;
             }           
         }

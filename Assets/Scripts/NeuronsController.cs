@@ -51,7 +51,9 @@ public class NeuronsController : MonoBehaviour
     public void NewSynapseMode(bool mode) {
         BroadcastMessage("NewSynapseModeReceiver", mode);
         BroadcastMessage("SynapseV1ModeReceiver", true);
-        ec.SetStatusText("New Synapse: Click source neuron");
+        if(mode){
+            ec.SetStatusText("New Synapse: Click source neuron");
+        }
     }
 
     public void SynapseCoordinate1(GameObject neuron) {

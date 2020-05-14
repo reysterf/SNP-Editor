@@ -20,11 +20,13 @@ public class NeuronController : MonoBehaviour
     public GameObject rulesUI;
     public GameObject spikesUI;
     public GameObject neuronLabel;
+    public GameObject timerUI;
 
     public Text rulesText;
     public Text spikesText;
     public Text neuronLabelText;
     public Text outputText;
+    public Text timerText;
 
     public GameObject spikeSprite;
 
@@ -58,6 +60,10 @@ public class NeuronController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(IsOutputNeuron()){
+            timerUI.SetActive(false);
+
+        }
         // spikes = "";
         EditorController = GameObject.Find("EditorController");
         ec = EditorController.GetComponent<EditorController>();
@@ -102,12 +108,20 @@ public class NeuronController : MonoBehaviour
             //Spikes Text
             spikesText.text = GetSpikesNum().ToString();
             collider.size = gameObject.GetComponent<RectTransform>().sizeDelta;
-            if(isClosed){
+            if(isClosed || IsOutputNeuron()){
                 neuronContainer.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
             }
             if(!isClosed){
                 neuronContainer.GetComponent<Image>().color = new Color(1f, 1f, 1f);
             }
+            if(timer >= 0){
+                // timerUI.SetActive(true);
+                timerText.text = timer.ToString();
+            }
+            if(timer < 0){
+                // timerUI.SetActive(false);
+            }
+
             UIChanged = false;
         }
 
@@ -140,19 +154,19 @@ public class NeuronController : MonoBehaviour
     }
 
     public void EditRules(){        //Called by clicking the rules box of a neuron
-        if(ec.isFreeMode()){
+        if(ec.isFreeMode() && editNeuronMode){
             ec.EditNeuron(gameObject, "rules");
         }
     }
 
     public void EditSpikes(){       //Called by clicking the spikes box of a neuron
-        if(ec.isFreeMode()){
+        if(ec.isFreeMode() && editNeuronMode){
             ec.EditNeuron(gameObject, "spikes");
         }
     }
 
     public void ShowRules(){
-        if(gameObject.tag == "OutputNeuron")
+        if(gameObject.tag != "OutputNeuron")
         {
             showRules = true;
             // gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
@@ -306,6 +320,50 @@ public class NeuronController : MonoBehaviour
     {
         //The mouse is no longer hovering over the GameObject so output this message each frame
         // Debug.Log("Mouse is no longer on GameObject.");
+    }
+
+    public void SetStoredGive(int newStoredGive){
+        storedGive = newStoredGive;
+    }
+
+    public int GetStoredGive(){
+        return storedGive;
+    }
+
+
+    public void SetStoredConsume(int newStoredConsume){
+        storedConsume = newStoredConsume;
+    }
+
+    public int GetStoredConsume(){
+        return storedConsume;
+    }
+
+    public void SetStoredReceived(int newStoredReceived){
+        storedReceived = newStoredReceived;
+    }
+
+    public int GetStoredReceived(){
+        return storedReceived;
+    }
+
+    public void SetToOutputNeuron(){
+        gameObject.tag = "OutputNeuron";
+    }
+
+    public bool IsOutputNeuron(){
+        if(gameObject.tag == "OutputNeuron"){
+            return true;
+        }
+        return false;
+    }
+
+    public void SetBitString(string newBitString){
+        outputText.text = newBitString;
+    }
+
+    public string GetBitString(){
+        return outputText.text;
     }
 
     public (List<string>, string) FireOneStep(List<GameObject> targets)

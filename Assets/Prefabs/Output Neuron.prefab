@@ -313,7 +313,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "View output \nbitstring"
+  m_Text: 
 --- !u!114 &5578816938430662839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1054,22 +1054,22 @@ PrefabInstance:
     - target: {fileID: 8494581105136839401, guid: d31c15a8d2d700645a7698f452db77cd,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8494581105136839401, guid: d31c15a8d2d700645a7698f452db77cd,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8494581105136839401, guid: d31c15a8d2d700645a7698f452db77cd,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 31
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8494581105136839401, guid: d31c15a8d2d700645a7698f452db77cd,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -13
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8494581105136839401, guid: d31c15a8d2d700645a7698f452db77cd,
         type: 3}

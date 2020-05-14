@@ -89,6 +89,7 @@ public class EditorController : MonoBehaviour
     public ChoiceNode last;
     public List<int> choiceTimes;
     public List<List<int>> configHistory;
+    public List<List<int>> delayHistory;
     private string outputPath;
     List<string> outputBitstrings = new List<string>();
 
@@ -103,6 +104,7 @@ public class EditorController : MonoBehaviour
         lastData = null;
         root = null;
         configHistory = new List<List<int>>();
+        delayHistory = new List<List<int>>();
         choiceTimes = new List<int>();
         appliedRulesStorage = new List<(List<string>, string, string)>();
         outputPath = Application.dataPath + "/output.txt";
@@ -868,6 +870,7 @@ public class EditorController : MonoBehaviour
         List<(List<string>, string ,int)> nondeterministicList = new List<(List<string>, string, int)>();
         (List<string>, string) determinismCheck = (new List<string>(), "");
         configHistory.Add(GetAllSpikes());
+        delayHistory.Add(GetAllDelay());
         synapses.Sort();
         List<GameObject> receivingNeurons = new List<GameObject>();
         int shootingNeuron = 0;
@@ -932,6 +935,8 @@ public class EditorController : MonoBehaviour
         {
             SetAllSpikes(configHistory[configHistory.Count - 1]);
             configHistory.RemoveAt(configHistory.Count - 1);
+            SetAllDelays(delayHistory[delayHistory.Count - 1]);
+            delayHistory.RemoveAt(delayHistory.Count - 1);
             globalTime--;
         }    
     }
@@ -1150,6 +1155,18 @@ public class EditorController : MonoBehaviour
         return config;
     }
 
+    public List<int> GetAllDelay()
+    {
+        List<int> delayList = new List<int>();
+        foreach (int i in neurons)
+        {
+            GameObject neuronObject = GameObject.Find(i.ToString());
+            int spike = neuronObject.GetComponent<NeuronController>().GetDelay();
+            delayList.Add(spike);
+        }
+        return delayList;
+    }
+
     public void SetAllSpikes(List<int> config)
     {
         foreach (int i in neurons)
@@ -1160,6 +1177,21 @@ public class EditorController : MonoBehaviour
                 neuronObject.GetComponent<NeuronController>().SetSpikes(config[i]);
             }               
         }
+    }
+
+    public void SetAllDelays(List<int> delayList)
+    {
+        string delayString = "";
+        foreach (int i in neurons)
+        {
+            if (i < delayList.Count)
+            {
+                GameObject neuronObject = GameObject.Find(i.ToString());
+                neuronObject.GetComponent<NeuronController>().SetDelay(delayList[i]);
+                delayString += delayList[i].ToString() + ", ";
+            }
+        }
+        print(delayString);
     }
 
     public bool ValidateRules(string rules)

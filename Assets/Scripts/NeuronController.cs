@@ -222,6 +222,10 @@ public class NeuronController : MonoBehaviour
         if(timer >= 0){
             isClosed = true;
         }
+        else
+        {
+            isClosed = false;
+        }
         UIChanged = true;
     }
 

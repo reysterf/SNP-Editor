@@ -940,6 +940,20 @@ public class EditorController : MonoBehaviour
             configHistory.RemoveAt(configHistory.Count - 1);
             SetAllDelays(delayHistory[delayHistory.Count - 1]);
             delayHistory.RemoveAt(delayHistory.Count - 1);
+
+            outputBitstrings.Clear();
+            if (outputneurons.Count > 0)
+            {
+                foreach (int i in outputneurons)
+                {
+                    string outputBitsring = i.ToString() + ":" +
+                        Neurons.GetComponent<NeuronsController>().RetractOutput(GameObject.Find("Neurons/" + i.ToString()));
+                    outputBitstrings.Add(outputBitsring);
+                }
+            }
+            if (outputBitstrings.Count > 0)
+                SaveOutput(outputBitstrings);
+
             globalTime--;
         }    
     }

@@ -490,6 +490,18 @@ public class NeuronController : MonoBehaviour
         return outputText.text;
     }
 
+    public string Retract()
+    {
+        print(outputText.text);
+        if(outputText.text.Length > 0)
+        {
+            outputText.text = outputText.text.Remove(outputText.text.Length-1);
+            print(outputText.text);
+        }
+
+        return outputText.text;
+    }
+
     public static string RepeatString(string s, int n)
     {
         return string.Concat(Enumerable.Repeat(s, n));

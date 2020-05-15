@@ -96,4 +96,9 @@ public class NeuronsController : MonoBehaviour
     public string EndFire(GameObject outputNeuron){
         return outputNeuron.GetComponent<NeuronController>().SignalEnd();
     }
+
+    public string RetractOutput(GameObject outputNeuron)
+    {
+        return outputNeuron.GetComponent<NeuronController>().Retract();
+    }
 }

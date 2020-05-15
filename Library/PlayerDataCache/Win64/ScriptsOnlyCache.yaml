@@ -1,6 +1,7 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - ChoiceController
     - DeleteButtonController
     - Drawer
     - EditorController
@@ -111,7 +112,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13142}
     - Class: 114
-      Script: {instanceID: 14634}
+      Script: {instanceID: 14690}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -666,4 +667,4 @@ ScriptsOnlyBuild:
   platform: 19
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Builds/SNP Editor.exe
+  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Build_Windows/SNP Editor.exe

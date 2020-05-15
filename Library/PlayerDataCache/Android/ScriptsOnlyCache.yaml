@@ -1,7 +1,6 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
-    - ChoiceController
     - DeleteButtonController
     - Drawer
     - EditorController

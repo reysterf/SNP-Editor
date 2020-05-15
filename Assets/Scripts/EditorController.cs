@@ -1230,7 +1230,7 @@ public class EditorController : MonoBehaviour
 
             try
             {
-                if(!Regex.Match("a", parts[0]).Success)
+                if(!Regex.Match(parts[0],"^[^A-Zb-z0-9]*a[^A-Zb-z0-9]*$").Success)
                     return false;
                 if(!Regex.Match(parts[1], " *a+ *").Success)
                     return false;
@@ -1238,6 +1238,7 @@ public class EditorController : MonoBehaviour
                     return false;
                 if(!Regex.Match(parts[3], " *[0-9]+ *").Success)
                     return false;
+                Regex.Match("", parts[0]);
             }
             catch(ArgumentException e)
             {

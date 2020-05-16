@@ -666,4 +666,4 @@ ScriptsOnlyBuild:
   platform: 19
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Build_Windows/SNP Editor.exe
+  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Build_Windows/Snapse.exe

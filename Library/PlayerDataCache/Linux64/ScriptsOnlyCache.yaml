@@ -666,4 +666,4 @@ ScriptsOnlyBuild:
   platform: 24
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Build_Linux/Snapse_Linux.x86_64
+  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Build_Linux/Snapse.x86_64

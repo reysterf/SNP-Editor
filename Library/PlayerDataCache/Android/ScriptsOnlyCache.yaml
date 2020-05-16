@@ -1,6 +1,7 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - ChoiceController
     - DeleteButtonController
     - Drawer
     - EditorController
@@ -666,4 +667,4 @@ ScriptsOnlyBuild:
   platform: 13
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Build_Android/SnapseLandscape.apk
+  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Build_Android/Snapse.apk

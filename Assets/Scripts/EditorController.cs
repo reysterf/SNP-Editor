@@ -199,7 +199,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void SetStatusText(string statusText) {
-        statusBar.transform.GetChild(0).GetComponent<Text>().text = statusText;
+        statusBar.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = statusText;
     }
 
     public bool isFreeMode() {
@@ -999,7 +999,7 @@ public class EditorController : MonoBehaviour
             {
                 ignoredRules += rule + "\n";
             }
-            ignoredRules.TrimEnd((new char[] { '\n' }));
+            ignoredRules = ignoredRules.TrimEnd((new char[] { '\n' }));
             newChoicePerNeuron.transform.Find("Ignored").Find("IgnoredText").GetComponent<Text>().text = ignoredRules;
         }     
         //Canvas.ForceUpdateCanvases();
@@ -1058,7 +1058,7 @@ public class EditorController : MonoBehaviour
                 print("1: "+ newPath);
                 if (String.Equals(newPath, Application.dataPath + "/../root", StringComparison.OrdinalIgnoreCase) ||
                     String.Equals(newPath, Application.dataPath + "/../", StringComparison.OrdinalIgnoreCase))
-                    newPath = Application.dataPath + "/../";
+                    newPath = Application.dataPath + "/..";
                 print("2: "+newPath);
                 print(Application.dataPath);
                 newPath += "/output.txt";

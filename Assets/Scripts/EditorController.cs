@@ -1058,7 +1058,7 @@ public class EditorController : MonoBehaviour
                 print("1: "+ newPath);
                 if (String.Equals(newPath, Application.dataPath + "/../root", StringComparison.OrdinalIgnoreCase) ||
                     String.Equals(newPath, Application.dataPath + "/../", StringComparison.OrdinalIgnoreCase))
-                    newPath = Application.dataPath;
+                    newPath = Application.dataPath + "/../";
                 print("2: "+newPath);
                 print(Application.dataPath);
                 newPath += "/output.txt";

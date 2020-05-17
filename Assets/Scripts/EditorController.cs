@@ -1226,17 +1226,20 @@ public class EditorController : MonoBehaviour
         foreach (string rule in rulesArr)
         {
             string[] separators = new string[3] { "/", "->", ";" };
-            string[] parts = rule.Split(separators, 4, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = rule.Split(separators, 4, StringSplitOptions.None);
 
             try
             {
+                print("2:" + parts[2]+"end");
+                print(parts[2] != "");
+                print(!Regex.Match(parts[2], "^ *a* *$").Success);
                 if(!Regex.Match(parts[0],"^[^A-Zb-z0-9]*a[^A-Zb-z0-9]*$").Success)
                     return false;
-                if(!Regex.Match(parts[1], " *a+ *").Success)
+                if(!Regex.Match(parts[1], "^ *a+ *$").Success)
                     return false;
-                if(!Regex.Match(parts[2], " *a+ *").Success)
+                if(!Regex.Match(parts[2], "^ *a* *$").Success)
                     return false;
-                if(!Regex.Match(parts[3], " *[0-9]+ *").Success)
+                if(!Regex.Match(parts[3], "^ *[0-9]+ *$").Success)
                     return false;
                 Regex.Match("", parts[0]);
             }

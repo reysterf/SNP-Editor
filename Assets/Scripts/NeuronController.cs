@@ -449,8 +449,12 @@ public class NeuronController : MonoBehaviour
         //    DrawMovingSpike(transform.position, target.transform.position);
         foreach(GameObject target in targets){
             target.GetComponent<NeuronController>().Receive(give);
-            IEnumerator animate = AnimateFire(transform.position, target.transform.position);
-            StartCoroutine(animate);
+            if (give > 0)
+            {
+                IEnumerator animate = AnimateFire(transform.position, target.transform.position);
+                StartCoroutine(animate);
+            }
+                
         }
 
         //}

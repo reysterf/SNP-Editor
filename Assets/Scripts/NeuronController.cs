@@ -401,6 +401,7 @@ public class NeuronController : MonoBehaviour
         {
             int slashInd = rule.IndexOf("/");
             string reg = rule.Substring(0, slashInd);
+            reg = "^" + reg + "$";
             if (Regex.IsMatch(spikes, reg))
             {
                 matches.Add(rule);
@@ -442,6 +443,7 @@ public class NeuronController : MonoBehaviour
     {
         Debug.Log("Fire!");
         int i = 0;
+        Debug.Log("spikes: " + spikes.Length + "consumed: " + consumed);
         spikes = spikes.Substring(consumed);
         //for (i = 0; i < connexion.Length; i++)
         //{
@@ -504,6 +506,11 @@ public class NeuronController : MonoBehaviour
         }
 
         return outputText.text;
+    }
+
+    public void ClearOutput()
+    {
+        outputText.text = "";
     }
 
     public static string RepeatString(string s, int n)

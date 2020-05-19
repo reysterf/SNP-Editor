@@ -934,7 +934,7 @@ public class EditorController : MonoBehaviour
 
     public void GoBackOne()
     {
-        if(configHistory.Count > 0)
+        if(configHistory.Count > 0 && globalTime > 0)
         {
             SetAllSpikes(configHistory[configHistory.Count - 1]);
             configHistory.RemoveAt(configHistory.Count - 1);
@@ -955,20 +955,27 @@ public class EditorController : MonoBehaviour
                 SaveOutput(outputBitstrings);
 
             globalTime--;
+            SetStatusText("Went back to t = " + globalTime);
         }    
     }
 
     public void GoToChoice()
     {
-        if(EventSystem.current.currentSelectedGameObject.name == "root")
-        {
+
             if (configHistory.Count > 0)
             {
                 SetAllSpikes(configHistory[0]);
+                if (outputneurons.Count > 0)
+                {
+                    foreach (int i in outputneurons)
+                    {
+                        Neurons.GetComponent<NeuronsController>().ClearOutput(GameObject.Find("Neurons/" + i.ToString()));
+                    }
+                }
                 globalTime = 0;
-                SetStatusText("t = " + globalTime);
+                SetStatusText("Went back to t = " + globalTime);
             }       
-        }
+
     }
 
     public void AddChoiceElement(List<(List<string>, string, int)> nondeterministicList)
@@ -1247,7 +1254,12 @@ public class EditorController : MonoBehaviour
             {
                 print(e);
                 return false;
-            }           
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                print(e);
+                return false;
+            }
         }
         return true;
     }

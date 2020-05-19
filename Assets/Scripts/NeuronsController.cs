@@ -101,4 +101,9 @@ public class NeuronsController : MonoBehaviour
     {
         return outputNeuron.GetComponent<NeuronController>().Retract();
     }
+
+    public void ClearOutput(GameObject outputNeuron)
+    {
+        outputNeuron.GetComponent<NeuronController>().ClearOutput();
+    }
 }

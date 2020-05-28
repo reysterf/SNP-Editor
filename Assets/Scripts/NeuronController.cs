@@ -54,6 +54,7 @@ public class NeuronController : MonoBehaviour
     private int timer = -1;
     public string spikes = "";
     private List<string> rules = new List<string>();
+    private List<GameObject> storedTargets = new List<GameObject>();
 
     private bool isClosed = false;
 
@@ -374,7 +375,6 @@ public class NeuronController : MonoBehaviour
 
     public (List<string>, string) FireOneStep(List<GameObject> targets)
     {
-        Debug.Log(timer);
         (List<string>, string) rules = (new List<string>(),"");
         if (timer == -1){
             rules = CheckRules(targets);
@@ -407,26 +407,57 @@ public class NeuronController : MonoBehaviour
                 matches.Add(rule);
             }
         }
-        
-        if (matches.Count > 0)
+        if (!ec.guidedMode)
         {
-            chosenRule = matches[Random.Range(0, matches.Count)];
-            chosenRule = chosenRule.Replace(" ", "");
-            int slashInd = chosenRule.IndexOf("/");
-            string reg = chosenRule.Substring(0, slashInd);
-            int arrowInd = chosenRule.IndexOf(">");
-            int semicolInd = chosenRule.IndexOf(";");
-            int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
-            int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
-            int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
-            timer = delay;
-            if (delay == 0)
-                Fire(consume, give, targets);
-            else
-                CloseNeuron(consume, give);
-        }
+            if (matches.Count > 0)
+            {
+                chosenRule = matches[Random.Range(0, matches.Count)];
+                chosenRule = chosenRule.Replace(" ", "");
+                int slashInd = chosenRule.IndexOf("/");
+                string reg = chosenRule.Substring(0, slashInd);
+                int arrowInd = chosenRule.IndexOf(">");
+                int semicolInd = chosenRule.IndexOf(";");
+                int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
+                int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
+                int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
+                timer = delay;
+                if (delay == 0)
+                    StoreRule(consume, give, targets);
+                else
+                    CloseNeuron(consume, give);
+            }
 
-        return (matches, chosenRule);
+            return (matches, chosenRule);
+        }
+        else
+        {
+            //chosenRule = await GuidedNondetStart(matches);
+            return (matches, chosenRule);
+        }
+            
+    }
+
+    //private string GuidedNondetStart(List<string> matches)
+    //{
+    //    GameObject newGuideMenu = Instantiate(ec.guidedMenu, new Vector3(transform.position.x, transform.position.y, transform.position.z),
+    //          Quaternion.identity, GameObject.Find("Overlay").transform);
+    //    foreach(string rule in matches)
+    //    {
+    //        GameObject newRulePrefab = Instantiate(ec.guidedMenu, new Vector3(transform.position.x, transform.position.y, transform.position.z),
+    //          Quaternion.identity, GameObject.Find("Overlay").transform);
+    //    }
+    //}
+
+    //private (int, int, List<GameObject>) parseRule()
+    //{
+
+    //}
+
+    private void StoreRule(int consume, int give, List<GameObject>targets)
+    {
+        storedConsume = consume;
+        storedGive = give;
+        storedTargets = targets;
     }
 
     private void CloseNeuron(int consumed, int give)
@@ -469,12 +500,15 @@ public class NeuronController : MonoBehaviour
 
     public void Receive(int received)
     {
-        string recStr = new string('a', received);
-        spikes = string.Concat(spikes, recStr);
-        storedReceived += received;
-        //float scale = (float)spikes.Length / ((float)30);
-        // transform.localScale = new Vector3(scale, scale, scale);
-        UIChanged = true;
+        if(!isClosed)
+        {
+            string recStr = new string('a', received);
+            spikes = string.Concat(spikes, recStr);
+            storedReceived += received;
+            //float scale = (float)spikes.Length / ((float)30);
+            // transform.localScale = new Vector3(scale, scale, scale);
+            UIChanged = true;
+        }        
     }
 
     public string SignalEnd()

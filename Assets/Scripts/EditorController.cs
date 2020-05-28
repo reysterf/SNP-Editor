@@ -25,6 +25,7 @@ public class EditorController : MonoBehaviour
 
     public GameObject Buttons;
 
+    public GameObject guidedMenu;
     public GameObject NeuronPrefab;
     public GameObject OutputNeuronPrefab;
     public GameObject NeuronWithRules;
@@ -43,6 +44,7 @@ public class EditorController : MonoBehaviour
     private bool deleteNeuronMode = false;
     private bool deleteSynapseMode = false;
     private bool changeOutputMode = false;
+    public bool guidedMode = true;
 
     private bool panMode = false;
 

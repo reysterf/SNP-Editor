@@ -67,6 +67,9 @@ public class EditorController : MonoBehaviour
     public GameObject neuronLabel;
     public GameObject cancelButton;
 
+    public GameObject newSynapseModeIndicator;
+    public Button NewSynapseButton;
+
     private GameObject activeNeuronForEditing;
 
     private string initialString;
@@ -104,6 +107,8 @@ public class EditorController : MonoBehaviour
         editSpikesMenu.SetActive(false);
         cancelButton.SetActive(false);
 
+        newSynapseModeIndicator.SetActive(false);
+
         lastData = null;
         root = null;
         configHistory = new List<List<int>>();
@@ -129,9 +134,13 @@ public class EditorController : MonoBehaviour
         if (freeModeChanged) {
             if (!freeMode) {
                 DisableButtons();
+                print("Disable Buttons");
+                freeModeChanged = false;
             }
             else if (freeMode) {
                 EnableButtons();
+                print("Enable Buttons");
+                freeModeChanged = false;
             }
         }
         if (!deleteSynapseMode) {
@@ -162,6 +171,9 @@ public class EditorController : MonoBehaviour
                 showRulesText.text = "Show Rules";
                 showModeChanged = false;
             }
+        }
+        if(newSynapseMode){
+            NewSynapseButton.interactable = true;
         }
     }
 
@@ -720,18 +732,40 @@ public class EditorController : MonoBehaviour
         EndMode();
     }
 
-    public void NewSynapseStart(){
-        if(freeMode){
-            SetStatusText("New Synapse");
-            newSynapseMode = true;
-            SetFreeMode(false);
-            // freeMode = false;
-            Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
-            StartMode();
+    public void NewSynapseToggle(){
+
+        if(!newSynapseMode){
+            NewSynapseOn();
+        }
+        else if(newSynapseMode){
+            NewSynapseOff();
         }
     }
 
-    
+    void NewSynapseOn(){
+        if(freeMode){
+            SetStatusText("Entered New Synapse Mode");
+            newSynapseModeIndicator.SetActive(true);
+            newSynapseMode = true;
+            SetFreeMode(false);
+            // NewSynapseButton.interactable = true;
+            // freeMode = false;
+            StartMode();
+            NewSynapseStart();
+            // Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
+        }
+    }
+
+    public void NewSynapseStart(){
+        // if(freeMode){
+        //     SetStatusText("New Synapse");
+        //     newSynapseMode = true;
+        //     SetFreeMode(false);
+        //     // freeMode = false;
+        //     StartMode();
+        Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
+        // }
+    }
 
     public void NewSynapse(string sourceNeuronName, string destNeuronName){
         // synapseStart = v1;
@@ -750,7 +784,7 @@ public class EditorController : MonoBehaviour
         bool invalidSynapse = false;
         if(sourceNeuron == destNeuron){
             SetStatusText("Can't create synapse with the same source and destination");
-            NewSynapseError();
+            // NewSynapseError();
             invalidSynapse = true;
         }
 
@@ -765,12 +799,22 @@ public class EditorController : MonoBehaviour
         }
     }
 
-    public void NewSynapseEnd(){
-        newSynapseMode = false;
-        SetFreeMode(true);
+    public void NewSynapseEnd(){ //Possibly depracated in favor of NewSynapseOff
+        // newSynapseMode = false;
+        // SetFreeMode(true);
         SetStatusText("Synapse successfully created");
-        EndMode();
+        NewSynapseStart();
+        // EndMode();
         // freeMode = true;
+    }
+
+    public void NewSynapseOff(){
+        newSynapseMode = false;
+        newSynapseModeIndicator.SetActive(false);
+        SetStatusText("Exited New Synapse Mode");
+        Neurons.GetComponent<NeuronsController>().NewSynapseMode(false);
+        SetFreeMode(true);
+        EndMode();
     }
 
     public void NewSynapseError(){

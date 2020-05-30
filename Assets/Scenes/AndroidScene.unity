@@ -2758,7 +2758,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1182110173}
-        m_MethodName: EditNeuronStart
+        m_MethodName: EditNeuronToggle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2948,7 +2948,7 @@ GameObject:
   - component: {fileID: 532655317}
   - component: {fileID: 532655316}
   m_Layer: 5
-  m_Name: Toggle
+  m_Name: Edit Neuron Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9360,7 +9360,7 @@ GameObject:
   - component: {fileID: 1405668273}
   - component: {fileID: 1405668272}
   m_Layer: 5
-  m_Name: Toggle
+  m_Name: New Synapse Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14573,6 +14573,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1901419047409993506, guid: abf09cf4f66fe5e4787a06b3664a8be5,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.0000038146973
+      objectReference: {fileID: 0}
     - target: {fileID: 1901419047420793133, guid: abf09cf4f66fe5e4787a06b3664a8be5,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -14975,6 +14980,26 @@ PrefabInstance:
       propertyPath: NewSynapseButton
       value: 
       objectReference: {fileID: 766251996}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: editNeuronButton
+      value: 
+      objectReference: {fileID: 497392498}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: editNeuronIndicator
+      value: 
+      objectReference: {fileID: 532655314}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: newSynapseButton
+      value: 
+      objectReference: {fileID: 766251996}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: editNeuronModeIndicator
+      value: 
+      objectReference: {fileID: 532655314}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 4319445626964287762, guid: d8601e10adbb44d42bff516828d2b7b0, type: 3}

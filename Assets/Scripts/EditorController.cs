@@ -68,7 +68,9 @@ public class EditorController : MonoBehaviour
     public GameObject cancelButton;
 
     public GameObject newSynapseModeIndicator;
-    public Button NewSynapseButton;
+    public Button newSynapseButton;
+    public GameObject editNeuronModeIndicator;
+    public Button editNeuronButton;
 
     private GameObject activeNeuronForEditing;
 
@@ -108,6 +110,7 @@ public class EditorController : MonoBehaviour
         cancelButton.SetActive(false);
 
         newSynapseModeIndicator.SetActive(false);
+        editNeuronModeIndicator.SetActive(false);
 
         lastData = null;
         root = null;
@@ -173,7 +176,10 @@ public class EditorController : MonoBehaviour
             }
         }
         if(newSynapseMode){
-            NewSynapseButton.interactable = true;
+            newSynapseButton.interactable = true;
+        }
+        if(editNeuronMode){
+            editNeuronButton.interactable = true;
         }
     }
 
@@ -582,6 +588,35 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    public void EditNeuronToggle(){
+        if(!editNeuronMode){
+            EditNeuronOn();
+        }
+        else if(editNeuronMode){
+            EditNeuronOff();
+        }
+    }
+
+    public void EditNeuronOn(){
+        if(freeMode){
+            editNeuronModeIndicator.SetActive(true);
+            SetFreeMode(false);
+            EditNeuronStart();
+        }
+    }
+
+    public void EditNeuronOff(){
+        editNeuronModeIndicator.SetActive(false);
+        SetFreeMode(true);
+        EditNeuronEnd();
+    }
+
+    public void EditNeuronEnd(){
+        editNeuronMode = false;
+        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);       
+        EndMode();        
+    }
+
     public void EditNeuronStart(){
         editNeuronMode = true;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(true);
@@ -634,7 +669,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditRulesStart(){
-        SetFreeMode(false);
+        // SetFreeMode(false);
         editRulesMode = true;
         editRulesMenu.SetActive(true);
         editRulesMenu.transform.position = activeNeuronForEditing.transform.position;
@@ -658,7 +693,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditRulesConfirm(){
-        SetFreeMode(true);
+        // SetFreeMode(true);
         editRulesMode = false;
         editRulesMenu.SetActive(false);
 
@@ -669,23 +704,23 @@ public class EditorController : MonoBehaviour
         else
             SetStatusText("Invalid rule format");
 
-        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);       
-        EndMode();
+        // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);       
+        // EndMode();
     }
 
     public void EditRulesCancel(){
-        SetFreeMode(true);
+        // SetFreeMode(true);
         editRulesMode = false;
         editRulesMenu.SetActive(false);
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
 
         SetStatusText("Rules edit cancelled");
-        EndMode();
+        // EndMode();
     }
 
     public void EditSpikesStart(){
-        SetFreeMode(false);
+        // SetFreeMode(false);
         // freeMode = false;
         editSpikesMode = true;
         editSpikesMenu.SetActive(true);
@@ -701,11 +736,11 @@ public class EditorController : MonoBehaviour
         // string rulesString = string.Join("\n", rules.ToArray());
 
         spikesInputField.text = activeNeuronForEditing.GetComponent<NeuronController>().GetSpikesNum().ToString();
-        print(spikesInputField.text);
+        // print(spikesInputField.text);
     }
 
     public void EditSpikesConfirm(){
-        SetFreeMode(true);
+        // SetFreeMode(true);
         // freeMode = true;
 
         InputField spikesInputField = editSpikesMenu.transform.Find("Spikes InputField").GetComponent<InputField>();
@@ -715,21 +750,21 @@ public class EditorController : MonoBehaviour
 
         activeNeuronForEditing.GetComponent<NeuronController>().SetSpikes(int.Parse(spikesInputField.text));
 
-        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         SetStatusText("Spikes successfully edited");
-        EndMode();
+        // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
+        // EndMode();
     }
 
     public void EditSpikesCancel(){
-        SetFreeMode(true);
+        // SetFreeMode(true);
         // freeMode = true;
 
         editSpikesMode = false;
         editSpikesMenu.SetActive(false);
 
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
-        SetStatusText("Spikes edit cancelled");
-        EndMode();
+        // SetStatusText("Spikes edit cancelled");
+        // EndMode();
     }
 
     public void NewSynapseToggle(){
@@ -748,7 +783,7 @@ public class EditorController : MonoBehaviour
             newSynapseModeIndicator.SetActive(true);
             newSynapseMode = true;
             SetFreeMode(false);
-            // NewSynapseButton.interactable = true;
+            // newSynapseButton.interactable = true;
             // freeMode = false;
             StartMode();
             NewSynapseStart();

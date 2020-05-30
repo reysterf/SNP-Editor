@@ -155,13 +155,16 @@ public class NeuronController : MonoBehaviour
     }
 
     public void EditRules(){        //Called by clicking the rules box of a neuron
-        if(ec.isFreeMode() && editNeuronMode){
+        // if(ec.isFreeMode() && editNeuronMode){
+        if(editNeuronMode){
             ec.EditNeuron(gameObject, "rules");
         }
     }
 
     public void EditSpikes(){       //Called by clicking the spikes box of a neuron
-        if(ec.isFreeMode() && editNeuronMode){
+        print("EDIT SPIKES");
+        // if(ec.isFreeMode() && editNeuronMode){
+        if(editNeuronMode){
             ec.EditNeuron(gameObject, "spikes");
         }
     }

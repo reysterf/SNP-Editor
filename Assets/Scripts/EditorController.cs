@@ -71,6 +71,10 @@ public class EditorController : MonoBehaviour
     public Button newSynapseButton;
     public GameObject editNeuronModeIndicator;
     public Button editNeuronButton;
+    public GameObject deleteNeuronModeIndicator;
+    public Button deleteNeuronButton;
+    public GameObject deleteSynapseModeIndicator;
+    public Button deleteSynapseButton;
 
     private GameObject activeNeuronForEditing;
 
@@ -87,7 +91,7 @@ public class EditorController : MonoBehaviour
     public Text showRulesText;
     public Text showLabelsText;
 
-    public GameObject deleteSynapseButton;
+    public GameObject deleteSynapseInstanceButton;
 
     public Material white;
 
@@ -111,6 +115,8 @@ public class EditorController : MonoBehaviour
 
         newSynapseModeIndicator.SetActive(false);
         editNeuronModeIndicator.SetActive(false);
+        deleteNeuronModeIndicator.SetActive(false);
+        deleteSynapseModeIndicator.SetActive(false);
 
         lastData = null;
         root = null;
@@ -180,6 +186,15 @@ public class EditorController : MonoBehaviour
         }
         if(editNeuronMode){
             editNeuronButton.interactable = true;
+        }
+        if(deleteNeuronMode){
+            deleteNeuronButton.interactable = true;
+        }
+        if(deleteSynapseMode){
+            deleteSynapseButton.interactable = true;
+        }
+        if(Input.GetKeyDown("1")){
+            NewNeuron();
         }
     }
 
@@ -459,14 +474,43 @@ public class EditorController : MonoBehaviour
         return newron;
     }
 
-    public void DeleteSynapseStart(){
+    public void DeleteSynapseToggle(){
+        if(!deleteSynapseMode){
+            DeleteSynapseOn();
+        }
+        else if(deleteSynapseMode){
+            DeleteSynapseOff();
+        }
+    }
+
+    public void DeleteSynapseOn(){
         if(freeMode){
             SetFreeMode(false);
             deleteSynapseMode = true;
-            Draw();
-            Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
+            deleteSynapseModeIndicator.SetActive(true);
+            // Draw();
+            // Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
             StartMode();
+            DeleteSynapseStart();
         }
+    }
+
+    public void DeleteSynapseOff(){
+        deleteSynapseModeIndicator.SetActive(false);
+        SetFreeMode(true);
+        deleteSynapseMode = false;
+        Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(false);
+        EndMode();
+
+        GameObject[] deleteButtons = GameObject.FindGameObjectsWithTag("Delete Button");
+        foreach(GameObject delBut in deleteButtons){
+            Destroy(delBut);
+        }
+    }
+
+    public void DeleteSynapseStart(){
+        Draw();
+        Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
     }
 
     public void DeleteSynapse(string synapseName){
@@ -486,23 +530,16 @@ public class EditorController : MonoBehaviour
     }
 
     public void DeleteSynapseEnd(){
-        SetFreeMode(true);
-        deleteSynapseMode = false;
-        Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(false);
-        EndMode();
-
         SetStatusText("Synapse deleted");
 
-        GameObject[] deleteButtons = GameObject.FindGameObjectsWithTag("Delete Button");
-        foreach(GameObject delBut in deleteButtons){
-            Destroy(delBut);
-        }
 
         //Synapse reset
         GameObject[] synapsesDelete = GameObject.FindGameObjectsWithTag("Synapse");
         foreach(GameObject synapse in synapsesDelete){
             Destroy(synapse);
         }
+
+        DeleteSynapseStart();
     }
 
     public void DeleteSynapseCancel(){
@@ -522,16 +559,40 @@ public class EditorController : MonoBehaviour
         foreach(GameObject synapse in synapsesDelete){
             Destroy(synapse);
         }
+        
     }
 
-    public void DeleteNeuronStart(){
+    public void DeleteNeuronToggle(){
+        if(!deleteNeuronMode){
+            DeleteNeuronOn();
+        }
+        else if(deleteNeuronMode){
+            DeleteNeuronOff();
+        }
+    }
+
+    public void DeleteNeuronOn(){
         if(freeMode){
             SetStatusText("Delete Neuron: Select a neuron to delete");
             SetFreeMode(false);
             deleteNeuronMode = true;
-            Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
+            deleteNeuronModeIndicator.SetActive(true);
+            // Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
             StartMode();
+            DeleteNeuronStart();
         }
+    }
+
+    public void DeleteNeuronOff(){
+        SetFreeMode(true);
+        deleteNeuronMode = false;
+        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);   
+        deleteNeuronModeIndicator.SetActive(false);
+        EndMode();
+    }
+
+    public void DeleteNeuronStart(){
+        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
     }
 
     public void DeleteNeuron(GameObject neuron){
@@ -542,11 +603,11 @@ public class EditorController : MonoBehaviour
     }
 
     public void DeleteNeuronEnd(){
-        SetFreeMode(true);
-        deleteNeuronMode = false;
-        Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);   
+        // SetFreeMode(true);
+        // deleteNeuronMode = false;
+        // Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(false);   
         SetStatusText("Neuron deleted");     
-        EndMode();
+        // EndMode();
     }
 
     public void DeleteNeuronCancel(){
@@ -930,7 +991,7 @@ public class EditorController : MonoBehaviour
         lr2.startColor = Color.white;
 
         if(deleteSynapseMode){
-            GameObject delbut = Instantiate(deleteSynapseButton, (start + end) * 0.5f, Quaternion.identity);
+            GameObject delbut = Instantiate(deleteSynapseInstanceButton, (start + end) * 0.5f, Quaternion.identity);
             delbut.transform.localScale = new Vector3(.015f, .015f, 0);
             delbut.transform.SetParent(newSynapse.transform);
             delbut.transform.tag = "Delete Button";

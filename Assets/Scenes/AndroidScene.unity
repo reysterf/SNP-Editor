@@ -7706,7 +7706,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1182110173}
-        m_MethodName: DeleteNeuronStart
+        m_MethodName: DeleteNeuronToggle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14180,7 +14180,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1182110173}
-        m_MethodName: DeleteSynapseStart
+        m_MethodName: DeleteSynapseToggle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -15000,6 +15000,32 @@ PrefabInstance:
       propertyPath: editNeuronModeIndicator
       value: 
       objectReference: {fileID: 532655314}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: deleteNeuronModeIndicator
+      value: 
+      objectReference: {fileID: 1002151570}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: deleteNeuronButton
+      value: 
+      objectReference: {fileID: 1129808369}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: deleteSynapseInstanceButton
+      value: 
+      objectReference: {fileID: 2663394240239927686, guid: afc53d384066db3468743d9f2739aacf,
+        type: 3}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: deleteSynapseModeIndicator
+      value: 
+      objectReference: {fileID: 859953198}
+    - target: {fileID: 3000603469988135875, guid: d8601e10adbb44d42bff516828d2b7b0,
+        type: 3}
+      propertyPath: deleteSynapseButton
+      value: 
+      objectReference: {fileID: 2044064181}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 4319445626964287762, guid: d8601e10adbb44d42bff516828d2b7b0, type: 3}

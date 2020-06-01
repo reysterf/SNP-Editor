@@ -76,6 +76,8 @@ public class EditorController : MonoBehaviour
     public GameObject deleteSynapseModeIndicator;
     public Button deleteSynapseButton;
 
+    public GameObject panModeIndicator;
+
     private GameObject activeNeuronForEditing;
 
     private string initialString;
@@ -117,6 +119,8 @@ public class EditorController : MonoBehaviour
         editNeuronModeIndicator.SetActive(false);
         deleteNeuronModeIndicator.SetActive(false);
         deleteSynapseModeIndicator.SetActive(false);
+
+        panModeIndicator.SetActive(false);
 
         lastData = null;
         root = null;
@@ -194,7 +198,42 @@ public class EditorController : MonoBehaviour
             deleteSynapseButton.interactable = true;
         }
         if(Input.GetKeyDown("1")){
-            NewNeuron();
+            if(freeMode){
+                NewNeuron();
+            }
+        }
+        if(Input.GetKeyDown("2")){
+            if(freeMode){
+                NewOutputNeuron();
+            }
+        }
+        if(Input.GetKeyDown("3")){
+            if(freeMode || newSynapseMode){
+                NewSynapseToggle();
+            }
+        }
+        if(Input.GetKeyDown("4")){
+            if(freeMode || editNeuronMode){
+                EditNeuronToggle();
+            }
+        }
+        if(Input.GetKeyDown("5")){
+            if(freeMode || deleteNeuronMode){
+                DeleteNeuronToggle();
+            }
+        }
+        if(Input.GetKeyDown("6")){
+            if(freeMode || deleteSynapseMode){
+                DeleteSynapseToggle();  
+            }
+        }
+        if(Input.GetKey(KeyCode.RightControl) ||
+                Input.GetKey(KeyCode.LeftControl) ||
+                Input.GetKey(KeyCode.LeftApple) ||
+                Input.GetKey(KeyCode.RightApple)){
+            if(Input.GetKeyDown("s")){
+                Save();
+            }
         }
     }
 
@@ -263,8 +302,9 @@ public class EditorController : MonoBehaviour
     }
 
     public void ChangePanMode() {
-        SetFreeMode(!freeMode);
+        // SetFreeMode(!freeMode);
         panMode = !panMode;
+        panModeIndicator.SetActive(panMode);
         panController.SetPanMode(panMode);
         if (panMode) {
             SetStatusText("Pan Mode");

@@ -557,7 +557,7 @@ public class NeuronController : MonoBehaviour
 
     private IEnumerator AnimateFire(Vector3 startPosition, Vector3 endPosition)
     {
-        // print("Animate Fire");
+        // print("Animate Firing");
         GameObject sprite = Instantiate(spikeSprite, startPosition, Quaternion.identity);
         sprite.transform.SetParent(GameObject.Find("Neurons and Synapses").transform);
         sprite.transform.SetAsFirstSibling();

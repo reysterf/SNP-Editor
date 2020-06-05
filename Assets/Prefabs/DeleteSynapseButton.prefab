@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 2663394240239927705}
   - component: {fileID: 2663394240239927704}
   - component: {fileID: 6469946993706585520}
+  - component: {fileID: 5151005523904152069}
   m_Layer: 5
-  m_Name: Button
+  m_Name: DeleteSynapseButton
   m_TagString: Delete Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,6 +143,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc01bc414d1f65d4b918e6524966cca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5151005523904152069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2663394240239927686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 1
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &2663394240596481866
 GameObject:
   m_ObjectHideFlags: 0

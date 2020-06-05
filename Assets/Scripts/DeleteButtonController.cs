@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DeleteButtonController : MonoBehaviour
 {
+    private GameObject linkedSynapse;
 
     // Start is called before the first frame update
     void Start()
@@ -14,7 +15,13 @@ public class DeleteButtonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(linkedSynapse == null){
+            Destroy(gameObject);
+        }
+    }
+
+    public void SetSynapse(GameObject synapse){
+        linkedSynapse = synapse;
     }
 
     public void DeleteButtonPress(){
@@ -24,7 +31,10 @@ public class DeleteButtonController : MonoBehaviour
         print("Delete Button Pressed");
 
         EditorController ec = GameObject.Find("EditorController").GetComponent<EditorController>();
-        ec.DeleteSynapse(gameObject.transform.parent.gameObject.name);
+        ec.DeleteSynapse(linkedSynapse.name);
+        gameObject.SetActive(false);
+        print("Name: " + linkedSynapse.name);
+        print("Destroy button");
     }
 
 }

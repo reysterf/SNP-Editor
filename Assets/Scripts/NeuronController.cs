@@ -54,7 +54,6 @@ public class NeuronController : MonoBehaviour
     private int timer = -1;
     public string spikes = "";
     private List<string> rules = new List<string>();
-    private List<GameObject> storedTargets = new List<GameObject>();
 
     private bool isClosed = false;
 
@@ -376,26 +375,27 @@ public class NeuronController : MonoBehaviour
         return outputText.text;
     }
 
-    public (List<string>, string) FireOneStep(List<GameObject> targets)
+    public (List<string>, string) StartFire()
     {
+        timer = timer - 1;
         (List<string>, string) rules = (new List<string>(),"");
-        if (timer == -1){
-            rules = CheckRules(targets);
+        if (timer <= -1){
+            rules = CheckRules();
         }
-        else if (timer == 0){
-            Fire(storedConsume, storedGive, targets);
-            isClosed = false;
-        }
-        else if (timer > 0){
-            timer = timer - 1;
-        }
-
         UIChanged = true;
-        ec.appliedRulesStorage.Add((rules.Item1, rules.Item2, gameObject.name));
         return rules;
     }
 
-    private (List<string>, string) CheckRules(List<GameObject> targets)
+    public void EndFire()
+    {
+        if(!IsOutputNeuron() && timer == 0)
+        {
+            Fire(storedConsume, storedGive);
+            isClosed = false;
+        }
+    }
+
+    private (List<string>, string) CheckRules()
     {
         int i = 0;
         List<string> matches = new List<string>();
@@ -410,34 +410,44 @@ public class NeuronController : MonoBehaviour
                 matches.Add(rule);
             }
         }
+
+        Debug.Log(ec.guidedMode);
         if (!ec.guidedMode)
         {
             if (matches.Count > 0)
             {
                 chosenRule = matches[Random.Range(0, matches.Count)];
-                chosenRule = chosenRule.Replace(" ", "");
-                int slashInd = chosenRule.IndexOf("/");
-                string reg = chosenRule.Substring(0, slashInd);
-                int arrowInd = chosenRule.IndexOf(">");
-                int semicolInd = chosenRule.IndexOf(";");
-                int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
-                int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
-                int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
-                timer = delay;
-                if (delay == 0)
-                    StoreRule(consume, give, targets);
-                else
-                    CloseNeuron(consume, give);
+                ProcessRule(chosenRule);
             }
 
             return (matches, chosenRule);
         }
         else
         {
-            //chosenRule = await GuidedNondetStart(matches);
+            if(matches.Count == 1)
+            {
+                chosenRule = matches[Random.Range(0, matches.Count)];
+                ProcessRule(chosenRule);
+            }
             return (matches, chosenRule);
-        }
-            
+        }           
+    }
+
+    public void ProcessRule(string chosenRule)
+    {
+        chosenRule = chosenRule.Replace(" ", "");
+        int slashInd = chosenRule.IndexOf("/");
+        string reg = chosenRule.Substring(0, slashInd);
+        int arrowInd = chosenRule.IndexOf(">");
+        int semicolInd = chosenRule.IndexOf(";");
+        int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
+        int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
+        int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
+        timer = delay;
+        if (delay == 0)
+            StoreRule(consume, give);
+        else
+            CloseNeuron(consume, give);
     }
 
     //private string GuidedNondetStart(List<string> matches)
@@ -456,11 +466,10 @@ public class NeuronController : MonoBehaviour
 
     //}
 
-    private void StoreRule(int consume, int give, List<GameObject>targets)
+    private void StoreRule(int consume, int give)
     {
         storedConsume = consume;
         storedGive = give;
-        storedTargets = targets;
     }
 
     private void CloseNeuron(int consumed, int give)
@@ -473,17 +482,17 @@ public class NeuronController : MonoBehaviour
         UIChanged = true;
     }
 
-    private void Fire(int consumed, int give, List<GameObject> targets)
+    private void Fire(int consumed, int give)
     {
         Debug.Log("Fire!");
-        int i = 0;
         Debug.Log("spikes: " + spikes.Length + "consumed: " + consumed);
         spikes = spikes.Substring(consumed);
         //for (i = 0; i < connexion.Length; i++)
         //{
         //    Neuron target = connexion[i];
         //    DrawMovingSpike(transform.position, target.transform.position);
-        foreach(GameObject target in targets){
+        foreach(int i in outSynapses){
+            GameObject target = GameObject.Find("Neurons/" + i.ToString());
             target.GetComponent<NeuronController>().Receive(give);
             if (give > 0)
             {
@@ -496,8 +505,6 @@ public class NeuronController : MonoBehaviour
         //}
         //float scale = (float)spikes.Length / ((float)30);
         // transform.localScale = new Vector3(scale, scale, scale);
-        timer = timer - 1;
-
         UIChanged = true;
     }
 
@@ -514,7 +521,7 @@ public class NeuronController : MonoBehaviour
         }        
     }
 
-    public string SignalEnd()
+    public string UpdateOutput()
     {
         try
         {

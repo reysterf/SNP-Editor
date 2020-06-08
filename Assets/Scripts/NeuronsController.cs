@@ -88,13 +88,18 @@ public class NeuronsController : MonoBehaviour
         BroadcastMessage("HideRules");
     }
 
-    public (List<string>, string) Fire(GameObject shootingNeuron, List<GameObject> targetNeurons)
+    public (List<string>, string) Fire(GameObject shootingNeuron)
     {
-        return shootingNeuron.GetComponent<NeuronController>().FireOneStep(targetNeurons);
+        return shootingNeuron.GetComponent<NeuronController>().StartFire();
     }
 
-    public string EndFire(GameObject outputNeuron){
-        return outputNeuron.GetComponent<NeuronController>().SignalEnd();
+    public void EndFireNeurons(GameObject shootingNeuron)
+    {
+        shootingNeuron.GetComponent<NeuronController>().EndFire();
+    }
+
+    public string UpdateOutputNeurons(GameObject outputNeuron){
+        return outputNeuron.GetComponent<NeuronController>().UpdateOutput();
     }
 
     public string RetractOutput(GameObject outputNeuron)
@@ -105,5 +110,10 @@ public class NeuronsController : MonoBehaviour
     public void ClearOutput(GameObject outputNeuron)
     {
         outputNeuron.GetComponent<NeuronController>().ClearOutput();
+    }
+
+    public void SetChosenRule(GameObject neuron, string chosenRule)
+    {
+        neuron.GetComponent<NeuronController>().ProcessRule(chosenRule);
     }
 }

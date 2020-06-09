@@ -73,6 +73,10 @@ public class EditorController : MonoBehaviour
     public GameObject editSpikesMenu;
     public GameObject neuronLabel;
     public GameObject cancelButton;
+    public GameObject fireButton;
+    public GameObject continuousButton;
+    public GameObject stopButton;
+    public GameObject backButton;
 
     public GameObject newSynapseModeIndicator;
     public Button newSynapseButton;
@@ -96,6 +100,7 @@ public class EditorController : MonoBehaviour
     private bool showRules = true;
     private bool showLabels = true;
     private bool showModeChanged = false;
+    private int fireState = 0;
 
     public Text showRulesText;
     public Text showLabelsText;
@@ -104,6 +109,7 @@ public class EditorController : MonoBehaviour
 
     public Material white;
 
+    public int waitTime;
     private string lastData;
     public List<(List<string>, string, int)> appliedRulesStorage;
     public ChoiceNode root;
@@ -1119,8 +1125,44 @@ public class EditorController : MonoBehaviour
         lineCount += 1;
     }
 
+    public void StopContinuous()
+    {
+        backButton.GetComponent<Button>().interactable = true;
+        fireButton.GetComponent<Button>().interactable = true;
+        continuousButton.GetComponent<Button>().interactable = true;
+        fireState = 0;
+        SetStatusText("Stopped at t = " + globalTime);
+    }
+
+    public void StartContinuous()
+    {
+        backButton.GetComponent<Button>().interactable = false;
+        fireButton.GetComponent<Button>().interactable = false;
+        continuousButton.GetComponent<Button>().interactable = false;
+        fireState = 1;
+        IEnumerator continuousIEnum = ContinuousFire();
+        StartCoroutine(continuousIEnum);
+    }
+
+    IEnumerator ContinuousFire()
+    {
+        while(fireState > 0)
+        {
+            StartFire();
+            while (fireState != 2)
+                yield return null;
+            print(fireState);
+            yield return new WaitForSeconds(waitTime);
+            print("Waited 2 secs");
+           //IEnumerator continuousIEnum = ContinuousFire();
+           //StartCoroutine(continuousIEnum);
+        }
+        Debug.Log("stop");
+    }
+
     public void StartFire()
     {
+        fireState = 1;
         //create Root (ie. the first configuration)
         if (root == null)
         {
@@ -1191,6 +1233,7 @@ public class EditorController : MonoBehaviour
 
     private void CreateGuidedMenus()
     {
+        freeMode = false;
         foreach((List<string>, string, int) rule in appliedRulesStorage)
         {
             if(rule.Item1.Count > 1)
@@ -1239,6 +1282,7 @@ public class EditorController : MonoBehaviour
 
     public void EndFire()
     {
+        freeMode = true;
         foreach(int i in neurons)
         {
             Neurons.GetComponent<NeuronsController>().EndFireNeurons(GameObject.Find("Neurons/" + i.ToString()));
@@ -1259,6 +1303,7 @@ public class EditorController : MonoBehaviour
 
         configHistory.Add(GetAllSpikes());
         delayHistory.Add(GetAllDelay());
+        globalTime++;
         SetStatusText("Fired at t = " + globalTime);
 
         List<(List<string>, string, int)> nondeterministicList = new List<(List<string>, string, int)>();
@@ -1269,7 +1314,9 @@ public class EditorController : MonoBehaviour
                 nondeterministicList.Add(rule);
             }
         }
-        AddChoiceElement(nondeterministicList);
+        if(nondeterministicList.Count > 0)
+            AddChoiceElement(nondeterministicList);
+        fireState = 2;
     }
 
     public void GoBackOne()

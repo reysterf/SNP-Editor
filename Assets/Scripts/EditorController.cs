@@ -33,8 +33,10 @@ public class EditorController : MonoBehaviour
     public GameObject NeuronWithRules;
     public GameObject NeuronWithoutRules;
     public GameObject Neurons;
+    public GameObject guidedMenusContainer;
     public GameObject Synapses;
     public GameObject SynapsePrefab;
+    public GameObject rulePrefab;
 
     public PanController panController;
 
@@ -71,6 +73,10 @@ public class EditorController : MonoBehaviour
     public GameObject editSpikesMenu;
     public GameObject neuronLabel;
     public GameObject cancelButton;
+    public GameObject fireButton;
+    public GameObject continuousButton;
+    public GameObject stopButton;
+    public GameObject backButton;
 
     public GameObject newSynapseModeIndicator;
     public Button newSynapseButton;
@@ -102,6 +108,7 @@ public class EditorController : MonoBehaviour
     private bool showRules = true;
     private bool showLabels = true;
     private bool showModeChanged = false;
+    private int fireState = 0;
 
     public Text showRulesText;
     public Text showLabelsText;
@@ -110,8 +117,9 @@ public class EditorController : MonoBehaviour
 
     public Material white;
 
+    public int waitTime;
     private string lastData;
-    public List<(List<string>, string, string)> appliedRulesStorage;
+    public List<(List<string>, string, int)> appliedRulesStorage;
     public ChoiceNode root;
     public ChoiceNode last;
     public List<int> choiceTimes;
@@ -141,7 +149,7 @@ public class EditorController : MonoBehaviour
         configHistory = new List<List<int>>();
         delayHistory = new List<List<int>>();
         choiceTimes = new List<int>();
-        appliedRulesStorage = new List<(List<string>, string, string)>();
+        appliedRulesStorage = new List<(List<string>, string, int)>();
         outputPath = Application.dataPath + "/output.txt";
 
         showLabelsText.text = "Hide Labels";
@@ -1170,8 +1178,44 @@ public class EditorController : MonoBehaviour
         lineCount += 1;
     }
 
+    public void StopContinuous()
+    {
+        backButton.GetComponent<Button>().interactable = true;
+        fireButton.GetComponent<Button>().interactable = true;
+        continuousButton.GetComponent<Button>().interactable = true;
+        fireState = 0;
+        SetStatusText("Stopped at t = " + globalTime);
+    }
+
+    public void StartContinuous()
+    {
+        backButton.GetComponent<Button>().interactable = false;
+        fireButton.GetComponent<Button>().interactable = false;
+        continuousButton.GetComponent<Button>().interactable = false;
+        fireState = 1;
+        IEnumerator continuousIEnum = ContinuousFire();
+        StartCoroutine(continuousIEnum);
+    }
+
+    IEnumerator ContinuousFire()
+    {
+        while(fireState > 0)
+        {
+            StartFire();
+            while (fireState != 2)
+                yield return null;
+            print(fireState);
+            yield return new WaitForSeconds(waitTime);
+            print("Waited 2 secs");
+           //IEnumerator continuousIEnum = ContinuousFire();
+           //StartCoroutine(continuousIEnum);
+        }
+        Debug.Log("stop");
+    }
+
     public void StartFire()
     {
+        fireState = 1;
         //create Root (ie. the first configuration)
         if (root == null)
         {
@@ -1179,11 +1223,26 @@ public class EditorController : MonoBehaviour
             last = root;
             choiceTimes.Add(globalTime);
         }
+
+        //Check applicable rules of all neurons
         appliedRulesStorage.Clear();
+        (List<string>, string) rule = (new List<string>(), "");
+        foreach (int i in neurons)
+        {
+            //rules is a tuple of (List of applicable rules, chosenrule)
+            rule = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()));
+            appliedRulesStorage.Add((rule.Item1, rule.Item2, i));
+        }
+        LogAppliedRules();
+        if(guidedMode)
+            CreateGuidedMenus();
+        IEnumerator waitGuided = WaitForGuided();
+        StartCoroutine(waitGuided);
+
+        /*
         List<(List<string>, string ,int)> nondeterministicList = new List<(List<string>, string, int)>();
         (List<string>, string) determinismCheck = (new List<string>(), "");
-        configHistory.Add(GetAllSpikes());
-        delayHistory.Add(GetAllDelay());
+
         synapses.Sort();
         List<GameObject> receivingNeurons = new List<GameObject>();
         int shootingNeuron = 0;
@@ -1222,24 +1281,95 @@ public class EditorController : MonoBehaviour
         if (nondeterministicList.Count > 0)
         {
             AddChoiceElement(nondeterministicList);
+        }*/
+    }
+
+    private void CreateGuidedMenus()
+    {
+        freeMode = false;
+        foreach((List<string>, string, int) rule in appliedRulesStorage)
+        {
+            if(rule.Item1.Count > 1)
+            {
+                GameObject neuron = GameObject.Find("Neurons/" + rule.Item3.ToString());
+                GameObject newGuidedMenu = Instantiate(guidedMenu, neuron.transform.position, Quaternion.identity, guidedMenusContainer.transform);
+                newGuidedMenu.GetComponent<GuidedMenuController>().SetUpMenu(rule.Item1, rule.Item3);
+            }
         }
+    }
+
+    public void SetGuidedChoice(List<string> rules, string choice, int neuronNo)
+    {
+        for (int i=0; i<appliedRulesStorage.Count; i++)
+        {
+            if(neuronNo == appliedRulesStorage[i].Item3)
+            {
+                appliedRulesStorage[i] = (rules, choice, neuronNo);
+                Neurons.GetComponent<NeuronsController>().SetChosenRule(GameObject.Find("Neurons/" + neuronNo.ToString()), choice);
+            }
+        }
+        LogAppliedRules();
+    }
+
+    public void CancelGuided()
+    {
+
+    }
+
+    IEnumerator WaitForGuided()
+    {
+        bool allNeuronsGuided = false;
+        while (!allNeuronsGuided)
+        {
+            allNeuronsGuided = true;
+            foreach ((List<string>, string, int) rule in appliedRulesStorage)
+            {
+                if (rule.Item1.Count > 0 && rule.Item2 == "")
+                    allNeuronsGuided = false;
+            }
+            yield return null;
+        }
+                
+        EndFire();
     }
 
     public void EndFire()
     {
+        freeMode = true;
+        foreach(int i in neurons)
+        {
+            Neurons.GetComponent<NeuronsController>().EndFireNeurons(GameObject.Find("Neurons/" + i.ToString()));
+        }
+        
         outputBitstrings.Clear();
         if (outputneurons.Count > 0)
         {
             foreach (int i in outputneurons)
             {
                 string outputBitsring = i.ToString() + ":" + 
-                    Neurons.GetComponent<NeuronsController>().EndFire(GameObject.Find("Neurons/" + i.ToString()));
+                    Neurons.GetComponent<NeuronsController>().UpdateOutputNeurons(GameObject.Find("Neurons/" + i.ToString()));
                 outputBitstrings.Add(outputBitsring);
             }
         }
         if(outputBitstrings.Count > 0)
             SaveOutput(outputBitstrings);
+
+        configHistory.Add(GetAllSpikes());
+        delayHistory.Add(GetAllDelay());
+        globalTime++;
         SetStatusText("Fired at t = " + globalTime);
+
+        List<(List<string>, string, int)> nondeterministicList = new List<(List<string>, string, int)>();
+        foreach ((List<string>, string, int)rule in appliedRulesStorage)
+        {
+            if (rule.Item1.Count > 1)
+            {
+                nondeterministicList.Add(rule);
+            }
+        }
+        if(nondeterministicList.Count > 0)
+            AddChoiceElement(nondeterministicList);
+        fireState = 2;
     }
 
     public void GoBackOne()
@@ -1336,14 +1466,14 @@ public class EditorController : MonoBehaviour
     public void LogAppliedRules()
     {
         string appliedRules = "Matched Rules: ";
-        foreach ((List<string> matchedRules, string chosen, string name) in appliedRulesStorage)
+        foreach ((List<string> matchedRules, string chosen, int name) in appliedRulesStorage)
         {
             foreach(string rule in matchedRules)
             {
                 appliedRules += rule + ", ";
             }
             appliedRules += "|| The Chosen: " + chosen;
-            appliedRules += "|| NeuronNo: " + name;
+            appliedRules += "|| NeuronNo: " + name.ToString();
             appliedRules += "\n";
         }
         print(appliedRules);

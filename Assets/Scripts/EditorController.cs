@@ -27,8 +27,6 @@ public class EditorController : MonoBehaviour
     private Vector3 prevPosition;
     private float panSensitivity = 1;
 
-    public GameObject Buttons;
-
     public GameObject guidedMenu;
     public GameObject NeuronPrefab;
     public GameObject OutputNeuronPrefab;
@@ -51,6 +49,8 @@ public class EditorController : MonoBehaviour
     private bool changeOutputMode = false;
     public bool guidedMode = true;
 
+    private bool settingsMenuMode = false;
+
     private bool panMode = false;
 
     private Vector3 synapseStart;
@@ -60,7 +60,7 @@ public class EditorController : MonoBehaviour
     private List<int> outputneurons = new List<int>();
     private List<(int, int)> synapses = new List<(int, int)>();
 
-
+    public GameObject settingsMenu;
     public GameObject statusBar;
     public GameObject ChoiceMenu;
     public GameObject choiceContent;
@@ -82,6 +82,14 @@ public class EditorController : MonoBehaviour
     public Button deleteSynapseButton;
 
     public GameObject panModeIndicator;
+
+    public GameObject viewButtons;
+    public GameObject controlButtons;
+    public GameObject titleText;
+    public GameObject showButtonsButton;
+    public GameObject settingsButton;
+
+    private bool showButtonsMode = false;
 
     private GameObject activeNeuronForEditing;
 
@@ -119,6 +127,7 @@ public class EditorController : MonoBehaviour
         editRulesMenu.SetActive(false);
         editSpikesMenu.SetActive(false);
         cancelButton.SetActive(false);
+        settingsMenu.SetActive(false);
 
         newSynapseModeIndicator.SetActive(false);
         editNeuronModeIndicator.SetActive(false);
@@ -242,6 +251,21 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    public void HideButtonsToggle(){
+        if(!showButtonsMode){
+            viewButtons.SetActive(true);
+            controlButtons.SetActive(true);
+            titleText.SetActive(true);
+            showButtonsMode = true;
+        }
+        else if(showButtonsMode){
+            viewButtons.SetActive(false);
+            controlButtons.SetActive(false);
+            titleText.SetActive(false);
+            showButtonsMode = false;
+        }
+    }
+
     // void OnMouseDown()
     // {
     //     screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
@@ -277,6 +301,27 @@ public class EditorController : MonoBehaviour
         DeleteAllNeurons();
     }
 
+    public void SettingsMenuToggle(){
+        if(!settingsMenuMode){
+            settingsMenuMode = true;
+            SettingsMenuOpen();
+        }
+        else if(settingsMenuMode){
+            settingsMenuMode = false;
+            SettingsMenuClose();
+        }
+    }
+
+    public void SettingsMenuOpen(){
+        SetFreeMode(false);
+        settingsMenu.SetActive(true);        
+    }
+
+    public void SettingsMenuClose(){
+        SetFreeMode(true);
+        settingsMenu.SetActive(false);
+    }
+
     public void SetStatusText(string statusText) {
         statusBar.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = statusText;
     }
@@ -291,19 +336,25 @@ public class EditorController : MonoBehaviour
     }
 
     public void DisableButtons() {
-        Button[] buttons = Buttons.transform.GetComponentsInChildren<Button>();
+        Button[] buttons = controlButtons.transform.GetComponentsInChildren<Button>();
 
         foreach (Button button in buttons) {
             button.interactable = false;
         }
+
+        settingsButton.GetComponent<Button>().interactable = false;
+        showButtonsButton.GetComponent<Button>().interactable = false;
     }
 
     public void EnableButtons() {
-        Button[] buttons = Buttons.transform.GetComponentsInChildren<Button>();
+        Button[] buttons = controlButtons.transform.GetComponentsInChildren<Button>();
 
         foreach (Button button in buttons) {
             button.interactable = true;
         }
+
+        settingsButton.GetComponent<Button>().interactable = true;
+        showButtonsButton.GetComponent<Button>().interactable = true;
     }
 
     public void ChangePanMode() {
@@ -883,6 +934,8 @@ public class EditorController : MonoBehaviour
         // SetStatusText("Spikes edit cancelled");
         // EndMode();
     }
+
+
 
     public void NewSynapseToggle(){
 

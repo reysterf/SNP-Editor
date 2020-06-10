@@ -51,10 +51,12 @@
      <Compile Include="Assets\Scripts\DeleteButtonController.cs" />
      <Compile Include="Assets\Scripts\Drawer.cs" />
      <Compile Include="Assets\Scripts\EditorController.cs" />
+     <Compile Include="Assets\Scripts\GuidedMenuController.cs" />
      <Compile Include="Assets\Scripts\HistoryNode.cs" />
      <Compile Include="Assets\Scripts\NeuronController.cs" />
      <Compile Include="Assets\Scripts\NeuronsController.cs" />
      <Compile Include="Assets\Scripts\PanController.cs" />
+     <Compile Include="Assets\Scripts\RulePrefabController.cs" />
      <Compile Include="Assets\Scripts\SynapseController.cs" />
      <Compile Include="Assets\Scripts\SynapsesController.cs" />
      <Compile Include="Assets\Scripts\testScript.cs" />

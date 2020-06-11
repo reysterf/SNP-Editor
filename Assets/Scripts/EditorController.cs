@@ -1247,19 +1247,43 @@ public class EditorController : MonoBehaviour
     {
         while(fireState > 0)
         {
+            Debug.Log("before:"+fireState);
             StartFire();
+            Debug.Log("after:" + fireState);
             while (fireState != 2)
                 yield return null;
             print(fireState);
             yield return new WaitForSeconds(waitTime);
             print("Waited 2 secs");
-           //IEnumerator continuousIEnum = ContinuousFire();
-           //StartCoroutine(continuousIEnum);
         }
-        Debug.Log("stop");
+    }
+
+    public bool CheckHalt()
+    {
+        List<int> currentTimers = GetAllDelay();
+        bool noActionsLeft = true;
+        foreach(int timer in currentTimers)
+        {
+            if (timer >= 0)
+                noActionsLeft = false;
+        }
+        foreach((List<string>,string,int)appliedRule in appliedRulesStorage)
+        {
+            if (appliedRule.Item1.Count > 0)
+                noActionsLeft = false;
+        }
+
+        fireState = 2;
+        return noActionsLeft;
     }
 
     public void StartFire()
+    {
+        IEnumerator oneStep = FireOneStep();
+        StartCoroutine(oneStep);
+    }
+
+    IEnumerator FireOneStep()
     {
         configHistory.Add(GetAllSpikes());
         delayHistory.Add(GetAllDelay());
@@ -1281,11 +1305,21 @@ public class EditorController : MonoBehaviour
             rule = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()));
             appliedRulesStorage.Add((rule.Item1, rule.Item2, i));
         }
-        LogAppliedRules();
-        if(guidedMode)
-            CreateGuidedMenus();
-        IEnumerator waitGuided = WaitForGuided();
-        StartCoroutine(waitGuided);
+        bool halting = CheckHalt();
+        yield return halting;
+        if (halting)
+        {
+            StopContinuous();
+            configHistory.RemoveAt(configHistory.Count - 1);
+            delayHistory.RemoveAt(delayHistory.Count - 1);
+        }
+        else
+        {
+            if (guidedMode && appliedRulesStorage.Count > 0)
+                CreateGuidedMenus();
+            IEnumerator waitGuided = WaitForGuided();
+            StartCoroutine(waitGuided);
+        }     
 
         /*
         List<(List<string>, string ,int)> nondeterministicList = new List<(List<string>, string, int)>();
@@ -1426,7 +1460,6 @@ public class EditorController : MonoBehaviour
         {
             SetAllSpikes(configHistory[configHistory.Count - 1]);
             configHistory.RemoveAt(configHistory.Count - 1);
-            LogDelay();
             SetAllDelays(delayHistory[delayHistory.Count - 1]);
             delayHistory.RemoveAt(delayHistory.Count - 1);
 

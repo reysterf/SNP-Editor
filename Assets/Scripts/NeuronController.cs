@@ -380,7 +380,7 @@ public class NeuronController : MonoBehaviour
     {
         timer = timer - 1;
         (List<string>, string) rules = (new List<string>(),"");
-        if (timer <= -1){
+        if (timer <= -1 && outSynapses.Count > 0){
             rules = CheckRules();
         }
         UIChanged = true;

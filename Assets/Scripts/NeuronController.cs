@@ -496,8 +496,10 @@ public class NeuronController : MonoBehaviour
             target.GetComponent<NeuronController>().Receive(give);
             if (give > 0)
             {
-                IEnumerator animate = AnimateFire(transform.position, target.transform.position);
-                StartCoroutine(animate);
+                if(ec.isEnableAnimationMode()){
+                    IEnumerator animate = AnimateFire(transform.position, target.transform.position);
+                    StartCoroutine(animate);
+                }
             }
                 
         }

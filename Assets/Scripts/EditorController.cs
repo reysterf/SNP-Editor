@@ -49,7 +49,9 @@ public class EditorController : MonoBehaviour
     private bool deleteNeuronMode = false;
     private bool deleteSynapseMode = false;
     private bool changeOutputMode = false;
-    public bool guidedMode = true;
+    public bool enableAnimationMode = true;
+
+    public bool guidedMode = false;
 
     private bool settingsMenuMode = false;
 
@@ -115,6 +117,9 @@ public class EditorController : MonoBehaviour
 
     public GameObject deleteSynapseInstanceButton;
 
+    public GameObject pseudorandomToggleIndicator;
+    public GameObject guidedToggleIndicator;
+
     public Material white;
 
     public int waitTime;
@@ -127,6 +132,8 @@ public class EditorController : MonoBehaviour
     public List<List<int>> delayHistory;
     private string outputPath;
     List<string> outputBitstrings = new List<string>();
+
+    public static GameObject quitTest;
 
     // Start is called before the first frame update
     void Start()
@@ -259,6 +266,19 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    static bool WantsToQuit()
+    {
+        quitTest.SetActive(true);
+        Debug.Log("Player prevented from quitting.");
+        return false;
+    }
+
+    [RuntimeInitializeOnLoadMethod]
+    static void RunOnStart()
+    {
+        Application.wantsToQuit += WantsToQuit;
+    }
+
     public void HideButtonsToggle(){
         if(!showButtonsMode){
             viewButtons.SetActive(true);
@@ -330,6 +350,23 @@ public class EditorController : MonoBehaviour
         settingsMenu.SetActive(false);
     }
 
+    public void SetToPseudorandomMode(){
+        //Change nondeterminism mode to pseudorandom
+        if(guidedMode == true){
+            guidedMode = false;
+            pseudorandomToggleIndicator.SetActive(true);
+            guidedToggleIndicator.SetActive(false);
+        }
+    }
+
+    public void SetToGuidedMode(){
+        if(guidedMode == false){
+            guidedMode = true;
+            pseudorandomToggleIndicator.SetActive(false);
+            guidedToggleIndicator.SetActive(true);
+        }
+    }
+
     public void SetStatusText(string statusText) {
         statusBar.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = statusText;
     }
@@ -387,6 +424,14 @@ public class EditorController : MonoBehaviour
         showModeChanged = true;
         showRules = !showRules;
         // }
+    }
+
+    public void ChangeEnableAnimationMode(){
+        enableAnimationMode = !enableAnimationMode;
+    }
+
+    public bool isEnableAnimationMode(){
+        return enableAnimationMode;
     }
 
     public void ShowChoiceMenu()
@@ -1119,6 +1164,7 @@ public class EditorController : MonoBehaviour
 
     public void DrawLine(string sourceNeuronName, string destNeuronName, float duration = 0.03f)
     {
+        //Deprecated
         Vector3 start = GameObject.Find(sourceNeuronName).transform.position;
         Vector3 end = GameObject.Find(destNeuronName).transform.position;
 

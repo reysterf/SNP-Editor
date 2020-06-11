@@ -1215,6 +1215,8 @@ public class EditorController : MonoBehaviour
 
     public void StartFire()
     {
+        configHistory.Add(GetAllSpikes());
+        delayHistory.Add(GetAllDelay());
         fireState = 1;
         //create Root (ie. the first configuration)
         if (root == null)
@@ -1335,6 +1337,7 @@ public class EditorController : MonoBehaviour
 
     public void EndFire()
     {
+        
         freeMode = true;
         foreach(int i in neurons)
         {
@@ -1354,8 +1357,7 @@ public class EditorController : MonoBehaviour
         if(outputBitstrings.Count > 0)
             SaveOutput(outputBitstrings);
 
-        configHistory.Add(GetAllSpikes());
-        delayHistory.Add(GetAllDelay());
+        
         globalTime++;
         SetStatusText("Fired at t = " + globalTime);
 
@@ -1378,6 +1380,7 @@ public class EditorController : MonoBehaviour
         {
             SetAllSpikes(configHistory[configHistory.Count - 1]);
             configHistory.RemoveAt(configHistory.Count - 1);
+            LogDelay();
             SetAllDelays(delayHistory[delayHistory.Count - 1]);
             delayHistory.RemoveAt(delayHistory.Count - 1);
 
@@ -1397,6 +1400,34 @@ public class EditorController : MonoBehaviour
             globalTime--;
             SetStatusText("Went back to t = " + globalTime);
         }    
+    }
+
+    public void LogConfig()
+    {
+        string log = "";
+        foreach(List<int> config in configHistory)
+        {
+            foreach(int i in config)
+            {
+                log+=i.ToString() + ", ";
+            }
+            log+="\n";
+        }
+        Debug.Log(log);
+    }
+
+    public void LogDelay()
+    {
+        string log = "";
+        foreach(List<int> delay in delayHistory)
+        {
+            foreach(int i in delay)
+            {
+                log += i.ToString() + ", ";
+            }
+            log += "\n";
+        }
+        Debug.Log(log);
     }
 
     public void GoToChoice()
@@ -1650,17 +1681,14 @@ public class EditorController : MonoBehaviour
 
     public void SetAllDelays(List<int> delayList)
     {
-        string delayString = "";
         foreach (int i in neurons)
         {
             if (i < delayList.Count)
             {
                 GameObject neuronObject = GameObject.Find(i.ToString());
                 neuronObject.GetComponent<NeuronController>().SetDelay(delayList[i]);
-                delayString += delayList[i].ToString() + ", ";
             }
         }
-        print(delayString);
     }
 
     public bool ValidateRules(string rules)

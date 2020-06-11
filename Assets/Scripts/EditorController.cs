@@ -75,10 +75,11 @@ public class EditorController : MonoBehaviour
     public GameObject editSpikesMenu;
     public GameObject neuronLabel;
     public GameObject cancelButton;
-    public GameObject fireButton;
-    public GameObject continuousButton;
-    public GameObject stopButton;
+    public GameObject nextButton;
+    public GameObject playButton;
     public GameObject backButton;
+    public Sprite playImage;
+    public Sprite pauseImage;
 
     public GameObject newSynapseModeIndicator;
     public Button newSynapseButton;
@@ -1224,11 +1225,21 @@ public class EditorController : MonoBehaviour
         lineCount += 1;
     }
 
+    public void PlayButton()
+    {
+        Debug.Log((playButton.GetComponent<Image>().sprite == pauseImage));
+        if (playButton.GetComponent<Image>().sprite == pauseImage)
+            StopContinuous();
+        else if (playButton.GetComponent<Image>().sprite == playImage)
+            StartContinuous();
+    }
+
     public void StopContinuous()
     {
         backButton.GetComponent<Button>().interactable = true;
-        fireButton.GetComponent<Button>().interactable = true;
-        continuousButton.GetComponent<Button>().interactable = true;
+        nextButton.GetComponent<Button>().interactable = true;
+        playButton.GetComponent<Image>().sprite = playImage;
+        playButton.GetComponent<Image>().color = new Color(0.392f, .980f, 0.424f);
         fireState = 0;
         SetStatusText("Stopped at t = " + globalTime);
     }
@@ -1236,8 +1247,9 @@ public class EditorController : MonoBehaviour
     public void StartContinuous()
     {
         backButton.GetComponent<Button>().interactable = false;
-        fireButton.GetComponent<Button>().interactable = false;
-        continuousButton.GetComponent<Button>().interactable = false;
+        nextButton.GetComponent<Button>().interactable = false;
+        playButton.GetComponent<Image>().sprite = pauseImage;
+        playButton.GetComponent<Image>().color = new Color(0.965f, 0.149f, 0.188f);
         fireState = 1;
         IEnumerator continuousIEnum = ContinuousFire();
         StartCoroutine(continuousIEnum);

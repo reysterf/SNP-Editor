@@ -437,7 +437,7 @@ public class EditorController : MonoBehaviour
 
     public void ShowChoiceMenu()
     {
-        ChoiceMenu.transform.position = new Vector3(0, 0, 0);
+        ChoiceMenu.transform.position = cameraCenterArea.transform.position;
         ChoiceMenu.GetComponent<CanvasGroup>().alpha = 1;
     }
 
@@ -1239,7 +1239,6 @@ public class EditorController : MonoBehaviour
         backButton.GetComponent<Button>().interactable = true;
         nextButton.GetComponent<Button>().interactable = true;
         playButton.GetComponent<Image>().sprite = playImage;
-        playButton.GetComponent<Image>().color = new Color(0.392f, .980f, 0.424f);
         fireState = 0;
         SetStatusText("Stopped at t = " + globalTime);
     }
@@ -1249,7 +1248,6 @@ public class EditorController : MonoBehaviour
         backButton.GetComponent<Button>().interactable = false;
         nextButton.GetComponent<Button>().interactable = false;
         playButton.GetComponent<Image>().sprite = pauseImage;
-        playButton.GetComponent<Image>().color = new Color(0.965f, 0.149f, 0.188f);
         fireState = 1;
         IEnumerator continuousIEnum = ContinuousFire();
         StartCoroutine(continuousIEnum);

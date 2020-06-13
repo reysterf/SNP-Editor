@@ -119,6 +119,7 @@ public class NeuronController : MonoBehaviour
                 timerText.text = timer.ToString();
             }
             if(timer < 0){
+                timerText.text = "0";
                 // timerUI.SetActive(false);
             }
 
@@ -224,7 +225,7 @@ public class NeuronController : MonoBehaviour
 
     public void SetDelay(int delay){
         timer = delay;
-        if(timer >= 0){
+        if(timer > 0){
             isClosed = true;
         }
         else
@@ -379,7 +380,7 @@ public class NeuronController : MonoBehaviour
     {
         timer = timer - 1;
         (List<string>, string) rules = (new List<string>(),"");
-        if (timer <= -1){
+        if (timer <= -1 && outSynapses.Count > 0){
             rules = CheckRules();
         }
         UIChanged = true;
@@ -475,7 +476,6 @@ public class NeuronController : MonoBehaviour
     private void CloseNeuron(int consumed, int give)
     {
         isClosed = true;
-        timer = timer - 1;
         storedGive = give;
         storedConsume = consumed;
 
@@ -484,8 +484,6 @@ public class NeuronController : MonoBehaviour
 
     private void Fire(int consumed, int give)
     {
-        Debug.Log("Fire!");
-        Debug.Log("spikes: " + spikes.Length + "consumed: " + consumed);
         spikes = spikes.Substring(consumed);
         //for (i = 0; i < connexion.Length; i++)
         //{

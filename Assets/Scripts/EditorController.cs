@@ -75,10 +75,11 @@ public class EditorController : MonoBehaviour
     public GameObject editSpikesMenu;
     public GameObject neuronLabel;
     public GameObject cancelButton;
-    public GameObject fireButton;
-    public GameObject continuousButton;
-    public GameObject stopButton;
+    public GameObject nextButton;
+    public GameObject playButton;
     public GameObject backButton;
+    public Sprite playImage;
+    public Sprite pauseImage;
 
     public GameObject newSynapseModeIndicator;
     public Button newSynapseButton;
@@ -444,7 +445,7 @@ public class EditorController : MonoBehaviour
 
     public void ShowChoiceMenu()
     {
-        ChoiceMenu.transform.position = new Vector3(0, 0, 0);
+        ChoiceMenu.transform.position = cameraCenterArea.transform.position;
         ChoiceMenu.GetComponent<CanvasGroup>().alpha = 1;
     }
 
@@ -1232,11 +1233,20 @@ public class EditorController : MonoBehaviour
         lineCount += 1;
     }
 
+    public void PlayButton()
+    {
+        Debug.Log((playButton.GetComponent<Image>().sprite == pauseImage));
+        if (playButton.GetComponent<Image>().sprite == pauseImage)
+            StopContinuous();
+        else if (playButton.GetComponent<Image>().sprite == playImage)
+            StartContinuous();
+    }
+
     public void StopContinuous()
     {
         backButton.GetComponent<Button>().interactable = true;
-        fireButton.GetComponent<Button>().interactable = true;
-        continuousButton.GetComponent<Button>().interactable = true;
+        nextButton.GetComponent<Button>().interactable = true;
+        playButton.GetComponent<Image>().sprite = playImage;
         fireState = 0;
         SetStatusText("Stopped at t = " + globalTime);
     }
@@ -1244,8 +1254,8 @@ public class EditorController : MonoBehaviour
     public void StartContinuous()
     {
         backButton.GetComponent<Button>().interactable = false;
-        fireButton.GetComponent<Button>().interactable = false;
-        continuousButton.GetComponent<Button>().interactable = false;
+        nextButton.GetComponent<Button>().interactable = false;
+        playButton.GetComponent<Image>().sprite = pauseImage;
         fireState = 1;
         IEnumerator continuousIEnum = ContinuousFire();
         StartCoroutine(continuousIEnum);
@@ -1255,20 +1265,46 @@ public class EditorController : MonoBehaviour
     {
         while(fireState > 0)
         {
+            Debug.Log("before:"+fireState);
             StartFire();
+            Debug.Log("after:" + fireState);
             while (fireState != 2)
                 yield return null;
             print(fireState);
             yield return new WaitForSeconds(waitTime);
             print("Waited 2 secs");
-           //IEnumerator continuousIEnum = ContinuousFire();
-           //StartCoroutine(continuousIEnum);
         }
-        Debug.Log("stop");
+    }
+
+    public bool CheckHalt()
+    {
+        List<int> currentTimers = GetAllDelay();
+        bool noActionsLeft = true;
+        foreach(int timer in currentTimers)
+        {
+            if (timer >= 0)
+                noActionsLeft = false;
+        }
+        foreach((List<string>,string,int)appliedRule in appliedRulesStorage)
+        {
+            if (appliedRule.Item1.Count > 0)
+                noActionsLeft = false;
+        }
+
+        fireState = 2;
+        return noActionsLeft;
     }
 
     public void StartFire()
     {
+        IEnumerator oneStep = FireOneStep();
+        StartCoroutine(oneStep);
+    }
+
+    IEnumerator FireOneStep()
+    {
+        configHistory.Add(GetAllSpikes());
+        delayHistory.Add(GetAllDelay());
         fireState = 1;
         //create Root (ie. the first configuration)
         if (root == null)
@@ -1287,11 +1323,21 @@ public class EditorController : MonoBehaviour
             rule = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()));
             appliedRulesStorage.Add((rule.Item1, rule.Item2, i));
         }
-        LogAppliedRules();
-        if(guidedMode)
-            CreateGuidedMenus();
-        IEnumerator waitGuided = WaitForGuided();
-        StartCoroutine(waitGuided);
+        bool halting = CheckHalt();
+        yield return halting;
+        if (halting)
+        {
+            StopContinuous();
+            configHistory.RemoveAt(configHistory.Count - 1);
+            delayHistory.RemoveAt(delayHistory.Count - 1);
+        }
+        else
+        {
+            if (guidedMode && appliedRulesStorage.Count > 0)
+                CreateGuidedMenus();
+            IEnumerator waitGuided = WaitForGuided();
+            StartCoroutine(waitGuided);
+        }     
 
         /*
         List<(List<string>, string ,int)> nondeterministicList = new List<(List<string>, string, int)>();
@@ -1389,6 +1435,7 @@ public class EditorController : MonoBehaviour
 
     public void EndFire()
     {
+        
         freeMode = true;
         foreach(int i in neurons)
         {
@@ -1408,8 +1455,7 @@ public class EditorController : MonoBehaviour
         if(outputBitstrings.Count > 0)
             SaveOutput(outputBitstrings);
 
-        configHistory.Add(GetAllSpikes());
-        delayHistory.Add(GetAllDelay());
+        
         globalTime++;
         SetStatusText("Fired at t = " + globalTime);
 
@@ -1451,6 +1497,34 @@ public class EditorController : MonoBehaviour
             globalTime--;
             SetStatusText("Went back to t = " + globalTime);
         }    
+    }
+
+    public void LogConfig()
+    {
+        string log = "";
+        foreach(List<int> config in configHistory)
+        {
+            foreach(int i in config)
+            {
+                log+=i.ToString() + ", ";
+            }
+            log+="\n";
+        }
+        Debug.Log(log);
+    }
+
+    public void LogDelay()
+    {
+        string log = "";
+        foreach(List<int> delay in delayHistory)
+        {
+            foreach(int i in delay)
+            {
+                log += i.ToString() + ", ";
+            }
+            log += "\n";
+        }
+        Debug.Log(log);
     }
 
     public void GoToChoice()
@@ -1704,17 +1778,14 @@ public class EditorController : MonoBehaviour
 
     public void SetAllDelays(List<int> delayList)
     {
-        string delayString = "";
         foreach (int i in neurons)
         {
             if (i < delayList.Count)
             {
                 GameObject neuronObject = GameObject.Find(i.ToString());
                 neuronObject.GetComponent<NeuronController>().SetDelay(delayList[i]);
-                delayString += delayList[i].ToString() + ", ";
             }
         }
-        print(delayString);
     }
 
     public bool ValidateRules(string rules)

@@ -13,6 +13,8 @@ using SWF = System.Windows.Forms;
 
 public class EditorController : MonoBehaviour
 {
+    public ZoomController zc;
+
     private int neuronCount = 0;
     private int lineCount = 0;
     private int globalTime = 0;
@@ -66,6 +68,7 @@ public class EditorController : MonoBehaviour
     private List<(int, int)> synapses = new List<(int, int)>();
 
     public GameObject settingsMenu;
+    public GameObject helpMenu;
     public GameObject statusBar;
     public GameObject ChoiceMenu;
     public GameObject choiceContent;
@@ -98,6 +101,7 @@ public class EditorController : MonoBehaviour
     public GameObject titleText;
     public GameObject showButtonsButton;
     public GameObject settingsButton;
+    public GameObject helpButton;
 
     private bool showButtonsMode = false;
 
@@ -121,6 +125,8 @@ public class EditorController : MonoBehaviour
 
     public GameObject pseudorandomToggleIndicator;
     public GameObject guidedToggleIndicator;
+    public Text outputPathText;
+
 
     public Material white;
 
@@ -146,6 +152,7 @@ public class EditorController : MonoBehaviour
         editSpikesMenu.SetActive(false);
         cancelButton.SetActive(false);
         settingsMenu.SetActive(false);
+        helpMenu.SetActive(false);
 
         newSynapseModeIndicator.SetActive(false);
         editNeuronModeIndicator.SetActive(false);
@@ -161,6 +168,7 @@ public class EditorController : MonoBehaviour
         choiceTimes = new List<int>();
         appliedRulesStorage = new List<(List<string>, string, int)>();
         outputPath = Application.dataPath + "/output.txt";
+        outputPathText.text = outputPath;
 
         showLabelsText.text = "Hide Labels";
         showRulesText.text = "Hide Rules";
@@ -176,6 +184,8 @@ public class EditorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // print(outputPath);
+
         if (freeModeChanged) {
             if (!freeMode) {
                 DisableButtons();
@@ -267,6 +277,15 @@ public class EditorController : MonoBehaviour
                 Save();
             }
         }
+        if(Input.GetKeyDown("=")){
+            zc.ZoomIn();
+        }
+        if(Input.GetKeyDown("-")){
+            zc.ZoomOut();
+        }
+        if(Input.GetKeyDown("p")){
+            ChangePanMode();
+        }
     }
 
     [RuntimeInitializeOnLoadMethod]
@@ -274,8 +293,6 @@ public class EditorController : MonoBehaviour
     {
         Application.wantsToQuit += WantsToQuit;
     }
-
-    
 
     static bool WantsToQuit()
     {
@@ -342,6 +359,7 @@ public class EditorController : MonoBehaviour
     //     }
     // }
 
+
     public void Draw() {
         // foreach ((int i, int j) in synapses)
         // {
@@ -353,6 +371,17 @@ public class EditorController : MonoBehaviour
         //Reset the program state into a blank slate
         DeleteAllNeurons();
     }
+
+    public void HelpMenuOpen(){
+        SetFreeMode(false);
+        helpMenu.SetActive(true);
+    }
+
+    public void HelpMenuClose(){
+        SetFreeMode(true);
+        helpMenu.SetActive(false);
+    }
+
 
     public void SettingsMenuToggle(){
         if(!settingsMenuMode){
@@ -414,6 +443,8 @@ public class EditorController : MonoBehaviour
 
         settingsButton.GetComponent<Button>().interactable = false;
         showButtonsButton.GetComponent<Button>().interactable = false;
+        helpButton.GetComponent<Button>().interactable = false;
+
     }
 
     public void EnableButtons() {
@@ -425,6 +456,7 @@ public class EditorController : MonoBehaviour
 
         settingsButton.GetComponent<Button>().interactable = true;
         showButtonsButton.GetComponent<Button>().interactable = true;
+        helpButton.GetComponent<Button>().interactable = true;
     }
 
     public void ChangePanMode() {
@@ -959,7 +991,7 @@ public class EditorController : MonoBehaviour
         editRulesMode = false;
         editRulesMenu.SetActive(false);
 
-        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
+        // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
 
         SetStatusText("Rules edit cancelled");
         // EndMode();
@@ -1008,7 +1040,7 @@ public class EditorController : MonoBehaviour
         editSpikesMode = false;
         editSpikesMenu.SetActive(false);
 
-        Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
+        // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         // SetStatusText("Spikes edit cancelled");
         // EndMode();
     }

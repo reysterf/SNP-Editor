@@ -44,7 +44,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Toggle
     - UnityEngine.UI.VerticalLayoutGroup
   sceneClasses:
-    Assets/Scenes/AndroidScene.unity:
+    Assets/Scenes/MainScene.unity:
     - Class: 1
       Script: {instanceID: 0}
     - Class: 4
@@ -68,65 +68,65 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11164}
+      Script: {instanceID: 11170}
     - Class: 114
-      Script: {instanceID: 11296}
+      Script: {instanceID: 11302}
     - Class: 114
-      Script: {instanceID: 11340}
+      Script: {instanceID: 11346}
     - Class: 114
-      Script: {instanceID: 11342}
+      Script: {instanceID: 11348}
     - Class: 114
-      Script: {instanceID: 11380}
+      Script: {instanceID: 11386}
     - Class: 114
-      Script: {instanceID: 11436}
+      Script: {instanceID: 11442}
     - Class: 114
-      Script: {instanceID: 11486}
+      Script: {instanceID: 11492}
     - Class: 114
-      Script: {instanceID: 11504}
+      Script: {instanceID: 11510}
     - Class: 114
-      Script: {instanceID: 11698}
+      Script: {instanceID: 11704}
     - Class: 114
-      Script: {instanceID: 11806}
+      Script: {instanceID: 11812}
     - Class: 114
-      Script: {instanceID: 11976}
+      Script: {instanceID: 11982}
     - Class: 114
-      Script: {instanceID: 11978}
+      Script: {instanceID: 11984}
     - Class: 114
-      Script: {instanceID: 12016}
+      Script: {instanceID: 12022}
     - Class: 114
-      Script: {instanceID: 12034}
+      Script: {instanceID: 12040}
     - Class: 114
-      Script: {instanceID: 12160}
+      Script: {instanceID: 12166}
     - Class: 114
-      Script: {instanceID: 12236}
+      Script: {instanceID: 12242}
     - Class: 114
-      Script: {instanceID: 12334}
+      Script: {instanceID: 12340}
     - Class: 114
-      Script: {instanceID: 12436}
+      Script: {instanceID: 12442}
     - Class: 114
-      Script: {instanceID: 12466}
+      Script: {instanceID: 12472}
     - Class: 114
-      Script: {instanceID: 12494}
+      Script: {instanceID: 12500}
     - Class: 114
-      Script: {instanceID: 12592}
+      Script: {instanceID: 12598}
     - Class: 114
-      Script: {instanceID: 12610}
+      Script: {instanceID: 12616}
     - Class: 114
-      Script: {instanceID: 12754}
+      Script: {instanceID: 12760}
     - Class: 114
-      Script: {instanceID: 12826}
+      Script: {instanceID: 12832}
     - Class: 114
-      Script: {instanceID: 12872}
+      Script: {instanceID: 12878}
     - Class: 114
-      Script: {instanceID: 12886}
+      Script: {instanceID: 12892}
     - Class: 114
-      Script: {instanceID: 13150}
+      Script: {instanceID: 13156}
     - Class: 114
-      Script: {instanceID: 13166}
+      Script: {instanceID: 13172}
     - Class: 114
-      Script: {instanceID: 13202}
+      Script: {instanceID: 13208}
     - Class: 114
-      Script: {instanceID: 15718}
+      Script: {instanceID: 15744}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -556,7 +556,7 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
-      Hash: b13de53ca3e959ac4d9e59ce295c6797
+      Hash: ed6c9520c5f20e34a49ac6c058b5d4a3
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: EditorController
@@ -700,5 +700,5 @@ ScriptsOnlyBuild:
     className: PlayableTrack
   platform: 5
   scenePathNames:
-  - Assets/Scenes/AndroidScene.unity
+  - Assets/Scenes/MainScene.unity
   playerPath: C:/Users/Work/Documents/Thesis/testBuild/Snapse.exe

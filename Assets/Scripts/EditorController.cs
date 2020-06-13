@@ -119,6 +119,8 @@ public class EditorController : MonoBehaviour
 
     public GameObject pseudorandomToggleIndicator;
     public GameObject guidedToggleIndicator;
+    public Text outputPathText;
+    public InputField outputPathField;
 
     public Material white;
 
@@ -132,6 +134,8 @@ public class EditorController : MonoBehaviour
     public List<List<int>> delayHistory;
     private string outputPath;
     List<string> outputBitstrings = new List<string>();
+
+
 
     public static GameObject quitTest;
 
@@ -158,6 +162,7 @@ public class EditorController : MonoBehaviour
         choiceTimes = new List<int>();
         appliedRulesStorage = new List<(List<string>, string, int)>();
         outputPath = Application.dataPath + "/output.txt";
+        outputPathField.text = outputPath;
 
         showLabelsText.text = "Hide Labels";
         showRulesText.text = "Hide Rules";
@@ -173,6 +178,9 @@ public class EditorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // print(outputPath);
+        outputPathField.text = outputPath;
+
         if (freeModeChanged) {
             if (!freeMode) {
                 DisableButtons();

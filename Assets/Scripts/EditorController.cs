@@ -9,6 +9,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System;
 using SFB;
+using SWF = System.Windows.Forms;
 
 public class EditorController : MonoBehaviour
 {
@@ -134,6 +135,7 @@ public class EditorController : MonoBehaviour
     private string outputPath;
     List<string> outputBitstrings = new List<string>();
 
+    public static bool quitConfirmation = false;
     public static GameObject quitTest;
 
     // Start is called before the first frame update
@@ -267,17 +269,39 @@ public class EditorController : MonoBehaviour
         }
     }
 
-    static bool WantsToQuit()
-    {
-        quitTest.SetActive(true);
-        Debug.Log("Player prevented from quitting.");
-        return false;
-    }
-
     [RuntimeInitializeOnLoadMethod]
     static void RunOnStart()
     {
         Application.wantsToQuit += WantsToQuit;
+    }
+
+    
+
+    static bool WantsToQuit()
+    {
+        if (quitConfirmation)
+        {
+            return true;
+        }
+        else
+        {
+            RequestQuitConfirmation();
+        }
+        return false;
+    }
+
+    static void RequestQuitConfirmation()
+    {
+        SWF.DialogResult result = SWF.MessageBox.Show(
+            "Are you sure you want to cancel ?",
+            "Question",
+            SWF.MessageBoxButtons.YesNo,
+            SWF.MessageBoxIcon.Question);
+        if (result == SWF.DialogResult.Yes)
+        {
+            quitConfirmation = true;
+            Application.Quit();
+        }
     }
 
     public void HideButtonsToggle(){

@@ -78,7 +78,7 @@ public class EditorController : MonoBehaviour
     public GameObject editRulesMenu;
     public GameObject editSpikesMenu;
     public GameObject neuronLabel;
-    public GameObject cancelButton;
+    // public GameObject cancelButton;
     public GameObject nextButton;
     public GameObject playButton;
     public GameObject backButton;
@@ -150,7 +150,7 @@ public class EditorController : MonoBehaviour
         editNeuronMenu.SetActive(false);
         editRulesMenu.SetActive(false);
         editSpikesMenu.SetActive(false);
-        cancelButton.SetActive(false);
+        // cancelButton.SetActive(false);
         settingsMenu.SetActive(false);
         helpMenu.SetActive(false);
 
@@ -239,36 +239,36 @@ public class EditorController : MonoBehaviour
         if(deleteSynapseMode){
             deleteSynapseButton.interactable = true;
         }
-        if(Input.GetKeyDown("1")){
-            if(freeMode){
-                NewNeuron();
-            }
-        }
-        if(Input.GetKeyDown("2")){
-            if(freeMode){
-                NewOutputNeuron();
-            }
-        }
-        if(Input.GetKeyDown("3")){
-            if(freeMode || newSynapseMode){
-                NewSynapseToggle();
-            }
-        }
-        if(Input.GetKeyDown("4")){
-            if(freeMode || editNeuronMode){
-                EditNeuronToggle();
-            }
-        }
-        if(Input.GetKeyDown("5")){
-            if(freeMode || deleteNeuronMode){
-                DeleteNeuronToggle();
-            }
-        }
-        if(Input.GetKeyDown("6")){
-            if(freeMode || deleteSynapseMode){
-                DeleteSynapseToggle();  
-            }
-        }
+        // if(Input.GetKeyDown("1")){
+        //     if(freeMode){
+        //         NewNeuron();
+        //     }
+        // }
+        // if(Input.GetKeyDown("2")){
+        //     if(freeMode){
+        //         NewOutputNeuron();
+        //     }
+        // }
+        // if(Input.GetKeyDown("3")){
+        //     if(freeMode || newSynapseMode){
+        //         NewSynapseToggle();
+        //     }
+        // }
+        // if(Input.GetKeyDown("4")){
+        //     if(freeMode || editNeuronMode){
+        //         EditNeuronToggle();
+        //     }
+        // }
+        // if(Input.GetKeyDown("5")){
+        //     if(freeMode || deleteNeuronMode){
+        //         DeleteNeuronToggle();
+        //     }
+        // }
+        // if(Input.GetKeyDown("6")){
+        //     if(freeMode || deleteSynapseMode){
+        //         DeleteSynapseToggle();  
+        //     }
+        // }
         if(Input.GetKey(KeyCode.RightControl) ||
                 Input.GetKey(KeyCode.LeftControl) ||
                 Input.GetKey(KeyCode.LeftApple) ||
@@ -276,12 +276,12 @@ public class EditorController : MonoBehaviour
             if(Input.GetKeyDown("s")){
                 Save();
             }
-        }
-        if(Input.GetKeyDown("=")){
-            zc.ZoomIn();
-        }
-        if(Input.GetKeyDown("-")){
-            zc.ZoomOut();
+            if(Input.GetKeyDown("=")){
+                zc.ZoomIn();
+            }
+            if(Input.GetKeyDown("-")){
+                zc.ZoomOut();
+            }
         }
         if(Input.GetKeyDown("p")){
             ChangePanMode();
@@ -310,7 +310,7 @@ public class EditorController : MonoBehaviour
     static void RequestQuitConfirmation()
     {
         SWF.DialogResult result = SWF.MessageBox.Show(
-            "Are you sure you want to cancel ?",
+            "Are you sure you want to exit?",
             "Question",
             SWF.MessageBoxButtons.YesNo,
             SWF.MessageBoxIcon.Question);
@@ -521,7 +521,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void StartMode(){
-        cancelButton.SetActive(true);
+        // cancelButton.SetActive(true);
     }
 
     public void CancelCurrentMode(){
@@ -545,7 +545,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EndMode(){
-        cancelButton.SetActive(false);
+        // cancelButton.SetActive(false);
     }
 
     public void neuronsRefresh() {

@@ -405,8 +405,10 @@ public class NeuronController : MonoBehaviour
         {
             int slashInd = rule.IndexOf("/");
             string reg = rule.Substring(0, slashInd);
+            int arrowInd = rule.IndexOf(">");
+            int consume = (rule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
             reg = "^" + reg + "$";
-            if (Regex.IsMatch(spikes, reg))
+            if (Regex.IsMatch(spikes, reg) && consume <= spikes.Length)
             {
                 matches.Add(rule);
             }
@@ -443,7 +445,15 @@ public class NeuronController : MonoBehaviour
         int semicolInd = chosenRule.IndexOf(";");
         int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
         int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
-        int delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
+        int delay = 0;
+        try
+        {
+            delay = int.Parse(chosenRule.Substring(semicolInd + 1, chosenRule.Length - semicolInd - 1));
+        }
+        catch(System.FormatException e) 
+        {
+            delay = 0;
+        }
         timer = delay;
         if (delay == 0)
             StoreRule(consume, give);

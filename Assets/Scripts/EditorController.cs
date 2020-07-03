@@ -1863,7 +1863,13 @@ public class EditorController : MonoBehaviour
                 if(!Regex.Match(parts[2], "^ *a* *$").Success)
                     return false;
                 if(!Regex.Match(parts[3], "^ *[0-9]+ *$").Success)
-                    return false;
+                {
+                    if(parts[3].Length != 0)
+                    {
+                        if(!Regex.Match(parts[3], "^ *$").Success)
+                            return false;
+                    }         
+                }  
                 Regex.Match("", parts[0]);
             }
             catch(ArgumentException e)

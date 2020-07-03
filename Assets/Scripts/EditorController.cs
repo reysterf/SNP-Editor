@@ -140,6 +140,7 @@ public class EditorController : MonoBehaviour
     public List<List<int>> delayHistory;
     private string outputPath;
     List<string> outputBitstrings = new List<string>();
+    private bool guidedCreated = false;
 
     public static bool quitConfirmation = false;
     public static GameObject quitTest;
@@ -1381,7 +1382,7 @@ public class EditorController : MonoBehaviour
         }
         else
         {
-            if (guidedMode && appliedRulesStorage.Count > 0)
+            if (guidedMode && appliedRulesStorage.Count > 0 && guidedCreated == false)
                 CreateGuidedMenus();
             IEnumerator waitGuided = WaitForGuided();
             StartCoroutine(waitGuided);
@@ -1434,7 +1435,8 @@ public class EditorController : MonoBehaviour
 
     private void CreateGuidedMenus()
     {
-        freeMode = false;
+        SetFreeMode(false);
+        guidedCreated = true;
         foreach((List<string>, string, int) rule in appliedRulesStorage)
         {
             if(rule.Item1.Count > 1)
@@ -1483,8 +1485,8 @@ public class EditorController : MonoBehaviour
 
     public void EndFire()
     {
-        
-        freeMode = true;
+        guidedCreated = false;
+        SetFreeMode(true);
         foreach(int i in neurons)
         {
             Neurons.GetComponent<NeuronsController>().EndFireNeurons(GameObject.Find("Neurons/" + i.ToString()));
@@ -1785,7 +1787,8 @@ public class EditorController : MonoBehaviour
             }
             SetStatusText("Loaded");
         }
-
+        configHistory.Clear();
+        globalTime = 0;
     }
     
     public List<int> GetAllSpikes()

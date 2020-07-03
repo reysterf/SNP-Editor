@@ -1871,6 +1871,11 @@ public class EditorController : MonoBehaviour
                     }         
                 }  
                 Regex.Match("", parts[0]);
+                string part1 = parts[1].Replace(" ", "");
+                string part2 = parts[2].Replace(" ", "");
+                //consumed should be greater than or equal to produced
+                if (part1.Length < part2.Length)
+                    return false;
             }
             catch(ArgumentException e)
             {

@@ -403,14 +403,15 @@ public class NeuronController : MonoBehaviour
         string chosenRule = "";
         foreach (string rule in rules)
         {
-            int slashInd = rule.IndexOf("/");
-            string reg = rule.Substring(0, slashInd);
-            int arrowInd = rule.IndexOf(">");
-            int consume = (rule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
+            string checkRule = rule.Replace(" ", "");
+            int slashInd = checkRule.IndexOf("/");
+            string reg = checkRule.Substring(0, slashInd);
+            int arrowInd = checkRule.IndexOf(">");
+            int consume = (checkRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
             reg = "^" + reg + "$";
             if (Regex.IsMatch(spikes, reg) && consume <= spikes.Length)
             {
-                matches.Add(rule);
+                matches.Add(checkRule);
             }
         }
 
@@ -438,7 +439,6 @@ public class NeuronController : MonoBehaviour
 
     public void ProcessRule(string chosenRule)
     {
-        chosenRule = chosenRule.Replace(" ", "");
         int slashInd = chosenRule.IndexOf("/");
         string reg = chosenRule.Substring(0, slashInd);
         int arrowInd = chosenRule.IndexOf(">");

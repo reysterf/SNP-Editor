@@ -322,6 +322,8 @@ public class EditorController : MonoBehaviour
         }
     }
 
+
+
     public void HideButtonsToggle(){
         if(!showButtonsMode){
             viewButtons.SetActive(true);

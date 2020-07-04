@@ -63,6 +63,7 @@
      <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserLinux.cs" />
      <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserMac.cs" />
      <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserWindows.cs" />
+     <Compile Include="Assets\TutorialController.cs" />
      <Compile Include="Assets\ZoomController.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.0f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

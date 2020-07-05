@@ -292,7 +292,7 @@ public class EditorController : MonoBehaviour
     [RuntimeInitializeOnLoadMethod]
     static void RunOnStart()
     {
-        Application.wantsToQuit += WantsToQuit;
+        // Application.wantsToQuit += WantsToQuit;
     }
 
     static bool WantsToQuit()

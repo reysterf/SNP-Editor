@@ -9,6 +9,7 @@ public class TutorialController : MonoBehaviour
     public GameObject title;
     public GameObject content;
     public GameObject pageNav;
+    public Toggle tutorialToggle;
 
     int currentPage = 0;
 
@@ -17,7 +18,12 @@ public class TutorialController : MonoBehaviour
 
     void Awake(){
         if(PlayerPrefs.GetInt("ShowTutorial", 1) == 0){
+            tutorialToggle.isOn = false;
             tutorialMenu.SetActive(false);
+        }
+        else{
+            tutorialMenu.SetActive(true);
+            tutorialToggle.isOn = true;
         }
     }
 
@@ -47,6 +53,10 @@ public class TutorialController : MonoBehaviour
         tutorialTitle.Add("Continuous Simulation");
         tutorialText.Add("You can simulate a system continuously. \n\nYou can start continuous simulation using the play (>) button. During continuous simulation, the program simulates the system until the user clicks the pause (||) button or until the system halts");
 
+        tutorialTitle.Add("Saving");
+        tutorialText.Add("//Add Details Later//");
+
+
         title.GetComponent<Text>().text = tutorialTitle[0];
         content.GetComponent<Text>().text = tutorialText[0];
         pageNav.GetComponent<Text>().text = (1).ToString() + "/" + tutorialTitle.Count.ToString();        
@@ -61,6 +71,17 @@ public class TutorialController : MonoBehaviour
 
     public void CloseTutorial(){
         tutorialMenu.SetActive(false);
+    }
+
+    public void OpenTutorial(){
+        if(PlayerPrefs.GetInt("ShowTutorial", 1) == 0){
+            tutorialToggle.isOn = false;
+        }
+        else{
+            tutorialMenu.SetActive(true);
+        }
+
+        tutorialMenu.SetActive(true);
     }
 
     public void NextPage(){
@@ -82,9 +103,11 @@ public class TutorialController : MonoBehaviour
 
     public void ToggleShowAgain(){
         if(PlayerPrefs.GetInt("ShowTutorial", 1) == 0){
+            tutorialToggle.isOn = true;
             PlayerPrefs.SetInt("ShowTutorial", 1);
         }
         else{
+            tutorialToggle.isOn = false;
             PlayerPrefs.SetInt("ShowTutorial", 0);
         }
     }

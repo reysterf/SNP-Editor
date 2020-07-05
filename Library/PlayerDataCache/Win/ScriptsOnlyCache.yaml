@@ -12,6 +12,7 @@ ScriptsOnlyBuild:
     - RulePrefabController
     - SynapseController
     - SynapsesController
+    - TutorialController
     - ZoomController
     Unity.2D.Tilemap.Editor.dll:
     - UnityEditor.Tilemaps.GridPaintingState
@@ -68,65 +69,67 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11170}
+      Script: {instanceID: 11150}
     - Class: 114
-      Script: {instanceID: 11302}
+      Script: {instanceID: 11152}
     - Class: 114
-      Script: {instanceID: 11346}
+      Script: {instanceID: 11154}
     - Class: 114
-      Script: {instanceID: 11348}
+      Script: {instanceID: 11156}
     - Class: 114
-      Script: {instanceID: 11386}
+      Script: {instanceID: 11158}
     - Class: 114
-      Script: {instanceID: 11442}
+      Script: {instanceID: 11160}
     - Class: 114
-      Script: {instanceID: 11492}
+      Script: {instanceID: 11178}
     - Class: 114
-      Script: {instanceID: 11510}
+      Script: {instanceID: 11312}
     - Class: 114
-      Script: {instanceID: 11704}
+      Script: {instanceID: 11356}
     - Class: 114
-      Script: {instanceID: 11812}
+      Script: {instanceID: 11358}
     - Class: 114
-      Script: {instanceID: 11982}
+      Script: {instanceID: 11428}
     - Class: 114
-      Script: {instanceID: 11984}
+      Script: {instanceID: 11516}
     - Class: 114
-      Script: {instanceID: 12022}
+      Script: {instanceID: 11710}
     - Class: 114
-      Script: {instanceID: 12040}
+      Script: {instanceID: 11818}
     - Class: 114
-      Script: {instanceID: 12166}
+      Script: {instanceID: 11992}
     - Class: 114
-      Script: {instanceID: 12242}
+      Script: {instanceID: 11994}
     - Class: 114
-      Script: {instanceID: 12340}
+      Script: {instanceID: 12032}
     - Class: 114
-      Script: {instanceID: 12442}
+      Script: {instanceID: 12050}
     - Class: 114
-      Script: {instanceID: 12472}
+      Script: {instanceID: 12176}
     - Class: 114
-      Script: {instanceID: 12500}
+      Script: {instanceID: 12348}
     - Class: 114
-      Script: {instanceID: 12598}
+      Script: {instanceID: 12504}
     - Class: 114
-      Script: {instanceID: 12616}
+      Script: {instanceID: 12604}
     - Class: 114
-      Script: {instanceID: 12760}
+      Script: {instanceID: 12622}
     - Class: 114
-      Script: {instanceID: 12832}
+      Script: {instanceID: 12766}
     - Class: 114
-      Script: {instanceID: 12878}
+      Script: {instanceID: 12838}
     - Class: 114
-      Script: {instanceID: 12892}
+      Script: {instanceID: 12884}
     - Class: 114
-      Script: {instanceID: 13156}
+      Script: {instanceID: 12898}
     - Class: 114
-      Script: {instanceID: 13172}
+      Script: {instanceID: 13162}
     - Class: 114
-      Script: {instanceID: 13208}
+      Script: {instanceID: 13178}
     - Class: 114
-      Script: {instanceID: 15744}
+      Script: {instanceID: 13214}
+    - Class: 114
+      Script: {instanceID: 16140}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -154,13 +157,49 @@ ScriptsOnlyBuild:
   scriptHashData:
   - hash:
       serializedVersion: 2
+      Hash: 89f9a1b4c64db9559e39f4a2e3bfaadd
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.UI
+    className: Image
+  - hash:
+      serializedVersion: 2
+      Hash: 5f1752ed2092162f016c19510c28a8b9
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.UI
+    className: Button
+  - hash:
+      serializedVersion: 2
+      Hash: 783f593b9380cf72d0f7ebfd4a0d4bcd
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.UI
+    className: InputField
+  - hash:
+      serializedVersion: 2
+      Hash: 8aa3d6ccbcb54ee8db6c1229854adaaa
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.UI
+    className: ContentSizeFitter
+  - hash:
+      serializedVersion: 2
+      Hash: 5ad4aa237d47ac2bab17bacb672edf7a
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.UI
+    className: HorizontalLayoutGroup
+  - hash:
+      serializedVersion: 2
+      Hash: 7ab0e790220bdca831fdd886b339039d
+    assemblyName: UnityEngine.UI.dll
+    namespaceName: UnityEngine.UI
+    className: GridLayoutGroup
+  - hash:
+      serializedVersion: 2
       Hash: 4bc4346a71a8df53a6b106f68ef3a190
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: CanvasScaler
   - hash:
       serializedVersion: 2
-      Hash: 3c08375166df118bd1801438fc36b92f
+      Hash: c42672c997f8be6b1aa86a927ebea785
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_SelectionCaret
@@ -185,6 +224,12 @@ ScriptsOnlyBuild:
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: UnityEngine.TestRunner.dll
+    namespaceName: UnityEngine.TestTools.TestRunner.Callbacks
+    className: PlayerQuitHandler
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: DeleteButtonController
@@ -202,7 +247,7 @@ ScriptsOnlyBuild:
     className: ActivationTrack
   - hash:
       serializedVersion: 2
-      Hash: 72712369a7c681ad84fc255a5ec0b333
+      Hash: aeb62f729c52c814dec86c47dcac1471
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Text
@@ -226,12 +271,6 @@ ScriptsOnlyBuild:
     className: TouchInputModule
   - hash:
       serializedVersion: 2
-      Hash: 8e0313c6f5e2ce35991fec2d64f8eaab
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.UI
-    className: Image
-  - hash:
-      serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: UnityEngine.TestRunner.dll
     namespaceName: UnityEngine.TestTools.TestRunner.Callbacks
@@ -250,16 +289,10 @@ ScriptsOnlyBuild:
     className: TMP_InputField
   - hash:
       serializedVersion: 2
-      Hash: 7ab0e790220bdca831fdd886b339039d
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.UI
-    className: GridLayoutGroup
-  - hash:
-      serializedVersion: 2
-      Hash: 8aa3d6ccbcb54ee8db6c1229854adaaa
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.UI
-    className: ContentSizeFitter
+      Hash: 2746a705aa90dac60fe3df572e4f31cd
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TutorialController
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -298,7 +331,7 @@ ScriptsOnlyBuild:
     className: RectMask2D
   - hash:
       serializedVersion: 2
-      Hash: 4e9333594897a1fb8b136ad2eae996c7
+      Hash: d941ab6dd93d37ffdf2277f2ea2375a0
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_SubMeshUI
@@ -442,13 +475,7 @@ ScriptsOnlyBuild:
     className: TextContainer
   - hash:
       serializedVersion: 2
-      Hash: 5f1752ed2092162f016c19510c28a8b9
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.UI
-    className: Button
-  - hash:
-      serializedVersion: 2
-      Hash: feb9a5a121d15fa3654d4e50a5233045
+      Hash: f84d945e5e1ca985698660fc26e9657f
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: RawImage
@@ -466,22 +493,10 @@ ScriptsOnlyBuild:
     className: VerticalLayoutGroup
   - hash:
       serializedVersion: 2
-      Hash: 783f593b9380cf72d0f7ebfd4a0d4bcd
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.UI
-    className: InputField
-  - hash:
-      serializedVersion: 2
       Hash: c9a8b80298a116835b51ba1cf9284367
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: SignalReceiver
-  - hash:
-      serializedVersion: 2
-      Hash: 5ad4aa237d47ac2bab17bacb672edf7a
-    assemblyName: UnityEngine.UI.dll
-    namespaceName: UnityEngine.UI
-    className: HorizontalLayoutGroup
   - hash:
       serializedVersion: 2
       Hash: 35a9693c388776aaf487636491a20f11
@@ -532,7 +547,7 @@ ScriptsOnlyBuild:
     className: OutputNeuronController
   - hash:
       serializedVersion: 2
-      Hash: 3b760e6526e13f7504f59e210145899a
+      Hash: 8001a5f7502aab37e42206da015e6914
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TextMeshProUGUI
@@ -556,7 +571,7 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
-      Hash: ed6c9520c5f20e34a49ac6c058b5d4a3
+      Hash: c39dc69ae2ac630a6a5ebeba5688f4a6
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: EditorController
@@ -586,7 +601,7 @@ ScriptsOnlyBuild:
     className: TMP_StyleSheet
   - hash:
       serializedVersion: 2
-      Hash: df434544c9f7b33d1cc7e635b180d279
+      Hash: 21d73eda81c18eacd2c91ad5dfaf2e32
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TextMeshPro
@@ -701,4 +716,4 @@ ScriptsOnlyBuild:
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainScene.unity
-  playerPath: C:/Users/Work/Documents/Thesis/testBuild/Snapse.exe
+  playerPath: C:/Users/Work/Documents/Thesis/testBuild2/SNP-Editor.exe

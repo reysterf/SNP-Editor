@@ -145,6 +145,10 @@ public class EditorController : MonoBehaviour
     public static bool quitConfirmation = false;
     public static GameObject quitTest;
 
+    public string autoSavePath;
+    public float autoSaveInterval;
+    public GameObject autoSaveNotif;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -171,6 +175,7 @@ public class EditorController : MonoBehaviour
         outputPath = Application.dataPath + "/output.txt";
         outputPathText.text = outputPath;
 
+
         showLabelsText.text = "Hide Labels";
         showRulesText.text = "Hide Rules";
 
@@ -180,6 +185,16 @@ public class EditorController : MonoBehaviour
         }
 
         SetStatusText("");
+
+
+        autoSavePath = Application.dataPath + "/autoSave.snapse";
+        AutoSave();
+        
+        //temp
+        autoSaveInterval = 60f;
+        //temp
+
+        InvokeRepeating("AutoSave", autoSaveInterval, autoSaveInterval);
     }
 
     // Update is called once per frame
@@ -933,7 +948,6 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditNeuronCancel(){
-        //// Add Functionality: "DON'T SAVE CHANGES"
 
         editNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
@@ -942,7 +956,6 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditNeuronSave(){
-        //// Add Functionality: "SAVE CHANGES"
 
         editNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
@@ -1761,6 +1774,33 @@ public class EditorController : MonoBehaviour
         }
 
     }
+
+    public void AutoSave(){
+        print(Time.time);
+        string path = autoSavePath;
+
+        if (path.Length != 0)
+        {
+            var configData = System.Text.Encoding.UTF8.GetBytes(EncodeToFormat());
+            if (configData != null)
+                File.WriteAllBytes(path, configData);
+            
+            SetStatusText("Autosaved!");
+        }
+        autoSaveNotif.GetComponent<Text>().text = "System autosaved at: \n" + autoSavePath;
+        IEnumerator notify = AutoSaveNotify();
+        StartCoroutine(notify);
+
+    }
+
+    private IEnumerator AutoSaveNotify(){
+        autoSaveNotif.SetActive(true);
+        yield return new WaitForSeconds(10f);
+        autoSaveNotif.SetActive(false);
+
+    }
+
+
 
     public void Load(){
         string[] path = StandaloneFileBrowser.OpenFilePanel("Load snapse file", "", "snapse", false);

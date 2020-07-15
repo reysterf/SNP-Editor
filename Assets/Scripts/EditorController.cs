@@ -145,6 +145,7 @@ public class EditorController : MonoBehaviour
     public static bool quitConfirmation = false;
     public static GameObject quitTest;
 
+    public SaveMenuController saveMenuController;
     public string autoSavePath;
     public float autoSaveInterval;
     public GameObject autoSaveNotif;
@@ -187,7 +188,7 @@ public class EditorController : MonoBehaviour
         SetStatusText("");
 
 
-        autoSavePath = Application.dataPath + "/autoSave.snapse";
+        autoSavePath = saveMenuController.GetSavePath();
         AutoSave();
         
         //temp
@@ -1758,11 +1759,12 @@ public class EditorController : MonoBehaviour
     }
 
     public void Save(){
-        var path = StandaloneFileBrowser.SaveFilePanel(
-        "Save as",
-        "",
-        "Untitled.snapse",
-        "snapse");
+        // var path = StandaloneFileBrowser.SaveFilePanel(
+        // "Save as",
+        // "",
+        // "Untitled.snapse",
+        // "snapse");
+        string path = autoSavePath;
 
         if (path.Length != 0)
         {
@@ -1773,6 +1775,10 @@ public class EditorController : MonoBehaviour
             SetStatusText("Saved!");
         }
 
+    }
+
+    public void ChangeAutoSavePath(string newPath){
+        autoSavePath = newPath;
     }
 
     public void AutoSave(){

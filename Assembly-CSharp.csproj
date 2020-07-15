@@ -38,6 +38,7 @@
   <ItemGroup>
      <Compile Include="Assets\DropdownController.cs" />
      <Compile Include="Assets\OutputNeuronController.cs" />
+     <Compile Include="Assets\SaveMenuController.cs" />
      <Compile Include="Assets\Scripts\ChoiceController.cs" />
      <Compile Include="Assets\Scripts\ChoiceNode.cs" />
      <Compile Include="Assets\Scripts\DeleteButtonController.cs" />

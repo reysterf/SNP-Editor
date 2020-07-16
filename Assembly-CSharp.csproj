@@ -36,6 +36,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\DropdownController.cs" />
      <Compile Include="Assets\LoadMenuController.cs" />
      <Compile Include="Assets\OutputNeuronController.cs" />
      <Compile Include="Assets\SaveMenuController.cs" />

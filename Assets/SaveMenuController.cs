@@ -22,7 +22,6 @@ public class SaveMenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        saveMenu.SetActive(false);
         saveNotif.gameObject.SetActive(false);
         savePathInputField.text = "autosave";
     }

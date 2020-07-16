@@ -22,7 +22,6 @@ public class SaveMenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CreateSavesFolder();
         saveMenu.SetActive(false);
         saveNotif.gameObject.SetActive(false);
         savePathInputField.text = "autosave";
@@ -45,7 +44,7 @@ public class SaveMenuController : MonoBehaviour
     
     public void Save(){
         SaveNotification();
-        ChangeAutoSavePath();
+        UpdateAutoSavePath();
     }
 
     public string GetSavePath(){
@@ -61,18 +60,9 @@ public class SaveMenuController : MonoBehaviour
         saveNotif.gameObject.SetActive(false);
     }
 
-    void ChangeAutoSavePath(){
+    void UpdateAutoSavePath(){
         editorController.ChangeAutoSavePath(savePath);
     }
 
-    void CreateSavesFolder(){
-        // Specify a name for your top-level folder.
-        string folderName = Application.dataPath;
 
-        // To create a string that specifies the path to a subfolder under your
-        // top-level folder, add a name for the subfolder to folderName.
-        string pathString = System.IO.Path.Combine(folderName, "saves");
-
-        System.IO.Directory.CreateDirectory(pathString);
-    }
 }

@@ -150,6 +150,11 @@ public class EditorController : MonoBehaviour
     public float autoSaveInterval;
     public GameObject autoSaveNotif;
 
+    void Awake(){
+        CreateSavesFolder();
+        autoSavePath = Application.dataPath + "/saves/autosave.snapse";
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -187,8 +192,6 @@ public class EditorController : MonoBehaviour
 
         SetStatusText("");
 
-
-        autoSavePath = saveMenuController.GetSavePath();
         AutoSave();
         
         //temp
@@ -291,7 +294,11 @@ public class EditorController : MonoBehaviour
                 Input.GetKey(KeyCode.LeftApple) ||
                 Input.GetKey(KeyCode.RightApple)){
             if(Input.GetKeyDown("s")){
-                Save();
+                if(autoSavePath == Application.dataPath + "/saves/autosave.snapse"){ //First time saving
+                    saveMenuController.OpenSaveMenu();
+                }else{
+                    AutoSave();
+                }
             }
             if(Input.GetKeyDown("=")){
                 zc.ZoomIn();
@@ -303,6 +310,17 @@ public class EditorController : MonoBehaviour
         if(Input.GetKeyDown("p")){
             ChangePanMode();
         }
+    }
+
+    void CreateSavesFolder(){
+        // Specify a name for your top-level folder.
+        string folderName = Application.dataPath;
+
+        // To create a string that specifies the path to a subfolder under your
+        // top-level folder, add a name for the subfolder to folderName.
+        string pathString = System.IO.Path.Combine(folderName, "saves");
+
+        System.IO.Directory.CreateDirectory(pathString);
     }
 
     [RuntimeInitializeOnLoadMethod]
@@ -1777,8 +1795,13 @@ public class EditorController : MonoBehaviour
 
     }
 
+    public string GetAutoSavePath(){
+        return autoSavePath;
+    }
+
     public void ChangeAutoSavePath(string newPath){
         autoSavePath = newPath;
+        AutoSave();
     }
 
     public void AutoSave(){
@@ -1806,7 +1829,34 @@ public class EditorController : MonoBehaviour
 
     }
 
+    public void LoadFromPath(string path){
+        // foreach (string p in path)
+        //     print(p);
+        
+        if (path.Length != 0)
+        {
+            var fileContent = File.ReadAllBytes(path);
+            string formatData = System.Text.Encoding.UTF8.GetString(fileContent);
 
+            bool hasPositionData = false;
+            hasPositionData = DecodeFromFormat(formatData);
+
+            if(!hasPositionData){
+                //Auto Layout
+                print("NO POSITION DATA");
+                Neurons.GetComponent<GridLayoutGroup>().cellSize = new Vector2(200, 200);
+                Neurons.GetComponent<GridLayoutGroup>().enabled = true;
+                Neurons.GetComponent<GridLayoutGroup>().CalculateLayoutInputHorizontal();
+                Neurons.GetComponent<GridLayoutGroup>().CalculateLayoutInputVertical();
+                Neurons.GetComponent<GridLayoutGroup>().SetLayoutHorizontal();
+                Neurons.GetComponent<GridLayoutGroup>().SetLayoutVertical();
+                Neurons.GetComponent<GridLayoutGroup>().enabled = false;
+            }
+            SetStatusText("Loaded");
+        }
+        configHistory.Clear();
+        globalTime = 0;
+    }
 
     public void Load(){
         string[] path = StandaloneFileBrowser.OpenFilePanel("Load snapse file", "", "snapse", false);

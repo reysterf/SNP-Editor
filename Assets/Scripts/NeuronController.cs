@@ -277,7 +277,7 @@ public class NeuronController : MonoBehaviour
 
     void OnMouseDrag()
     {
-        if(!ec.isDeleteSynapseMode()){
+        if(!ec.isDeleteSynapseMode() && ec.GetDragMode() && !ec.GetEditInstanceMode()){
             Vector3 cursorScreenPoint = new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
             Vector3 cursorPosition = Camera.main.ScreenToWorldPoint (cursorScreenPoint) + offset;
             transform.position = cursorPosition;

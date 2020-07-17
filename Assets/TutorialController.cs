@@ -53,8 +53,8 @@ public class TutorialController : MonoBehaviour
         tutorialTitle.Add("Continuous Simulation");
         tutorialText.Add("You can simulate a system continuously. \n\nYou can start continuous simulation using the play (>) button. During continuous simulation, the program simulates the system until the user clicks the pause (||) button or until the system halts");
 
-        tutorialTitle.Add("Saving");
-        tutorialText.Add("//Add Details Later//");
+        tutorialTitle.Add("Saving and Loading");
+        tutorialText.Add("The program autosaves new systems at \"autosave.snapse\". You can then change the save path by clicking \"Save\". After changing the path, the program will now autosave at the specified path.\n\nFor loading, the program looks at the \"saves\" folder in the application directory and lists the snapse files there. Note: The program doesn't look in subfolders.");
 
 
         title.GetComponent<Text>().text = tutorialTitle[0];

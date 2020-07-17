@@ -98,6 +98,7 @@ public class EditorController : MonoBehaviour
 
     public GameObject viewButtons;
     public GameObject controlButtons;
+    public GameObject simulationButtons;
     public GameObject titleText;
     public GameObject showButtonsButton;
     public GameObject settingsButton;
@@ -149,6 +150,9 @@ public class EditorController : MonoBehaviour
     public string autoSavePath;
     public float autoSaveInterval;
     public GameObject autoSaveNotif;
+
+    bool dragMode = true;
+    bool editInstanceMode = false;
 
     void Awake(){
         CreateSavesFolder();
@@ -208,12 +212,12 @@ public class EditorController : MonoBehaviour
 
         if (freeModeChanged) {
             if (!freeMode) {
-                DisableButtons();
+                DisableButtonsExceptView();
                 print("Disable Buttons");
                 freeModeChanged = false;
             }
             else if (freeMode) {
-                EnableButtons();
+                EnableButtonsExceptView();
                 print("Enable Buttons");
                 freeModeChanged = false;
             }
@@ -259,36 +263,6 @@ public class EditorController : MonoBehaviour
         if(deleteSynapseMode){
             deleteSynapseButton.interactable = true;
         }
-        // if(Input.GetKeyDown("1")){
-        //     if(freeMode){
-        //         NewNeuron();
-        //     }
-        // }
-        // if(Input.GetKeyDown("2")){
-        //     if(freeMode){
-        //         NewOutputNeuron();
-        //     }
-        // }
-        // if(Input.GetKeyDown("3")){
-        //     if(freeMode || newSynapseMode){
-        //         NewSynapseToggle();
-        //     }
-        // }
-        // if(Input.GetKeyDown("4")){
-        //     if(freeMode || editNeuronMode){
-        //         EditNeuronToggle();
-        //     }
-        // }
-        // if(Input.GetKeyDown("5")){
-        //     if(freeMode || deleteNeuronMode){
-        //         DeleteNeuronToggle();
-        //     }
-        // }
-        // if(Input.GetKeyDown("6")){
-        //     if(freeMode || deleteSynapseMode){
-        //         DeleteSynapseToggle();  
-        //     }
-        // }
         if(Input.GetKey(KeyCode.RightControl) ||
                 Input.GetKey(KeyCode.LeftControl) ||
                 Input.GetKey(KeyCode.LeftApple) ||
@@ -310,6 +284,36 @@ public class EditorController : MonoBehaviour
         if(Input.GetKeyDown("p")){
             ChangePanMode();
         }
+    }
+
+    void ReduceOpacity(Image img){
+        img.color = new Color(0.7843137f, 0.7843137f, 0.7843137f, 0.5019608f);
+    }
+
+    void ReturnToWhite(Image img){
+        img.color = Color.white;
+    }
+
+    void DisableNonInteractable(){
+        ReduceOpacity(titleText.GetComponent<Image>());
+        ReduceOpacity(statusBar.GetComponent<Image>());
+    }
+
+    void EnableNonInteractable(){
+        ReturnToWhite(titleText.GetComponent<Image>());
+        ReturnToWhite(statusBar.GetComponent<Image>());
+    }
+
+    public bool GetDragMode(){
+        return dragMode;
+    }
+
+    public void SetDragMode(bool mode){
+        dragMode = mode;
+    }
+
+    public bool GetEditInstanceMode(){
+        return editInstanceMode;
     }
 
     void CreateSavesFolder(){
@@ -356,7 +360,67 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    void DisableViewButtons(){
+        Button[] buttons = viewButtons.transform.GetComponentsInChildren<Button>();
 
+        foreach (Button button in buttons) {
+            button.interactable = false;
+        }
+    }
+
+    void EnableViewButtons(){
+        Button[] buttons = viewButtons.transform.GetComponentsInChildren<Button>();
+
+        foreach (Button button in buttons) {
+            button.interactable = true;
+        }
+    }
+
+    void DisableSimulationButtons(){
+        Button[] buttons = simulationButtons.transform.GetComponentsInChildren<Button>();
+
+        foreach (Button button in buttons) {
+            button.interactable = false;
+        }
+    }
+
+    void EnableSimulationButtons(){
+        Button[] buttons = simulationButtons.transform.GetComponentsInChildren<Button>();
+
+        foreach (Button button in buttons) {
+            button.interactable = true;
+        }
+    }
+
+
+    void DisableControlButtons(){
+        Button[] buttons = controlButtons.transform.GetComponentsInChildren<Button>();
+
+        foreach (Button button in buttons) {
+            button.interactable = false;
+        }
+    }
+
+    void EnableControlButtons(){
+        Button[] buttons = controlButtons.transform.GetComponentsInChildren<Button>();
+
+        foreach (Button button in buttons) {
+            button.interactable = true;
+        }
+    }
+
+    void DisableMiscButtons(){
+        settingsButton.GetComponent<Button>().interactable = false;
+        showButtonsButton.GetComponent<Button>().interactable = false;
+        helpButton.GetComponent<Button>().interactable = false;
+    }
+
+    void EnableMiscButtons(){
+        settingsButton.GetComponent<Button>().interactable = true;
+        showButtonsButton.GetComponent<Button>().interactable = true;
+        helpButton.GetComponent<Button>().interactable = true;
+
+    }
 
     public void HideButtonsToggle(){
         if(!showButtonsMode){
@@ -412,11 +476,15 @@ public class EditorController : MonoBehaviour
     public void HelpMenuOpen(){
         SetFreeMode(false);
         helpMenu.SetActive(true);
+        DisableButtonsAll();
+        DisableNonInteractable();
     }
 
     public void HelpMenuClose(){
         SetFreeMode(true);
         helpMenu.SetActive(false);
+        EnableButtonsAll();
+        EnableNonInteractable();
     }
 
 
@@ -426,6 +494,7 @@ public class EditorController : MonoBehaviour
             SettingsMenuOpen();
         }
         else if(settingsMenuMode){
+
             settingsMenuMode = false;
             SettingsMenuClose();
         }
@@ -434,11 +503,15 @@ public class EditorController : MonoBehaviour
     public void SettingsMenuOpen(){
         SetFreeMode(false);
         settingsMenu.SetActive(true);        
+        DisableButtonsAll();
+        DisableNonInteractable();
     }
 
     public void SettingsMenuClose(){
         SetFreeMode(true);
         settingsMenu.SetActive(false);
+        EnableButtonsAll();
+        EnableNonInteractable();
     }
 
     public void SetToPseudorandomMode(){
@@ -471,29 +544,30 @@ public class EditorController : MonoBehaviour
         freeModeChanged = true;
     }
 
-    public void DisableButtons() {
-        Button[] buttons = controlButtons.transform.GetComponentsInChildren<Button>();
-
-        foreach (Button button in buttons) {
-            button.interactable = false;
-        }
-
-        settingsButton.GetComponent<Button>().interactable = false;
-        showButtonsButton.GetComponent<Button>().interactable = false;
-        helpButton.GetComponent<Button>().interactable = false;
-
+    public void DisableButtonsExceptView() {
+        DisableControlButtons();
+        DisableMiscButtons();
+        DisableSimulationButtons();
     }
 
-    public void EnableButtons() {
-        Button[] buttons = controlButtons.transform.GetComponentsInChildren<Button>();
+    public void EnableButtonsExceptView() {
+        EnableControlButtons();
+        EnableMiscButtons();
+        EnableSimulationButtons();
+    }
 
-        foreach (Button button in buttons) {
-            button.interactable = true;
-        }
+    public void DisableButtonsAll() {
+        DisableControlButtons();
+        DisableMiscButtons();
+        DisableSimulationButtons();
+        DisableViewButtons();
+    }
 
-        settingsButton.GetComponent<Button>().interactable = true;
-        showButtonsButton.GetComponent<Button>().interactable = true;
-        helpButton.GetComponent<Button>().interactable = true;
+    public void EnableButtonsAll() {
+        EnableControlButtons();
+        EnableMiscButtons();
+        EnableSimulationButtons();
+        EnableViewButtons();
     }
 
     public void ChangePanMode() {
@@ -502,7 +576,11 @@ public class EditorController : MonoBehaviour
         panModeIndicator.SetActive(panMode);
         panController.SetPanMode(panMode);
         if (panMode) {
+            SetDragMode(false);
             SetStatusText("Pan Mode");
+        }
+        else if(!panMode){
+            SetDragMode(true);
         }
     }
 
@@ -939,6 +1017,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditNeuron(GameObject neuron){
+        //Deprecated
         editNeuronMenu.SetActive(true);
 
         activeNeuronForEditing = neuron;
@@ -958,6 +1037,7 @@ public class EditorController : MonoBehaviour
 
     public void EditNeuron(GameObject neuron, string mode){
         activeNeuronForEditing = neuron;
+        editInstanceMode = true;
         if(mode == "spikes"){
             EditSpikesStart();
         }  
@@ -967,7 +1047,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditNeuronCancel(){
-
+        //deprecated(?)
         editNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         editNeuronMenu.SetActive(false);
@@ -975,7 +1055,7 @@ public class EditorController : MonoBehaviour
     }
 
     public void EditNeuronSave(){
-
+        //deprecated(?)
         editNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         editNeuronMenu.SetActive(false);
@@ -1016,7 +1096,7 @@ public class EditorController : MonoBehaviour
             SetStatusText("Rules successfully edited");
         else
             SetStatusText("Invalid rule format");
-
+        editInstanceMode = false;
         // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);       
         // EndMode();
     }
@@ -1029,6 +1109,7 @@ public class EditorController : MonoBehaviour
         // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
 
         SetStatusText("Rules edit cancelled");
+        editInstanceMode = false;
         // EndMode();
     }
 
@@ -1064,6 +1145,8 @@ public class EditorController : MonoBehaviour
         activeNeuronForEditing.GetComponent<NeuronController>().SetSpikes(int.Parse(spikesInputField.text));
 
         SetStatusText("Spikes successfully edited");
+        editInstanceMode = false;
+
         // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         // EndMode();
     }
@@ -1074,6 +1157,7 @@ public class EditorController : MonoBehaviour
 
         editSpikesMode = false;
         editSpikesMenu.SetActive(false);
+        editInstanceMode = false;
 
         // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
         // SetStatusText("Spikes edit cancelled");

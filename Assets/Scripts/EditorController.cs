@@ -127,7 +127,7 @@ public class EditorController : MonoBehaviour
     public GameObject pseudorandomToggleIndicator;
     public GameObject guidedToggleIndicator;
     public Text outputPathText;
-
+    public Text savesPathText;
 
     public Material white;
 
@@ -184,6 +184,7 @@ public class EditorController : MonoBehaviour
         appliedRulesStorage = new List<(List<string>, string, int)>();
         outputPath = Application.dataPath + "/output.txt";
         outputPathText.text = outputPath;
+        savesPathText.text = Application.dataPath + "/saves/";
 
 
         showLabelsText.text = "Hide Labels";
@@ -1334,9 +1335,6 @@ public class EditorController : MonoBehaviour
         // synapse.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, distance); 
     }
 
-    public void UpdateSynapseLength(){
-        
-    }
 
     public void DrawLine(string sourceNeuronName, string destNeuronName, float duration = 0.03f)
     {

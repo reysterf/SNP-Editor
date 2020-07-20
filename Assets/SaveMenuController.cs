@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +14,7 @@ public class SaveMenuController : MonoBehaviour
     public Text savePathText;
     public InputField savePathInputField;
     public Text saveNotif;
+    public Text errorNotif;
 
     string savePath;
 
@@ -42,8 +45,42 @@ public class SaveMenuController : MonoBehaviour
     }
     
     public void Save(){
-        SaveNotification();
-        UpdateAutoSavePath();
+        if(ValidPath()){
+            SaveNotification();
+            UpdateAutoSavePath();
+        }
+        else if(!ValidPath()){
+            ErrorNotification("Invalid Path");
+        }
+    }
+
+    bool ValidPath(){
+        System.IO.FileInfo fi = null;
+        try {
+        fi = new System.IO.FileInfo(savePathText.text);
+        }
+        catch (ArgumentException) { }
+        catch (System.IO.PathTooLongException) { }
+        catch (NotSupportedException) { }
+        if (ReferenceEquals(fi, null)) {
+            return false;
+        } 
+        else {
+            char[] invalidFileChars = Path.GetInvalidFileNameChars();
+            char[] fileNameChars = savePathInputField.text.ToCharArray();
+            foreach (char c in fileNameChars){
+                foreach (char ic in invalidFileChars){
+                    if(c == ic){
+                        return false;
+                    }
+                }
+                if(c == '\\'){
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public string GetSavePath(){
@@ -57,6 +94,16 @@ public class SaveMenuController : MonoBehaviour
 
     void DisableNotif(){
         saveNotif.gameObject.SetActive(false);
+    }
+
+    void ErrorNotification(string error){
+        errorNotif.text = error;
+        errorNotif.gameObject.SetActive(true);
+        Invoke("DisableErrorNotif", 3.0f);
+    }
+
+    void DisableErrorNotif(){
+        errorNotif.gameObject.SetActive(false);
     }
 
     void UpdateAutoSavePath(){

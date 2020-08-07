@@ -978,8 +978,14 @@ public class EditorController : MonoBehaviour
 
         foreach ((int i, int j) in synapsesToDelete){
             GameObject synapseToDelete = GameObject.Find(i.ToString() + "-" + j.ToString());
+            RemoveOutSynapseFromSource(i, j);
             Destroy(synapseToDelete);
         }
+    }
+
+    void RemoveOutSynapseFromSource(int source, int dest){
+        GameObject sourceNeuron = GameObject.Find(source.ToString());
+        sourceNeuron.GetComponent<NeuronController>().DeleteOutSynapse(dest);
     }
 
     public void EditNeuronToggle(){
@@ -1469,6 +1475,7 @@ public class EditorController : MonoBehaviour
     IEnumerator FireOneStep()
     {
         configHistory.Add(GetAllSpikes());
+        LogConfig();
         delayHistory.Add(GetAllDelay());
         fireState = 1;
         //create Root (ie. the first configuration)
@@ -1997,13 +2004,12 @@ public class EditorController : MonoBehaviour
 
     public void SetAllSpikes(List<int> config)
     {
+        int counter = 0;
         foreach (int i in neurons)
         {
-            if (i < config.Count)
-            {
-                GameObject neuronObject = GameObject.Find(i.ToString());
-                neuronObject.GetComponent<NeuronController>().SetSpikes(config[i]);
-            }               
+            GameObject neuronObject = GameObject.Find(i.ToString());
+            neuronObject.GetComponent<NeuronController>().SetSpikes(config[counter]);           
+            counter++;
         }
     }
 

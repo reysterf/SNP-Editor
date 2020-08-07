@@ -32,6 +32,9 @@ public class TutorialController : MonoBehaviour
         tutorialText = new List<string>();
         tutorialTitle = new List<string>();
 
+        tutorialTitle.Add("About");
+        tutorialText.Add("Snapse is a GUI for Spiking Neural P systems built by Aleksei Fernandez and Reyster Fresco from the Algorithms and Complexity Lab (ACL) of the Department of Computer Science, University of the Philippines Diliman, under the guidance of Francis Cabarle and with the help of colleagues in the ACL.");
+
         tutorialTitle.Add("Creating Neurons");
         tutorialText.Add("Creating a neuron (via \"New Neuron\") will create an empty neuron with no rules and zero spikes. You can add rules and spikes using the \"Edit Neuron\" button.\n\nYou can also create an output neuron via \"New Output\" to receive the output of your system. This can serve as a substitute for the environment in SNP systems.");
 
@@ -55,7 +58,6 @@ public class TutorialController : MonoBehaviour
 
         tutorialTitle.Add("Saving and Loading");
         tutorialText.Add("The program autosaves new systems at \"autosave.snapse\". You can then change the save path by clicking \"Save\". After changing the path, the program will now autosave at the specified path.\n\nFor loading, the program looks at the \"saves\" folder in the application directory and lists the snapse files there. Note: The program doesn't look in subfolders.");
-
 
         title.GetComponent<Text>().text = tutorialTitle[0];
         content.GetComponent<Text>().text = tutorialText[0];

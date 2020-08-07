@@ -142,6 +142,7 @@ public class NeuronController : MonoBehaviour
 
     }
 
+
     void EditNeuronModeReceiver(bool mode){
         editNeuronMode = mode;
         if(editNeuronMode){
@@ -248,6 +249,7 @@ public class NeuronController : MonoBehaviour
     }
 
     public void DeleteOutSynapse(int neuron){
+        print("DELETED");
         outSynapses.Remove(neuron);
     }
 

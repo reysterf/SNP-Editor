@@ -38,10 +38,14 @@ public class SaveMenuController : MonoBehaviour
 
     public void OpenSaveMenu(){
         saveMenu.SetActive(true);
+        editorController.DisableButtonsAll();
+        editorController.DisableNonInteractable();
     }
 
     public void CloseSaveMenu(){
         saveMenu.SetActive(false);
+        editorController.EnableButtonsAll();
+        editorController.EnableNonInteractable();
     }
     
     public void Save(){

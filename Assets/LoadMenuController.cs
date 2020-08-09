@@ -67,11 +67,14 @@ public class LoadMenuController : MonoBehaviour
 
     public void OpenLoadMenu(){
         loadMenu.SetActive(true);
-
+        editorController.DisableButtonsAll();
+        editorController.DisableNonInteractable();
     }
 
     public void CloseLoadMenu(){
         loadMenu.SetActive(false);
+        editorController.EnableButtonsAll();
+        editorController.EnableNonInteractable();
     }
 
     public void Load(){

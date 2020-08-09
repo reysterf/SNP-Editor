@@ -295,12 +295,12 @@ public class EditorController : MonoBehaviour
         img.color = Color.white;
     }
 
-    void DisableNonInteractable(){
+    public void DisableNonInteractable(){
         ReduceOpacity(titleText.GetComponent<Image>());
         ReduceOpacity(statusBar.GetComponent<Image>());
     }
 
-    void EnableNonInteractable(){
+    public void EnableNonInteractable(){
         ReturnToWhite(titleText.GetComponent<Image>());
         ReturnToWhite(statusBar.GetComponent<Image>());
     }

@@ -39,7 +39,7 @@ public class TutorialController : MonoBehaviour
         tutorialText.Add("Clicking \"Edit Neuron\" toggles neuron editing mode where you can edit the spikes and rules of the neurons in the system. To add rules and spikes to an empty neuron, click the box below \"Spikes\" or \"Rules\", whichever you want to edit.\n\nClicking \"Edit Neuron\" again will exit neuron editing mode.");
 
         tutorialTitle.Add("Writing Rules");
-        tutorialText.Add("To write a rule, follow the format \"E/c->p;d\" where E is a regular expression over {a} and c and p are strings over the alphabet {a} whose length is equal to the number of spikes to be consumed and to be produced, respectively. d, on the other hand, is a number equal to the delay. For example, a(aa)*/aaa→aa;2 is a valid rule while a(aa)*/a3→a2;2 and a(aa)*/a3→a2;2 are not. \n\nTo write a forgetting rule simply leave p to be an empty string. For example, a*/a->;2 is a valid forgetting rule");
+        tutorialText.Add("To write a rule, follow the format \"E/c->p;d\" where E is a regular expression over {a} and c and p are strings over the alphabet {a} whose length is equal to the number of spikes to be consumed and to be produced, respectively. d, on the other hand, is a number equal to the delay. For example, a(aa)*/aaa→aa;2 is a valid rule while a(aa)*/a3→a2;2 and a(aa)*/a3→a2;2 are not. \n\nTo write a forgetting rule simply assign p=0 and d=0. For example, a*/a->0;0 is a valid forgetting rule");
 
         tutorialTitle.Add("Deleting Neurons");
         tutorialText.Add("Clicking \"Delete Neuron\" toggles neuron deletion mode. During neuron deletion mode, you can delete neurons by clicking them.\n\nTo exit neuron deletion mode, simply click \"Delete Neuron\" again.");

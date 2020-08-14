@@ -1101,8 +1101,6 @@ public class EditorController : MonoBehaviour
 
         if(activeNeuronForEditing.GetComponent<NeuronController>().SetRules(rulesInputField.text))
             SetStatusText("Rules successfully edited");
-        else
-            SetStatusText("Invalid rule format");
         editInstanceMode = false;
         // Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);       
         // EndMode();
@@ -2041,27 +2039,54 @@ public class EditorController : MonoBehaviour
             {
                 print("2:" + parts[2]+"end");
                 print(parts[2] != "");
-                print(!Regex.Match(parts[2], "^ *a* *$").Success);
-                if(!Regex.Match(parts[0],"^[^A-Zb-z0-9]*a[^A-Zb-z0-9]*$").Success)
-                    return false;
-                if(!Regex.Match(parts[1], "^ *a+ *$").Success)
-                    return false;
-                if(!Regex.Match(parts[2], "^ *a* *$").Success)
-                    return false;
-                if(!Regex.Match(parts[3], "^ *[0-9]+ *$").Success)
+                print(!Regex.Match(parts[2], "^ *a+ *$").Success);
+                if (!Regex.Match(parts[0], "^[^A-Zb-z0-9]*a[^A-Zb-z0-9]*$").Success)
                 {
-                    if(parts[3].Length != 0)
+                    SetStatusText("Invalid Rule Format: Invalid regex");
+                    return false;
+                }
+                if(!Regex.Match(parts[1], "^ *a+ *$").Success)
+                {
+                    SetStatusText("Invalid Rule Format: Consumed spikes must be a string in {a}");
+                    return false;
+                }                    
+                if (!Regex.Match(parts[2], "^ *a+ *$").Success)
+                {
+                    if(!Regex.Match(parts[2], "^ *0 *$").Success)
                     {
-                        if(!Regex.Match(parts[3], "^ *$").Success)
+                        SetStatusText("Invalid Rule Format: Given spikes must be a string in {a}");
+                        return false;
+                    }     
+                    else
+                    {
+                        if (!Regex.Match(parts[3], "^ *0 *$").Success)
+                        {
+                            SetStatusText("Invalid Rule Format: Forgetting rules must have 0 delay");
                             return false;
-                    }         
-                }  
+                        }
+                    }
+                }
+                if (!Regex.Match(parts[3], "^ *[0-9]+ *$").Success)
+                {
+                    if (parts[3].Length != 0)
+                    {
+                        if (!Regex.Match(parts[3], "^ *$").Success)
+                        {
+                            SetStatusText("Invalid Rule Format: Delay must be an integer");
+                            return false;
+                        }
+                    }
+                }
                 Regex.Match("", parts[0]);
                 string part1 = parts[1].Replace(" ", "");
                 string part2 = parts[2].Replace(" ", "");
                 //consumed should be greater than or equal to produced
                 if (part1.Length < part2.Length)
+                {
+                    SetStatusText("Invalid Rule Format: Consumed must be greater than given");
                     return false;
+                }
+                    
             }
             catch(ArgumentException e)
             {

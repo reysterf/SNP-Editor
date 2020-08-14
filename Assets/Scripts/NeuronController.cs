@@ -446,7 +446,9 @@ public class NeuronController : MonoBehaviour
         int arrowInd = chosenRule.IndexOf(">");
         int semicolInd = chosenRule.IndexOf(";");
         int consume = (chosenRule.Substring(slashInd + 1, arrowInd - slashInd - 2)).Length;
-        int give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
+        int give = 0;
+        if(chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1) != "0")
+            give = (chosenRule.Substring(arrowInd + 1, semicolInd - arrowInd - 1)).Length;
         int delay = 0;
         try
         {

@@ -78,77 +78,77 @@ ScriptsOnlyBuild:
     - Class: 111
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11146}
+      Script: {instanceID: 11132}
     - Class: 114
-      Script: {instanceID: 11148}
+      Script: {instanceID: 11134}
     - Class: 114
-      Script: {instanceID: 11150}
+      Script: {instanceID: 11136}
     - Class: 114
-      Script: {instanceID: 11152}
+      Script: {instanceID: 11138}
     - Class: 114
-      Script: {instanceID: 11154}
+      Script: {instanceID: 11140}
     - Class: 114
-      Script: {instanceID: 11156}
+      Script: {instanceID: 11142}
     - Class: 114
-      Script: {instanceID: 11174}
+      Script: {instanceID: 11162}
     - Class: 114
-      Script: {instanceID: 11308}
+      Script: {instanceID: 11296}
     - Class: 114
-      Script: {instanceID: 11352}
+      Script: {instanceID: 11340}
     - Class: 114
-      Script: {instanceID: 11354}
+      Script: {instanceID: 11342}
     - Class: 114
-      Script: {instanceID: 11424}
+      Script: {instanceID: 11412}
     - Class: 114
-      Script: {instanceID: 11512}
+      Script: {instanceID: 11500}
     - Class: 114
-      Script: {instanceID: 11522}
+      Script: {instanceID: 11510}
     - Class: 114
-      Script: {instanceID: 11602}
+      Script: {instanceID: 11590}
     - Class: 114
-      Script: {instanceID: 11708}
+      Script: {instanceID: 11696}
     - Class: 114
-      Script: {instanceID: 11816}
+      Script: {instanceID: 11804}
     - Class: 114
-      Script: {instanceID: 11990}
+      Script: {instanceID: 11978}
     - Class: 114
-      Script: {instanceID: 11992}
+      Script: {instanceID: 11980}
     - Class: 114
-      Script: {instanceID: 11994}
+      Script: {instanceID: 11982}
     - Class: 114
-      Script: {instanceID: 12032}
+      Script: {instanceID: 12020}
     - Class: 114
-      Script: {instanceID: 12050}
+      Script: {instanceID: 12038}
     - Class: 114
-      Script: {instanceID: 12176}
+      Script: {instanceID: 12164}
     - Class: 114
-      Script: {instanceID: 12348}
+      Script: {instanceID: 12336}
     - Class: 114
-      Script: {instanceID: 12504}
+      Script: {instanceID: 12492}
     - Class: 114
-      Script: {instanceID: 12604}
+      Script: {instanceID: 12592}
     - Class: 114
-      Script: {instanceID: 12622}
+      Script: {instanceID: 12610}
     - Class: 114
-      Script: {instanceID: 12766}
+      Script: {instanceID: 12754}
     - Class: 114
-      Script: {instanceID: 12838}
+      Script: {instanceID: 12826}
     - Class: 114
-      Script: {instanceID: 12884}
+      Script: {instanceID: 12872}
     - Class: 114
-      Script: {instanceID: 12898}
+      Script: {instanceID: 12886}
     - Class: 114
-      Script: {instanceID: 13010}
+      Script: {instanceID: 12998}
     - Class: 114
-      Script: {instanceID: 13150}
+      Script: {instanceID: 13138}
     - Class: 114
-      Script: {instanceID: 13164}
+      Script: {instanceID: 13152}
     - Class: 114
-      Script: {instanceID: 13180}
+      Script: {instanceID: 13168}
     - Class: 114
-      Script: {instanceID: 13216}
+      Script: {instanceID: 13204}
     - Class: 114
-      Script: {instanceID: 16768}
+      Script: {instanceID: 16182}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -432,7 +432,7 @@ ScriptsOnlyBuild:
     className: NeuronController
   - hash:
       serializedVersion: 2
-      Hash: 4c349bb504c15308ef913aa6b44b8f60
+      Hash: ef150cb28483cf3dff098329e2d3a02b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SaveMenuController
@@ -600,7 +600,7 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
-      Hash: 99347dc033a875ec45bf05b3895ebc6c
+      Hash: 39b6bfd7337b348fd7f1c713bf1596c3
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: EditorController
@@ -751,4 +751,4 @@ ScriptsOnlyBuild:
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainScene.unity
-  playerPath: C:/Users/Work/Documents/Thesis/testBuild2/SNP-Editor.exe
+  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Builds/Snapse_Windows/SNP-Editor.exe

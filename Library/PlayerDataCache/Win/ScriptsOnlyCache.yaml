@@ -1,6 +1,7 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - ChoiceController
     - DeleteButtonController
     - Drawer
     - DropdownController
@@ -78,77 +79,77 @@ ScriptsOnlyBuild:
     - Class: 111
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11132}
+      Script: {instanceID: 11146}
     - Class: 114
-      Script: {instanceID: 11134}
+      Script: {instanceID: 11148}
     - Class: 114
-      Script: {instanceID: 11136}
+      Script: {instanceID: 11150}
     - Class: 114
-      Script: {instanceID: 11138}
+      Script: {instanceID: 11152}
     - Class: 114
-      Script: {instanceID: 11140}
+      Script: {instanceID: 11154}
     - Class: 114
-      Script: {instanceID: 11142}
+      Script: {instanceID: 11156}
     - Class: 114
-      Script: {instanceID: 11162}
+      Script: {instanceID: 11174}
     - Class: 114
-      Script: {instanceID: 11296}
+      Script: {instanceID: 11308}
     - Class: 114
-      Script: {instanceID: 11340}
+      Script: {instanceID: 11352}
     - Class: 114
-      Script: {instanceID: 11342}
+      Script: {instanceID: 11354}
     - Class: 114
-      Script: {instanceID: 11412}
+      Script: {instanceID: 11424}
     - Class: 114
-      Script: {instanceID: 11500}
+      Script: {instanceID: 11512}
     - Class: 114
-      Script: {instanceID: 11510}
+      Script: {instanceID: 11522}
     - Class: 114
-      Script: {instanceID: 11590}
+      Script: {instanceID: 11602}
     - Class: 114
-      Script: {instanceID: 11696}
+      Script: {instanceID: 11708}
     - Class: 114
-      Script: {instanceID: 11804}
+      Script: {instanceID: 11816}
     - Class: 114
-      Script: {instanceID: 11978}
+      Script: {instanceID: 11990}
     - Class: 114
-      Script: {instanceID: 11980}
+      Script: {instanceID: 11992}
     - Class: 114
-      Script: {instanceID: 11982}
+      Script: {instanceID: 11994}
     - Class: 114
-      Script: {instanceID: 12020}
+      Script: {instanceID: 12032}
     - Class: 114
-      Script: {instanceID: 12038}
+      Script: {instanceID: 12050}
     - Class: 114
-      Script: {instanceID: 12164}
+      Script: {instanceID: 12176}
     - Class: 114
-      Script: {instanceID: 12336}
+      Script: {instanceID: 12348}
     - Class: 114
-      Script: {instanceID: 12492}
+      Script: {instanceID: 12504}
     - Class: 114
-      Script: {instanceID: 12592}
+      Script: {instanceID: 12604}
     - Class: 114
-      Script: {instanceID: 12610}
+      Script: {instanceID: 12622}
     - Class: 114
-      Script: {instanceID: 12754}
+      Script: {instanceID: 12766}
     - Class: 114
-      Script: {instanceID: 12826}
+      Script: {instanceID: 12838}
     - Class: 114
-      Script: {instanceID: 12872}
+      Script: {instanceID: 12884}
     - Class: 114
-      Script: {instanceID: 12886}
+      Script: {instanceID: 12898}
     - Class: 114
-      Script: {instanceID: 12998}
+      Script: {instanceID: 13010}
     - Class: 114
-      Script: {instanceID: 13138}
+      Script: {instanceID: 13150}
     - Class: 114
-      Script: {instanceID: 13152}
+      Script: {instanceID: 13164}
     - Class: 114
-      Script: {instanceID: 13168}
+      Script: {instanceID: 13180}
     - Class: 114
-      Script: {instanceID: 13204}
+      Script: {instanceID: 13216}
     - Class: 114
-      Script: {instanceID: 16182}
+      Script: {instanceID: 16790}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -751,4 +752,4 @@ ScriptsOnlyBuild:
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainScene.unity
-  playerPath: C:/Users/Aleksei/Documents/GitHub/SNP-Editor/Builds/Snapse_Windows/SNP-Editor.exe
+  playerPath: C:/Users/reyst/Documents/Program Builds/Snapse/Snapse.exe

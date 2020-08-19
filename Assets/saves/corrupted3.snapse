@@ -1,0 +1,11 @@
+neurons = [N0, N1]:
+N0{
+	spikes = 0:
+	rules = {[]}:
+	outsynapses = [N1]:
+}
+N1{
+	spikes = 0:
+	rules = {[]}:
+	outsynapses = [N0]:
+}

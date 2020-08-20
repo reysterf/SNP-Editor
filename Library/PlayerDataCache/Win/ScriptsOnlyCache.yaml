@@ -1,7 +1,6 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
-    - ChoiceController
     - DeleteButtonController
     - Drawer
     - DropdownController
@@ -149,7 +148,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13216}
     - Class: 114
-      Script: {instanceID: 16790}
+      Script: {instanceID: 16938}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -601,7 +600,7 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
-      Hash: 39b6bfd7337b348fd7f1c713bf1596c3
+      Hash: c407eec704f1e7ad741fb04fe46a86ee
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: EditorController

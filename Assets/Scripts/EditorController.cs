@@ -148,6 +148,7 @@ public class EditorController : MonoBehaviour
 
     public SaveMenuController saveMenuController;
     public string autoSavePath;
+    public string tempAutoSavePath;
     public float autoSaveInterval;
     public GameObject autoSaveNotif;
 
@@ -1928,6 +1929,7 @@ public class EditorController : MonoBehaviour
             var fileContent = File.ReadAllBytes(path);
             string formatData = System.Text.Encoding.UTF8.GetString(fileContent);
 
+            tempAutoSavePath = autoSavePath;
             autoSavePath = path;
 
             bool hasPositionData = false;
@@ -2498,7 +2500,14 @@ public class EditorController : MonoBehaviour
         catch(FormatException e)
         {
             print("Format Exception");
-            autoSavePath = Application.dataPath + "/saves/autosave.snapse";
+            autoSavePath = tempAutoSavePath;
+            BlankSlate();
+            ErrorInvalidFileNotify();
+        }
+        catch(NullReferenceException e)
+        {
+            print("Format Exception");
+            autoSavePath = tempAutoSavePath;
             BlankSlate();
             ErrorInvalidFileNotify();
         }

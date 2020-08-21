@@ -69,12 +69,14 @@ public class LoadMenuController : MonoBehaviour
         loadMenu.SetActive(true);
         editorController.DisableButtonsAll();
         editorController.DisableNonInteractable();
+        editorController.SetDragMode(false);
     }
 
     public void CloseLoadMenu(){
         loadMenu.SetActive(false);
         editorController.EnableButtonsAll();
         editorController.EnableNonInteractable();
+        editorController.SetDragMode(true);
     }
 
     public void Load(){

@@ -148,7 +148,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13216}
     - Class: 114
-      Script: {instanceID: 16938}
+      Script: {instanceID: 16934}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -600,7 +600,7 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
-      Hash: c407eec704f1e7ad741fb04fe46a86ee
+      Hash: d3ee6cfb7cabf081e4c5bd4424519a21
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: EditorController

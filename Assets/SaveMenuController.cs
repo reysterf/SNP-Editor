@@ -40,14 +40,16 @@ public class SaveMenuController : MonoBehaviour
         saveMenu.SetActive(true);
         editorController.DisableButtonsAll();
         editorController.DisableNonInteractable();
+        editorController.SetDragMode(false);
     }
 
     public void CloseSaveMenu(){
         saveMenu.SetActive(false);
         editorController.EnableButtonsAll();
         editorController.EnableNonInteractable();
+        editorController.SetDragMode(true);
     }
-    
+
     public void Save(){
         if(ValidPath()){
             SaveNotification();

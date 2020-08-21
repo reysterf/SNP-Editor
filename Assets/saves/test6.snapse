@@ -1,0 +1,11 @@
+neurons = []:
+N0{
+	spikes = 0:
+	rules = {[]}:
+	outsynapses = []:
+	delay = -1:
+	storedGive = 0:
+	storedConsume = 0:
+	outputNeuron = False:
+	position = (-2.648437,1.894531,-7.629395E-06):
+}

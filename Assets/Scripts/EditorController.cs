@@ -153,6 +153,7 @@ public class EditorController : MonoBehaviour
     public GameObject autoSaveNotif;
 
     bool dragMode = true;
+    bool dragModeChanged = false;
     bool editInstanceMode = false;
 
     public GameObject invalidFileErrorWindow;
@@ -228,6 +229,18 @@ public class EditorController : MonoBehaviour
         }
         if (!deleteSynapseMode) {
             Draw();
+        }
+        if (dragModeChanged)
+        {
+            if (panMode)
+            {
+                dragMode = false;
+            }
+            if (!panMode)
+            {
+                dragMode = true;
+            }
+            dragModeChanged = false;
         }
         if (showModeChanged) {
             if (showLabels) {
@@ -314,6 +327,7 @@ public class EditorController : MonoBehaviour
 
     public void SetDragMode(bool mode){
         dragMode = mode;
+        dragModeChanged = true;
     }
 
     public bool GetEditInstanceMode(){
@@ -2290,6 +2304,18 @@ public class EditorController : MonoBehaviour
         //Parse neuron declaration
         string[] neuronDeclarations = strValues[1].Split(new char[] {'[', ']', ','}, StringSplitOptions.RemoveEmptyEntries);
 
+        if(neuronDeclarations == null)
+        {
+            print("Null declarations");
+        }
+        if(neuronDeclarations.Length == 0)
+        {
+            print("Empty declarations");
+            autoSavePath = tempAutoSavePath;
+            BlankSlate();
+            ErrorInvalidFileNotify();
+            return false;
+        }
         List<GameObject> neurons = new List<GameObject>();
 
         foreach(string neuronDeclaration in neuronDeclarations){
@@ -2299,7 +2325,7 @@ public class EditorController : MonoBehaviour
             else if(neuronDeclaration[0] == 'O'){
                 neurons.Add(NewOutputNeuron(int.Parse(neuronDeclaration.Substring(1, neuronDeclaration.Length-1))));
             }
-            // print(neuronDeclaration);
+            print(neuronDeclaration);
         }
 
         int n = 0;
@@ -2506,7 +2532,7 @@ public class EditorController : MonoBehaviour
         }
         catch(NullReferenceException e)
         {
-            print("Format Exception");
+            print("Null Exception");
             autoSavePath = tempAutoSavePath;
             BlankSlate();
             ErrorInvalidFileNotify();

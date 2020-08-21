@@ -59,6 +59,9 @@ public class TutorialController : MonoBehaviour
         tutorialTitle.Add("Saving and Loading");
         tutorialText.Add("The program autosaves new systems at \"autosave.snapse\". You can then change the save path by clicking \"Save\". After changing the path, the program will now autosave at the specified path.\n\nFor loading, the program looks at the \"saves\" folder in the application directory and lists the snapse files there. Note: The program doesn't look in subfolders.");
 
+        tutorialTitle.Add("Bitstring output");
+        tutorialText.Add("The bitstrings of output neurons can be found in the output.txt file inside the program folder of Snapse. To see the complete filepath go to the help menu by clicking the (?) button.");
+
         tutorialTitle.Add("About");
         tutorialText.Add("Snapse is a graphical user interface for Spiking Neural P systems built with Unity3D and C# by Aleksei Fernandez and Reyster Fresco from the Algorithms and Complexity Lab (ACL) of the Department of Computer Science, University of the Philippines Diliman.\n\nSnapse is built under the guidance of Francis Cabarle and with the help of colleagues in the ACL.");
 

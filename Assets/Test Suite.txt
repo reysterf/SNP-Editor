@@ -1,0 +1,969 @@
+Test Suite A:  Creating a new SNP System
+
+
+Test Cases A-1: Creating neurons
+
+Test Case A-1-1: Creating a single neuron
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    Expected Result
+    - A neuron with a label "0", 0 spikes and no rules will appear
+
+
+Test Case A-1-2: Creating 10 neurons
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" 10 times
+    Expected Result
+    - 10 neurons with labels "0" - "9", 0 spikes and no rules will appear
+
+
+Test Case A-1-3: Creating an output neuron
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Output" once
+    Expected Result
+    - An output neuron with a label "0", 0 spikes, and an empty bitstring will appear
+
+
+Test Case A-1-3: Creating 10 output neurons
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Output" 10 times
+    Expected Result
+    - 10 output neurons with labels "0" - "9", 0 spikes, and an empty bitstring will appear
+
+
+Test Cases A-2: Editing a neuron
+
+
+Test Case A-2-1: Adding Spikes
+
+Test Case A-2-1-1: Adding 10 spikes (normal case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Spikes" with 0 in it
+    - Click the text area in the input field that appears
+    - Type "10" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 10 spikes, and no rules exists
+
+
+Test Case A-2-1-2: Adding 0 spikes (edge case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Spikes" with 0 in it
+    - Click the text area in the input field that appears
+    - Type "0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and no rules exists
+
+
+Test Case A-2-1-3: Adding -10 spikes (invalid case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Spikes" with 0 in it
+    - Click the text area in the input field that appears
+    - Type "-10" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and no rules exists
+
+
+Test Case A-2-2: Adding a Rule
+
+
+Test Case A-2-2-1: Adding "a/a->a;0" (normal, simple)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a/a->a;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and "a/a->a;0" in the rules box exists
+
+Test Case A-2-2-2: Adding "a(aaa)*/a->a;1" (normal, simple)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a(aaa)*/a->a;1" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and "a(aaa)*/a->a;1" in the rules box exists
+
+Test Case A-2-2-3: Adding "a(aaa(aaa)*)*/a->a;3" (normal, complex regex)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a(aaa(aaa)*)*/a->a;3" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and "a(aaa(aaa)*)*/a->a;3" in the rules box exists
+
+Test Case A-2-2-4: Adding "a/a->0;0" (normal, forgetting)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a/a->0;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and "a/a->0;0" in the rules box exists
+
+Test Case A-2-2-5: Adding "fdsfdsfds" (invalid)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "fdsfdsfds" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and no rules exists
+
+
+Test Case A-2-3: Cancelling editing
+
+
+Test Case A-2-3-1: Cancelling adding spikes by clicking "Cancel"
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Spikes"
+    - Click the text area in the input field that appears
+    - Type "10" into the input field
+    - Click "Cancel" to cancel the operation
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and no rules exists
+
+Test Case A-2-3-2: Cancelling adding rules by clicking "Cancel"
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a/a->a;0" into the input field
+    - Click "Cancel" to cancel the operation
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and no rules exists
+
+Test Case A-2-3-3: Cancelling adding spikes by clicking the close button
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Spikes"
+    - Click the text area in the input field that appears
+    - Type "10" into the input field
+    - Click the close button to cancel the operation
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and no rules exists
+
+Test Case A-2-3-4: Cancelling adding rules by clicking the close button
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Edit Neuron" to enter neuron editing mode
+    - Click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a/a->a;0" into the input field
+    - Click the close button to cancel the operation
+    - Click "Edit Neuron" to exit neuron editing mode
+    Expected Result
+    - A neuron with a label "0", 0 spikes, and no rules exists
+
+Test Cases A-3: Creating synapses
+
+
+Test Case A-3-1: Creating a synapse from one neuron to another (valid case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" 2 times
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click "New Synapse" to exit synapse creation mode
+    Expected Result
+    - 2 neurons with labels  "0" and "1" both with 0 spikes, and no rules exists
+    - There exists a synapse from neuron "0" to neuron "1"
+
+Test Case A-3-2: Creating self-loop synapse (invalid case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "0" again
+    - Click "New Synapse" to exit synapse creation mode
+    Expected Result
+    - A neurons with labels  "0", 0 spikes, no rules, and no synapses exists
+
+Test Case A-3-3: Creating multiple synapses between two neurons (valid case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" 2 times
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "0"
+    - Click "New Synapse" to exit synapse creation mode
+    Expected Result
+    - 2 neurons with labels  "0" and "1" both with 0 spikes, and no rules exists
+    - There exists a synapse from neuron "0" to neuron "1"
+    - There exists a synapse from neuron "1" to neuron "0"
+
+Test Case A-3-4: Cancelling creating a synapse from one neuron to another (valid case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" 2 times
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click "New Synapse" to exit synapse creation mode
+    Expected Result
+    - 2 neurons with labels  "0" and "1" both with 0 spikes, and no rules exists
+    - No synapses exist
+
+Test Cases A-4: Deleting Neurons
+
+Test Case A-4-1: Deleting a single neuron with no synapses
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Delete Neuron" to enter neuron deletion mode
+    - Click the neuron labelled "0"
+    - Click "Delete Neuron" to exit neuron deletion mode
+    Expected Result
+    - No neurons exist
+
+Test Case A-4-2: Deleting a single neuron with linked synapses
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" three times
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "2"
+    - Click "New Synapse" to exit synapse creation mode
+    - Click "Delete Neuron" to enter neuron deletion mode
+    - Click the neuron labelled "1"
+    - Click "Delete Neuron" to exit neuron deletion mode
+    Expected Result
+    - Only neurons "0" and "2" exist
+    - No synapses exist
+
+Test Case A-4-3: Deleting all neurons in a system with no synapses
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" 10 times
+    - Click "Delete Neuron" to enter neuron deletion mode
+    - Click all neurons
+    - Click "Delete Neuron" to exit neuron deletion mode
+    Expected Result
+    - No neurons exist
+
+Test Case A-4-4: Deleting all neurons in a fully connected system
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" 3 times
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "2"
+    - Click the neuron labelled "2"
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "2"
+    - Click the neuron labelled "2"
+    - Click the neuron labelled "1"
+    - Click "New Synapse" to exit synapse creation mode
+    - Click "Delete Neuron" to enter neuron deletion mode
+    - Click all neurons
+    - Click "Delete Neuron" to exit neuron deletion mode
+    Expected Result
+    - No neurons exist
+    - No synapses exist
+
+Test Cases A-5: Deleting Synapses
+
+Test Case A-5-1: Entering synapse deletion mode
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" three times
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click "New Synapse" to exit synapse creation mode
+    - Click "Delete Synapse" to enter synapse deletion mode
+    Expected Result
+    - Circular buttons with an X in them appear on top of synapses
+
+Test Case A-5-2: Deleting a synapse between two neurons
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" three times
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click "New Synapse" to exit synapse creation mode
+    - Click "Delete Synapse" to enter synapse deletion mode
+    - Click the X button on the synapse from "0" to "1"
+    - Click "Delete Synapse" to exit synapse deletion mode
+    Expected Result
+    - Only neurons "0" and "1" exist
+    - No synapses exist
+
+Test Case A-5-3: Deleting all synapses in a fully connected system
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" three times
+    - Click "New Synapse" to enter synapse creation mode
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "2"
+    - Click the neuron labelled "2"
+    - Click the neuron labelled "0"
+    - Click the neuron labelled "1"
+    - Click the neuron labelled "2"
+    - Click the neuron labelled "2"
+    - Click the neuron labelled "1"
+    - Click "New Synapse" to exit synapse creation mode
+    - Click "Delete Synapse" to enter synapse deletion mode
+    - Click all X buttons on top of synapses
+    - Click "Delete Synapse" to exit synapse deletion mode
+    Expected Result
+    - Only neurons "0", "1", and "2" exist
+    - No synapses exist
+
+
+...
+
+Test Suite B: Saving and Loading  SNP System
+Test Cases B-1: Create and Save
+
+Test Case B-1-1: Autosaving an unsaved system
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Wait for 60 seconds
+    Expected Result
+    - A notification will appear at the lower left saying that the system has been autosaved to "autosave.snapse"
+    - "autosave.snapse" exists in the "saves" folder with the data for the single neuron
+
+Text Case B-1-2: Saving and changing the autosave path
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Save"
+    - On the menu that appears, type "neuron1", without the parenthesis
+    Expected Result
+    - A notification will appear at the lower left saying that the system has been autosaved to "neuron1.snapse"
+    - "neuron1.snapse" exists in the "saves" folder with the data for the single neuron
+
+Test Case B-1-3: Creating and saving a complex system
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" three times, creating neurons "0", "1", and "2"
+    - Click "New Output" once, creating output neuron "3"
+    - Click "New Synapse", entering synapse creation mode
+    - Click neuron "0"
+    - Click neuron "1", creating a synapse
+    - Click neuron "1"
+    - Click neuron "0", creating a synapse
+    - Click neuron "1"
+    - Click neuron "2", creating a synapse
+    - Click neuron "0"
+    - Click neuron "2", creating a synapse
+    - Click neuron "2"
+    - Click neuron "3", creating a synapse
+    - Click "Edit Neuron", entering neuron editing mode
+    - Click the "Spikes" box of "0", type "2" in the input field, click "Confirm"
+    - Click the "Spikes" box of "1", type "1" in the input field, click "Confirm"
+    - Click the "Spikes" box of "2", type "3" in the input field, click "Confirm"
+    - Click the "Rules" box of "0"
+    - Type "aa/a->a;0" in the input field
+    - Press enter
+    - Type "a/a->0;0"
+    - Click "Confirm"
+    - Click the "Rules" box of "1"
+    - Type "a/a->a;0" in the input field
+    - Press enter
+    - Type "a/a->a;1"
+    - Click "Confirm"
+    - Click the "Rules" box of "2"
+    - Type "aaa/aaa->a;0" in the input field
+    - Press enter
+    - Type "a/a->a;1"
+    - Press enter
+    - Type "aa/aa->0;0"
+    - Click "Confirm"
+    - Click "Save"
+    - On the menu that appears, type "neuron2", without the parenthesis
+    Expected Result
+    - A notification will appear at the lower left saying that the system has been autosaved to "neuron2.snapse"
+    - "neuron2.snapse" exists in the "saves" folder with the data for the neurons, rules, spikes, delays and synapses in the system
+
+Test Case B-1-4: Saving the state of a system
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" three times, creating neurons "0", "1", and "2"
+    - Click "New Output" once, creating output neuron "3"
+    - Click "New Synapse", entering synapse creation mode
+    - Click neuron "0"
+    - Click neuron "1", creating a synapse
+    - Click neuron "1"
+    - Click neuron "0", creating a synapse
+    - Click neuron "1"
+    - Click neuron "2", creating a synapse
+    - Click neuron "0"
+    - Click neuron "2", creating a synapse
+    - Click neuron "2"
+    - Click neuron "3", creating a synapse
+    - Click "Edit Neuron", entering neuron editing mode
+    - Click the "Spikes" box of "0", type "2" in the input field, click "Confirm"
+    - Click the "Spikes" box of "1", type "1" in the input field, click "Confirm"
+    - Click the "Spikes" box of "2", type "3" in the input field, click "Confirm"
+    - Click the "Rules" box of "0"
+    - Type "aa/a->a;0" in the input field
+    - Press enter
+    - Type "a/a->0;0"
+    - Click "Confirm"
+    - Click the "Rules" box of "1"
+    - Type "a/a->a;0" in the input field
+    - Press enter
+    - Type "a/a->a;1"
+    - Click "Confirm"
+    - Click the "Rules" box of "2"
+    - Type "aaa/aaa->a;0" in the input field
+    - Press enter
+    - Type "a/a->a;1"
+    - Press enter
+    - Type "aa/aa->0;0"
+    - Click "Confirm"
+    - Click the next (>|) button on the lower right
+    - Click "Save"
+    - On the menu that appears, type "neuron3", without the parenthesis
+    Expected Result
+    - A notification will appear at the lower left saying that the system has been autosaved to "neuron3.snapse"
+    - "neuron3.snapse" exists in the "saves" folder with the data for the neurons, rules, spikes, delays and synapses in the system
+
+Test Case B-1-5: Bitstring output
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron", creating neuron "0"
+    - Click "New Output", creating output neuron "1"
+    - Click "New Synapse", entering synapse creation mode
+    - Click "0"
+    - Click "1"
+    - Click "New Synapse", exiting synapse creation mode
+    - Click "Edit Neuron"
+    - Click the spikes box of neuron "0"
+    - Type "5" in the input field
+    - Click "Confirm"
+    - Click the rules box of neuron "0"
+    - Type "a*/a->a;0" in the input field
+    - Click "Confirm"
+    - Click the continuous simulation button (>)
+    - Wait until the simulation halts
+    Expected Result
+    - The output file in the snapse_data folder contains "1:11111"
+    - The output neuron has 5 spikes and "11111" in its bitstring box
+
+...
+Test Cases B-2: Load, Edit, and Save
+Test Case B-2-1: Loading a valid .snapse file generated by Snapse
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron"
+    - Click "Save"
+    - Type "loadtest1" into the input field
+    - Close Snapse
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - Find and click "loadtest1" from the dropdown in the menu
+    - Click "Load" in the menu
+    Expected Result
+    - There is one neuron in the current system
+
+Test Case B-2-2: Loading a valid .snapse file created outside Snapse
+    - Open a text editor
+    - Type the following, minus the quotes
+        """
+        neurons = [N0]:
+        N0{
+            spikes = 0:
+            rules = {[]}:
+            outsynapses = []:
+        }
+        """
+    - Save the file as "loadtest2.snapse" in the "saves" folder in the Snapse directory
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - Find and click "loadtest2.snapse" in the dropdown
+    - Click "Load" in the menu
+    Expected Result
+    - There is one neuron, "0", in the current system
+
+Test Case B-2-3: Loading an empty .snapse file
+    - Open a text editor
+    - Save the empty text file as empty.snapse in the "saves" folder in the Snapse directory
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - On the dropdown, find and click "empty.snapse"
+    - Click "Load" in the menu
+    Expected Result
+    - The system doesn't load
+
+
+Test Case B-2-4: Loading an corrupted/invalid .snapse file (no parameters)
+    - Open a text editor
+    - Type the following, minus the quotes
+        """
+        neurons = [N0]:
+        N0{
+        }
+        """
+    - Save the file as "loadtest3.snapse" in the "saves" folder in the Snapse directory
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - On the dropdown, find and click "loadtest3.snapse"
+    - Click "Load" in the menu
+    Expected Result
+    - The load menu closes
+    - The system doesn't load
+    - A window appears that says "Snapse file is invalid"
+
+Test Case B-2-5: Loading an corrupted/invalid .snapse file (no delimiters)
+    - Open a text editor
+    - Type the following, minus the quotes
+        """
+        neurons = [N0]
+        N0{
+            spikes = 0
+            rules = {[]}
+            outsynapses = []
+        }
+        """
+    - Save the file as "loadtest4.snapse" in the "saves" folder in the Snapse directory
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - On the dropdown, find and click "loadtest4.snapse"
+    - Click "Load" in the menu
+    Expected Result
+    - The load menu closes
+    - The system doesn't load
+    - A window appears that says "Snapse file is invalid"
+
+Test Case B-2-5: Loading an corrupted/invalid .snapse file (incomplete declarations)
+    - Open a text editor
+    - Type the following, minus the quotes
+        """
+        neurons = [N0]:
+        N0{
+            spikes = 0:
+            rules = {[]}:
+            outsynapses = [N1]:
+            delay = -1:
+            storedGive = 0:
+            storedConsume = 0:
+            outputNeuron = False:
+            position = (-2.710095,1.264141,-7.629395E-06):
+        }
+        N1{
+            spikes = 0:
+            rules = {[]}:
+            outsynapses = []:
+            delay = -1:
+            storedGive = 0:
+            storedConsume = 0:
+            outputNeuron = False:
+            position = (0.770768,0.9839996,-7.629395E-06):
+        }
+        """
+    - Save the file as "loadtest5.snapse" in the "saves" folder in the Snapse directory
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - On the dropdown, find and click "loadtest5.snapse"
+    - Click "Load" in the menu
+    Expected Result
+    - The load menu closes
+    - The system doesn't load
+    - A window appears that says "Snapse file is invalid"
+
+Test Suite C: Simulation
+Test Cases C-1: Guided Simulation
+Test Case C-1-1: Step-by-Step
+Test Case C-1-2: Playing the Simulation
+...
+Test Cases C-2: Pseudorandom Simulation
+
+
+Test Suite D: UI Testing
+
+
+Test Cases D-1: Pan Testing
+
+Test Case D-1-1: Entering pan mode
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Pan" once
+    Expected Result
+    - A dark green indicator appears at the left side of "Pan"
+
+Test Case D-1-2: Dragging in pan mode
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Pan" once
+    - Drag mouse around in the space not occupied by buttons within the program window
+    Expected Result
+    - The camera moves around at the same magnitude as the dragging
+    - The buttons and other UI elements at the cornersstay where they are 
+    - Dragging over a neuron doesn't cause the neuron to act in an unusual manner
+
+Test Case D-1-3: Exiting pan mode
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Pan" once
+    - Drag mouse around in the space not occupied by buttons within the program window
+    - Click "Pan" once
+    - Drag a neuron around
+    Expected Result
+    - A dark green indicator appears at the left of the "Pan" button and disappeared after clicking the pan button again
+    - After the dark green indicator disappeared, dragging the neuron changes its position
+    - After the dark green indicator disappeared, dragging over an empty space changes nothing
+
+Test Cases D-2: Zoom Testing
+
+Test Case D-2-1: Zooming in
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Zoom In" once
+    Expected Result
+    - The neuron appears bigger after clicking "Zoom In"
+
+Test Case D-2-2: Zooming out
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Zoom Out" once
+    Expected Result
+    - The neuron appears smaller after clicking "Zoom In"
+
+Test Case D-2-3: Zoom in limit
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Zoom In" until nothing changes in the program window after clicking
+    Expected Result
+    - After clicking enough times, clicking "Zoom In" doesn't change the program's view
+
+Test Case D-2-4: Zoom out limit
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click "Zoom Out" until nothing changes in the program window
+    Expected Result
+    - After clicking enough times, clicking "Zoom Out" doesn't change the program's view
+
+Test Cases D-3: Other UI Elements (Visibility, Tutorial, Settings)
+
+Test Cases D-3-1 Visibility
+
+Test Case D-3-1-1: Hide buttons
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click the eye button once
+    Expected Result
+    - The buttons and the "Snapse" text box is not visible
+
+Test Case D-3-1-1: Show buttons
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click the eye button once
+    - Click the eye button once
+    Expected Result
+    - The buttons and the "Snapse" text box became invisible after clicking once then visible after clicking again
+
+
+Test Cases D-3-2 Tutorial
+
+Test Case D-3-2-1: Tutorial at first launch
+    - Open Snapse
+    Expected Result
+    - A window titled "Welcome" appears
+    - The window has contents: a title, some paragraphs, page number, next and previous buttons, and a "Show this at startup" toggle
+
+Test Case D-3-2-2: Don't show tutorial at launch
+    - Open Snapse
+    - On the window titled "Welcome", click the toggle, "Show this at startup" so there is no longer a checkmark in the box
+    - Close Snapse
+    - Open Snapse
+    Expected Result
+    - The window titled "Welcome" no longer appears
+
+Test Case D-3-2-3: Next page and previous page at tutorial
+    - Open Snapse
+    - On the window titled "Welcome", click the next (>) button
+    - On the window titled "Welcome", click the prev (<) button
+    Expected Result
+    - After clicking the next button, the title, the paragraphs changed, and the page number increased by 1
+    - After clicking the prev button, the title, the paragraphs changed, and the page number decreased by 1
+
+Test Case D-3-2-4: Acessing the tutorial via the help menu
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click the help (?) button
+    - Click "View Tutorial"
+    Expected Result
+    - The window titled "Welcome" appears
+
+Test Case D-3-2-5: Making the tutorial appear at the start after toggling the "Show this at startup" toggle
+    - Open Snapse
+    - On the window titled "Welcome", click the toggle, "Show this at startup" so there is no longer a checkmark in the box
+    - Close Snapse
+    - Open Snapse
+    - Click the help (?) button
+    - Click "View Tutorial"
+    - On the window titled "Welcome", click the toggle, "Show this at startup" so there is a checkmark in the box
+    - Close Snapse
+    - Open Snapse
+    Expected Result
+    - On the second opening of Snapse, the window titled "Welcome" doesn't appear
+    - The window appears at the first and third opening of Snapse
+
+Test Cases D-3-3 Settings
+
+Test Case D-3-3-1: Hide rules
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click the settings/gear button
+    - Toggle "Show Rules" so there is no longer a checkmark in the box
+    - Close the settings menu
+    Expected Result
+    - The neuron now only shows its label, spikes, and delay
+
+Test Case D-3-3-2: Hide labels
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click the settings/gear button
+    - Toggle "Show Labels" so there is no longer a checkmark in the box
+    - Close the settings menu
+    Expected Result
+    - The neuron now only shows its rules, spikes, and delay
+
+Test Case D-3-3-3: Hide rules and labels
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" once
+    - Click the settings/gear button
+    - Toggle "Show Labels" so there is no longer a checkmark in the box
+    - Toggle "Show Rules" so there is no longer a checkmark in the box
+    - Close the settings menu
+    Expected Result
+    - The neuron now only shows its spikes and delay
+
+Test Case D-3-3-4: Disable animations
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" twice, creating neurons "0" and "1"
+    - Click "Edit Neuron" once
+    - Click "0"'s spikes box, type "5", then Confirm
+    - Click "0"'s rules box, type "a*/a->a;0", then Confirm
+    - Click "Edit Neuron" once
+    - Click "New Synapse" once
+    - Click "0"
+    - Click "1"
+    - Click "New Synapse" once
+    - Click the gear/Settings button
+    - Toggle "Enable Animations" so there is no longer a checkmark in the box
+    - Close the settings menu
+    - Click the "Continuous simulation" button (>) on the bottom right
+    - Wait for the simulation to stop
+    Expected Result
+    - No yellow circles appeared
+    - Neuron "1" has 5 spikes
+    - Neuron "0" has 0 spikes
+
+Test Case D-3-3-4: Reenable animations
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" twice, creating neurons "0" and "1"
+    - Click "Edit Neuron" once
+    - Click "0"'s spikes box, type "1", then Confirm
+    - Click "0"'s rules box, type "a*/a->a;0", then Confirm
+    - Click "Edit Neuron" once
+    - Click "New Synapse" once
+    - Click "0"
+    - Click "1"
+    - Click "New Synapse" once
+    - Click the gear/Settings button
+    - Toggle "Enable Animations" so there is no longer a checkmark in the box
+    - Close the settings menu
+    - Click the "Continuous simulation" button (>) on the bottom right
+    - Wait for the simulation to stop
+    - Click the gear/Settings button
+    - Toggle "Enable Animations" so there is a checkmark in the box
+    - Close the settings menu
+    - Click "Edit Neuron" once
+    - Click "0"'s spikes box, type "1", then Confirm
+    - Click "Edit Neuron" once
+    - Click the "Continuous simulation" button (>) on the bottom right
+    - Wait for the simulation to stop
+    Expected Result
+    - No yellow circle appeared at the first simulation
+    - A yellow circle appeared at the second simulation
+    - Neuron "1" has 2 spikes
+    - Neuron "0" has 0 spikes
+
+Test Case D-3-3-5: Change to Guided Simulation
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click the settings/gear button
+    - Under nondeterminism, click "Guided"
+    - Close the settings menu
+    - Click "New Neuron" twice, creating neurons "0" and "1"
+    - Click "Edit Neuron" once
+    - Click "0"'s spikes box, type "1", then Confirm
+    - Click "0"'s rules box, type "a*/a->a;0", then Confirm
+    - Click "0"'s rules box, type "a*/a->0;0", then Confirm
+    - Click "Edit Neuron" once
+    - Click "New Synapse" once
+    - Click "0"
+    - Click "1"
+    - Click "New Synapse" once
+    - Click the "Continuous simulation" button (>) on the bottom right
+    Expected Result
+    - A window appears on neuron "0", displaying the available rules to fire
+
+Test Case D-3-3-5: Return to Pseudorandom Simulation after Guided Simulation
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click the settings/gear button
+    - Under nondeterminism, click "Guided"
+    - Close the settings menu
+    - Click "New Neuron" twice, creating neurons "0" and "1"
+    - Click "Edit Neuron" once
+    - Click "0"'s spikes box, type "1", then Confirm
+    - Click "0"'s rules box, type "a*/a->a;0", then Confirm
+    - Click "0"'s rules box, type "a*/a->0;0", then Confirm
+    - Click "Edit Neuron" once
+    - Click "New Synapse" once
+    - Click "0"
+    - Click "1"
+    - Click "New Synapse" once
+    - Click the "Continuous simulation" button (>) on the bottom right
+    - Wait for the simulation to stop
+    - Click "Edit Neuron" once
+    - Click "0"'s spikes box, type "1", then Confirm
+    - Click "Edit Neuron" once
+    - Click the settings/gear button
+    - Under nondeterminism, click "Pseudorandom"
+    - Close the settings menu
+    - Click the "Continuous simulation" button (>) on the bottom right
+    - Wait for the simulation to stop
+    Expected Result
+    - During the first simulation, a window appears on neuron "0" displaying the available rules to fire
+    - During the second simulation, no window appears on neuron "0" and neuron "0" just fires
+
+
+
+Test Suite E: Stress Testing
+Test Suite E-1: 10 Identical Fully Connected Neurons
+Test Case E-1-1: Creating, saving, loading, 10 Identical Fully Connected Neurons
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" 10 times, creating neurons "0" - "9"
+    - Click "New Synapse"
+    - Create a synapse to and from each neuron to every other neuron
+    - Click "New Synapse"
+    - Click "Edit Neuron", entering neuron editing mode
+    - Click each Spikes box, type 10, click confirm for all neurons
+    - Click each Rules box, type the text below and confirm for all neurons
+    """
+    a*/a->a;0
+    a*/a->0;0
+    """
+    - Click "Edit Neuron", exiting neuron editing mode
+    - Click "Save"
+    - Type "stresstest1" into the the field
+    - Click "Save" in the menu
+    - Close Snapse
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - Find and click "stresstest1.snapse" in the dropdown
+    - Click "Load" in the menu
+    Expected Result
+    - A file "stresstest1.snapse" exists in the saves folder
+    - Loading "stresstest1.snapse" shows a fully connected system with 10 Identical neurons
+
+Test Case E-1-2: Pseudorandom simulation of a fully connected system
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - Find and click "stresstest1.snapse"
+    - Click "Load"
+    - Make sure the "Pseudorandom" option is selected in the nondeterminism option in settings
+    - Click the continuous simulation button (>)
+    Expected Result
+    - The system correctly simulates the system at a reasonable performance
+
+Test Case E-1-3: Guided simulation of a fully connected system
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "Load"
+    - Find and click "stresstest1.snapse"
+    - Click "Load"
+    - Make sure the "Guided" option is selected in the nondeterminism option in settings
+    - Click the continuous simulation button (>)
+    Expected Result
+    - The system correctly simulates the system at a reasonable performance
+    - The program prompts the user to choose which rule to apply for all neurons, at each simulation step

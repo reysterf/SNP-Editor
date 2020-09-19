@@ -636,11 +636,330 @@ Test Case B-2-5: Loading an corrupted/invalid .snapse file (incomplete declarati
     - A window appears that says "Snapse file is invalid"
 
 Test Suite C: Simulation
-Test Cases C-1: Guided Simulation
-Test Case C-1-1: Step-by-Step
-Test Case C-1-2: Playing the Simulation
-...
+
+Test Cases C-1: Deterministic Simulation
+Test Case C-1-1: Step-by-Step with spikes less than the consumed spikes in the rule (invalid case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" twice
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "0", then click on neuron with label "1"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click "Edit Neuron" to enter neuron editing mode
+    - In neuron "0", click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a*/a->a;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Status bar says "Stopped at t = 0"
+Test Case C-1-2: Step-by-Step with spikes not satisfying the rule condition (invalid case)
+    - Continue from C-1-1
+    - Click "Edit Neuron" to enter neuron editing mode
+    - In neuron "0", click the rectangle in the neuron below "Spikes" with 0 in it
+    - Click the text area in the input field that appears
+    - Type "1" into the input field
+    - Click "Confirm" to save the value
+    - In neuron "0", click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "aa+/a->a;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Status bar says "Stopped at t = 0"
+Test Case C-1-3: Step-by-Step with spikes satisfying the minimum of the condition (edge case)
+    - Continue from C-1-2
+    - Click "Edit Neuron" to enter neuron editing mode 
+    - In neuron "0", click the rectangle in the neuron below "rules" with "aa+/a->a;0" in it
+    - Click the text area in the input field that appears
+    - Type "a+/a->a;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button (in the lower right of the screen)
+    - Neuron "0" should have 0 spikes and rules "a+/a->a;0", neuron "1" should have 1 spike and no rules. Status bar should say "Fired at t = 1".
+Test Case C-1-4: Step-by-Step with spikes greater than the consumed spikes and minimum of the condition in the rule (normal case)
+    - Continue from C-1-3
+    - Click "Edit Neuron" to enter neuron editing mode 
+    - In neuron "0", click the rectangle in the neuron below "Spikes" with 0 in it
+    - Click the text area in the input field that appears
+    - Type "9" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen twice
+    - Neuron "0" should have 7 spikes and rules "a+/a->a;0", neuron "1" should have 3 spikes and no rules. Status bar should say "Fired at t = 3".
+Test Case C-1-5: Pressing Back
+    - Continue from C-1-4
+    - Click the "|<" (back) button in the lower right of the screen
+    - Neuron "0" should have 8 spikes and rules "a+/a->a;0", neuron "1" should have 2 spikes and no rules. Status bar says "Went back to t=2"
+Test Case C-1-6: Step-by-Step with many synapses from one neuron
+    - Continue from C-1-5
+    - Click "New Neuron"
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "0", then click on neuron with label "2"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click the "|<" (back) button in the lower right of the screen
+    - Neuron "0" should have 7 spikes and rules "a+/a->a;0", neuron "1" should have 3 spikes and no rules, neuron "2" should have 1 spike and no rules. Status bar says "Fired at t=3"
+Test Case C-1-6: Step-by-Step where only one neuron has an applicable rule
+    - Continue from C-1-5
+    - Click "Edit Neuron" to enter neuron editing mode 
+    - In neuron "2", click the rectangle in the neuron below "rules"
+    - Click the text area in the input field that appears
+    - Type "(aa)+/aa->aa;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "2", then click on neuron with label "1"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click the "|<" (fire once) button in the lower right of the screen
+    - Neuron "0" should have 6 spikes and rules "a+/a->a;0", neuron "1" should have 4 spikes and no rules, neuron "2" should have 2 spikes and rules "(aa)+/aa->aa;0". Status bar says "Fired at t=4"
+Test Case C-1-7: Step-by-Step where many neurons have an applicable rule
+    - Continue from C-1-6
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Neuron "0" should have 5 spikes and rules "a+/a->a;0", neuron "1" should have 7 spikes and no rules, neuron "2" should have 0 spikes and rules "(aa)+/aa->aa;0". Status bar says "Fired at t=5"
+Test Case C-1-8: Continuous Simulation
+    - Continue from C-1-7
+    - Click the ">" (play) button in the lower right of the screen
+    - Wait until status bar says "Stopped at t = 11"
+    - Neuron "0" should have 0 spikes and rules "a+/a->a;0", neuron "1" should have 18 spikes and no rules, neuron "2" should have 0 spikes and rules "(aa)+/aa->aa;0".
+Test Case C-1-9: Pressing Back to a time when a certain neuron did not exist
+    - Continue from C-1-8
+    - Click the "|<" (back) button 10 times
+    - Neuron "0" should have 9 spikes and rules "a+/a->a;0", neuron "1" should have 1 spike and no rules, neuron "2" should not exist. Status bar says "Went back to t=1"
+    - Continue from C-1-8
+    - Click the "|<" (back) button in the lower right of the screen until Status bar says "Went back to t = 0"
+    - Neuron "0" should have 10 spikes and rules "a+/a->a;0", neuron "1" should have 0 spikes and no rules.
+Test Case C-1-10: Pressing Back until t = 0 (invalid case)   
+    - Continue from C-1-9
+    - Click the "|<" (back) button once
+    - Status bar should say "Went back to t = 0"
+    - Neuron "0" should have 10 spikes, neuron "1" should have 0 spikes.
+Test Case C-1-11: Pressing Back at t = 0 (invalid case)   
+    - Continue from C-1-10
+    - Click the "|<" (back) button any number of times
+    - Status bar should say "Went back to t = 0"
+    - Neuron "0" should have 10 spikes, neuron "1" should have 0 spikes.
+Test Case C-1-12: Forgetting Rule
+    - Continue from C-1-11
+    - Click "Edit Neuron" to enter neuron editing mode 
+    - In neuron "0", click the rectangle in the neuron below "rules"
+    - Click the text area in the input field that appears
+    - Type "a+/a->0;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Neuron "0" should have 9 spikes and rules "a+/a->0;0", neuron "1" should have 0 spikes and no rules. Status bar says "Fired at t = 1"
+Test Case C-1-13: Step-by-Step until Stop (edge case)
+    - Continue from C-1-12
+    - Click ">|" (fire once) button 9 times
+    - Neuron "0" should have 0 spikes and rules "a+/a->0;0", neuron "1" should have 0 spikes and no rules. Status bar should say "Fired at t = 10"
+Test Case C-1-14: Firing when there are no applicable rules (invalid case)
+    - Continue from C-1-13
+    - Click ">|" (fire once) button any number of times
+    - Neuron "0" should have 0 spikes and rules "a+/a->0;0", neuron "1" should have 0 spikes and no rules.
+    - Status bar should say "Stopped at t = 10"
+
 Test Cases C-2: Pseudorandom Simulation
+Test Case C-2-1: Step-by-Step with spikes less than the consumed spikes in any rule (invalid case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" twice
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "0", then click on neuron with label "1"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click "Edit Neuron" to enter neuron editing mode
+    - In neuron "0", click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a*/a->a;0" [Enter] "a*/aa->a;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Status bar says "Stopped at t = 0"
+Test Case C-2-2: Step-by-Step with spikes not satisfying any rule condition (invalid case)
+    - Continue from C-2-1
+    - Click "Edit Neuron" to enter neuron editing mode
+    - In neuron "0", click the rectangle in the neuron below "Spikes" with 0 in it
+    - Click the text area in the input field that appears
+    - Type "1" into the input field
+    - Click "Confirm" to save the value
+    - In neuron "0", click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "aa+/aa->aa;0" [Enter] "aaa+/aaa->aaa;1" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Status bar says "Stopped at t = 0"
+Test Case C-2-3: Step-by-Step with spikes satisfying two conditions (normal case)
+    - Continue from C-2-2
+    - Click "Edit Neuron" to enter neuron editing mode 
+    - In neuron "0", click the rectangle in the neuron below "Spikes" with 1 in it
+    - Click the text area in the input field that appears
+    - Type "10" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Neuron "0" should have 8 spikes, neuron "1" should have 2 spikes. Status bar should say "Fired at t = 1".
+        OR Neuron "0" should have 10 spikes and is locked with timer = 1, neuron "1" should have 0 spikes. Status bar should say "Fired at t = 1".
+Test Case C-2-4: Pressing Back
+    - Continue from C-2-3
+    - Click the "|<" (back) button in the lower right of the screen
+    - Neuron "0" should have 10 spikes, neuron "1" should have 0. Status bar says "Went back to t=0"
+Test Case C-2-5: Step-by-Step with many synapses from one neuron
+    - Continue from C-2-4
+    - Click "New Neuron" once
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "0", then click on neuron with label "2"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Neuron "0" should have 8 spikes, neuron "1" and neuron "2" should have 2 spikes. Status bar should say "Fired at t = 1".
+        OR Neuron "0" should have 10 spikes and is locked with timer = 1, neuron "1" and neuron "2" should have 0 spikes. Status bar should say "Fired at t = 1".
+    - IF neuron "0" is locked, Click the ">|" (fire once) button in the lower right of the screen
+Test Case C-2-6: Step-by-Step with many synapses from many neurons where many neurons have applicable rules
+    - Continue from C-2-5
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "2", then click on neuron with label "1"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click "Edit Neuron" to enter neuron editing mode 
+    - In neuron "2", click the rectangle in the neuron below "rules"
+    - Click the text area in the input field that appears
+    - Type "a+/a->a;0" [Enter] "a+/a->0;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Neuron "0" could have 4-6 spikes, neuron "1" could have 4-7 spikes, neuron "2" should have 0 spikes.
+Test Case C-2-7: Continuous Simulation
+    - Continue from C-2-6
+    - Click the ">" (play) button in the lower right of the screen
+    - Observe if the spikes consumed/given are constant and if neuron "0" is locked regularly or not.
+    - Neuron "0" could have 0-1 spikes, neuron "1" could have 9-20 spikes, neuron "2" should have 0 spikes.
+Test Case C-2-8: Pressing Back to a time when a certain neuron did not exist
+    - Continue from C-2-7
+    - Click the "|<" (back) in the lower right of the screen until Status bar says "Went back to t = 0"
+    - Neuron "0" should have 10 spikes, neuron "1" should have 0 spikes.
+Test Case C-2-9: Pressing Back at t = 0 (invalid case)   
+    - Continue from C-2-8
+    - Click the "|<" (back) button any number of times
+    - Status bar should say "Went back to t = 0"
+    - Neuron "0" should have 10 spikes, neuron "1" should have 0 spikes.
+Test Case C-2-10: Step-by-Step until Stop (edge case)
+    - Continue from C-2-9
+    - Click ">|" (fire once) until Status bar says "Stopped at t = [x]"
+    - Neuron "0" could have 0-1 spikes, neuron "1" could have 9-20 spikes, neuron "2" should have 0 spikes.
+Test Case C-2-11: Firing when there are no applicable rules (invalid case)
+    - Continue from C-2-10
+    - Click the ">|" (fire once) button any number of times
+    - Neuron "0" could have 0-1 spikes, neuron "1" could have 9-20 spikes, neuron "2" should have 0 spikes.
+
+
+Test Cases C-3: Guided Simulation
+Test Case C-3-1: Step-by-Step with spikes less than the consumed spikes in any rule (invalid case)
+    - Open Snapse
+    - If a window titled "Welcome" appears, close it
+    - Click "New Neuron" twice
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "0", then click on neuron with label "1"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click "Edit Neuron" to enter neuron editing mode
+    - In neuron "0", click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "a*/a->a;0" [Enter] "a*/aa->a;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Status bar says "Stopped at t = 0"
+Test Case C-3-2: Step-by-Step with spikes not satisfying any rule condition (invalid case)
+    - Continue from C-3-1
+    - Click "Edit Neuron" to enter neuron editing mode
+    - In neuron "0", click the rectangle in the neuron below "Spikes" with 0 in it
+    - Click the text area in the input field that appears
+    - Type "1" into the input field
+    - Click "Confirm" to save the value
+    - In neuron "0", click the rectangle in the neuron below "Rules"
+    - Click the text area in the input field that appears
+    - Type "aa+/aa->aa;0" [Enter] "aaa+/aaa->a;1" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Status bar says "Stopped at t = 0"
+Test Case C-3-3: Step-by-Step with spikes satisfying two conditions (normal case)
+    - Continue from C-3-2
+    - Click "Edit Neuron" to enter neuron editing mode 
+    - In neuron "0", click the rectangle in the neuron below "Spikes" with 1 in it
+    - Click the text area in the input field that appears
+    - Type "10" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Choose the rule "aa+/aa->aa;0"
+    - Neuron "0" should have 8 spikes, neuron "1" should have 2 spikes. Status bar should say "Fired at t = 1".
+Test Case C-3-4: Choosing the same rule consecutively
+    - Continue from C-3-3
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Choose the rule "aa+/aa->aa;0"
+    - Neuron "0" should have 6 spikes, neuron "1" should have 4 spikes. Status bar should say "Fired at t = 2".
+Test Case C-3-5: Choosing different rules consecutively
+    - Continue from C-3-4
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Choose the rule "aaa+/aaa->aaa;1"
+    - Neuron "0" should have 6 spikes and is locked with timer = 1, neuron "1" should have 4 spikes. Status bar should say "Fired at t = 4".
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Neuron "0" should have 3 spikes, neuron "1" should have 7 spikes. Status bar should say "Fired at t = 4".
+Test Case C-3-6: Pressing Back
+    - Continue from C-3-5
+    - Click the "|<" (back) button in the lower right of the screen
+    - Neuron "0" should have 6 spikes, neuron "1" should have 4 spikes. Status bar says "Went back to t=3"
+Test Case C-3-7: Step-by-Step with many synapses from one neuron
+    - Continue from C-3-6
+    - Click "New Neuron" once
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "0", then click on neuron with label "2"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Choose the rule "aa+/aa->aa;0"
+    - Neuron "0" should have 4 spikes, neuron "1" should have 6 spikes, neuron "2" should have 2 spikes. Status bar should say "Fired at t = 4".
+Test Case C-3-8: Step-by-Step with many synapses from many neurons where many neurons have applicable rules
+    - Continue from C-3-7
+    - Click "New Synapse" to enter synapse adding mode
+    - Click on neuron with label "2", then click on neuron with label "0"
+    - Click "New Synapse" to exit synapse adding mode
+    - Click "Edit Neuron" to enter neuron editing mode 
+    - In neuron "2", click the rectangle in the neuron below "rules"
+    - Click the text area in the input field that appears
+    - Type "aa+/aa->aa;0" [Enter] "a+/a->a;0" [Enter] "aaa+/aaa->0;0" [Enter] "a+/a->0;0" into the input field
+    - Click "Confirm" to save the value
+    - Click "Edit Neuron" to exit neuron editing mode
+    - Click the ">|" (fire once) button in the lower right of the screen
+    - Choose the rule "aa+/aa->aa;0" for neuron "0", choose the rule "aa+/aa->aa;0" for neuron "2"
+    - Neuron "0" should have 4 spikes, neuron "1" should have 8 spikes, neuron "2" should have 2 spikes. Status bar should say "Fired at t = 5".
+Test Case C-3-9: Continuous Simulation
+    - Continue from C-3-8
+    - Click the ">" (play) button in the lower right of the screen
+    - Choose the rule "aa+/aa->aa;0" for neuron "0", choose the rule "a+/a->a;0" for neuron "2"
+    - Neuron "0" should have 3 spikes, neuron "1" should have 10 spikes, neuron "2" should have 3 spikes. Status bar should say "Fired at t = 6".
+    - Choose the rule "aaa+/aaa->aaa;1" for neuron "0", choose the rule "aa+/aa->aa;0" for neuron "2"
+    - Neuron "0" should have 3 spikes and is locked with timer = 1, neuron "1" should have 10 spikes, neuron "2" should have 1 spike. Status bar should say "Fired at t = 7".
+    - Choose the rule "a+/a->a;0" for neuron "2"
+    - Neuron "0" should have 1 spike, neuron "1" should have 13 spikes, neuron "2" should have 3 spikes. Status bar should say "Fired at t = 8".
+    - Choose the rule "aaa+/aaa->0;0" for neuron "2"
+    - Neuron "0" should have 1 spike, neuron "1" should have 13 spikes, neuron "2" should have 0 spikes. Status bar should say "Fired at t = 9".
+    - Status bar should say "Stopped at t = 9".
+Test Case C-3-10: Firing when there are no applicable rules (invalid case)
+    - Continue from C-3-9
+    - Click the ">|" (fire once) button any number of times
+    - Neuron "0" should have 1 spike, neuron "1" should have 13 spikes, neuron "2" should have 0 spikes. Status bar should say "Stopped at t = 9".
+Test Case C-3-11: Pressing Back to a time when a certain neuron did not exist
+    - Continue from C-3-10
+    - Click the "|<" (back) button in the lower right of the screen until Status bar says "Went back to t = 3"
+    - Neuron "0" should have 6 spikes, neuron "1" should have 4 spikes, neuron "2" should not exist.
+Test Case C-3-12: Pressing Back to t = 0 (edge case)   
+    - Continue from C-3-11
+    - Click the "|<" (back) button in the lower right of the screen until Status bar says "Went back to t = 0"
+    - Status bar should say "Went back to t = 0"
+    - Neuron "0" should have 10 spikes, neuron "1" should have 0 spikes.
+Test Case C-3-13: Pressing Back att = 0 (invalid case)   
+    - Continue from C-3-12
+    - Click the "|<" (back) button any number of times
+    - Status bar should say "Went back to t = 0"
+    - Neuron "0" should have 10 spikes, neuron "1" should have 0 spikes.
 
 
 Test Suite D: UI Testing

@@ -117,7 +117,7 @@ public class EditorController : MonoBehaviour
     private bool showRules = true;
     private bool showLabels = true;
     private bool showModeChanged = false;
-    private int fireState = 0;
+    private int fireState = 0; //0 = stop, 1 = start, 2 = end of a round, 3 = waiting for choices
 
     public Text showRulesText;
     public Text showLabelsText;
@@ -1455,7 +1455,7 @@ public class EditorController : MonoBehaviour
             Debug.Log("before:"+fireState);
             StartFire();
             Debug.Log("after:" + fireState);
-            while (fireState != 2)
+            while (fireState < 2)
                 yield return null;
             print(fireState);
             yield return new WaitForSeconds(waitTime);
@@ -1478,14 +1478,18 @@ public class EditorController : MonoBehaviour
                 noActionsLeft = false;
         }
 
-        fireState = 2;
+        //fireState = 2;
         return noActionsLeft;
     }
 
     public void StartFire()
     {
-        IEnumerator oneStep = FireOneStep();
-        StartCoroutine(oneStep);
+        //check if waiting for choices
+        if (fireState != 3)
+        {
+            IEnumerator oneStep = FireOneStep();
+            StartCoroutine(oneStep);
+        }
     }
 
     IEnumerator FireOneStep()
@@ -1493,7 +1497,7 @@ public class EditorController : MonoBehaviour
         configHistory.Add(GetAllSpikes());
         LogConfig();
         delayHistory.Add(GetAllDelay());
-        fireState = 1;
+        //fireState = 1;
         //create Root (ie. the first configuration)
         if (root == null)
         {
@@ -1502,6 +1506,7 @@ public class EditorController : MonoBehaviour
             choiceTimes.Add(globalTime);
         }
 
+        
         //Check applicable rules of all neurons
         appliedRulesStorage.Clear();
         (List<string>, string) rule = (new List<string>(), "");
@@ -1511,6 +1516,7 @@ public class EditorController : MonoBehaviour
             rule = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + i.ToString()));
             appliedRulesStorage.Add((rule.Item1, rule.Item2, i));
         }
+        
         bool halting = CheckHalt();
         yield return halting;
         if (halting)
@@ -1521,6 +1527,8 @@ public class EditorController : MonoBehaviour
         }
         else
         {
+            Debug.Log("Going in");
+            Debug.Log(guidedMode + "store" + appliedRulesStorage.Count + " create" + guidedCreated);
             if (guidedMode && appliedRulesStorage.Count > 0 && guidedCreated == false)
                 CreateGuidedMenus();
             IEnumerator waitGuided = WaitForGuided();
@@ -1585,6 +1593,7 @@ public class EditorController : MonoBehaviour
                 newGuidedMenu.GetComponent<GuidedMenuController>().SetUpMenu(rule.Item1, rule.Item3);
             }
         }
+        fireState = 3;
     }
 
     public void SetGuidedChoice(List<string> rules, string choice, int neuronNo)
@@ -1618,12 +1627,13 @@ public class EditorController : MonoBehaviour
             }
             yield return null;
         }
-                
+     
         EndFire();
     }
 
     public void EndFire()
     {
+        Debug.Log("end of the world");
         guidedCreated = false;
         SetFreeMode(true);
         foreach(int i in neurons)
@@ -2027,11 +2037,25 @@ public class EditorController : MonoBehaviour
     public void SetAllSpikes(List<int> config)
     {
         int counter = 0;
+        List<GameObject> nonexistentneurons = new List<GameObject>();
         foreach (int i in neurons)
-        {
+        {            
             GameObject neuronObject = GameObject.Find(i.ToString());
-            neuronObject.GetComponent<NeuronController>().SetSpikes(config[counter]);           
-            counter++;
+            try
+            {
+                neuronObject.GetComponent<NeuronController>().SetSpikes(config[counter]);
+                counter++;
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                nonexistentneurons.Add(neuronObject);
+                //SetStatusText("Neuron deleted. Went back to t = " + globalTime);
+            }
+        }
+        foreach (GameObject neuron in nonexistentneurons)
+        {
+            DeleteNeuron(neuron);
+            SetStatusText("Neuron(s) deleted. Went back to t = " + globalTime);
         }
     }
 
@@ -2078,14 +2102,14 @@ public class EditorController : MonoBehaviour
                 {
                     if(!Regex.Match(parts[2], "^ *0 *$").Success)
                     {
-                        SetStatusText("Invalid Rule Format: Given spikes must be a string in {a}");
+                        SetStatusText("Invalid Rule Format: Given spikes must be a string in {a} or 0");
                         return false;
                     }     
                     else
                     {
                         if (!Regex.Match(parts[3], "^ *0 *$").Success)
                         {
-                            SetStatusText("Invalid Rule Format: Forgetting rules must have 0 delay");
+                            SetStatusText("Invalid Rule Format: Forgetting rules must have a delay of 0");
                             return false;
                         }
                     }

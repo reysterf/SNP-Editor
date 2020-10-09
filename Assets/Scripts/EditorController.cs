@@ -1455,7 +1455,7 @@ public class EditorController : MonoBehaviour
             Debug.Log("before:"+fireState);
             StartFire();
             Debug.Log("after:" + fireState);
-            while (fireState < 2)
+            while (fireState == 1)
                 yield return null;
             print(fireState);
             yield return new WaitForSeconds(waitTime);
@@ -1518,6 +1518,7 @@ public class EditorController : MonoBehaviour
         }
         
         bool halting = CheckHalt();
+        Debug.Log("halt " + halting);
         yield return halting;
         if (halting)
         {
@@ -1533,8 +1534,8 @@ public class EditorController : MonoBehaviour
                 CreateGuidedMenus();
             IEnumerator waitGuided = WaitForGuided();
             StartCoroutine(waitGuided);
-        }     
-
+        }
+        //yield return halting;
         /*
         List<(List<string>, string ,int)> nondeterministicList = new List<(List<string>, string, int)>();
         (List<string>, string) determinismCheck = (new List<string>(), "");

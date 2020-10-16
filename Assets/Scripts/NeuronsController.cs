@@ -88,11 +88,13 @@ public class NeuronsController : MonoBehaviour
         BroadcastMessage("HideRules");
     }
 
+    //Function that tells a neuron to start firing (check rules)
     public (List<string>, string) Fire(GameObject shootingNeuron)
     {
         return shootingNeuron.GetComponent<NeuronController>().StartFire();
     }
 
+    //Function that tells a neuron to end firing
     public void EndFireNeurons(GameObject shootingNeuron)
     {
         shootingNeuron.GetComponent<NeuronController>().EndFire();

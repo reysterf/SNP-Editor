@@ -17,7 +17,7 @@ public class EditorController : MonoBehaviour
 
     private int neuronCount = 0;
     private int lineCount = 0;
-    private int globalTime = 0;
+    private int globalTime = 0; //int containing the current time for the whole SN P system
 
     public GameObject MainCamera;
     public GameObject cameraCenterArea;
@@ -63,9 +63,9 @@ public class EditorController : MonoBehaviour
     private Vector3 synapseStart;
     private Vector3 synapseEnd;
 
-    private List<int> neurons = new List<int>();
-    private List<int> outputneurons = new List<int>();
-    private List<(int, int)> synapses = new List<(int, int)>();
+    private List<int> neurons = new List<int>(); //List of all the neuron names (names are numbers)
+    private List<int> outputneurons = new List<int>(); //List of all the output neuron names (names are numbers)
+    private List<(int, int)> synapses = new List<(int, int)>(); //List of synapse connections in the form: (source, target)
 
     public GameObject settingsMenu;
     public GameObject helpMenu;
@@ -131,17 +131,17 @@ public class EditorController : MonoBehaviour
 
     public Material white;
 
-    public int waitTime;
+    public int waitTime; //Changeable time to wait for each step in continuous fire
     private string lastData;
-    public List<(List<string>, string, int)> appliedRulesStorage;
-    public ChoiceNode root;
-    public ChoiceNode last;
-    public List<int> choiceTimes;
-    public List<List<int>> configHistory;
-    public List<List<int>> delayHistory;
+    public List<(List<string>, string, int)> appliedRulesStorage; //List containing (applicable rules, chosen rule, neuron number)
+    public ChoiceNode root; //The original configuration of the system at t = 0
+    public ChoiceNode last; //The last nondeterministic choice made
+    public List<int> choiceTimes; //List of time t that a nondeterministic choice was made
+    public List<List<int>> configHistory; //List containing the spikes for each neuron. A neuron is identified by the index
+    public List<List<int>> delayHistory; //List containing the timers for each neuron. A neuron is identified by the index
     private string outputPath;
-    List<string> outputBitstrings = new List<string>();
-    private bool guidedCreated = false;
+    List<string> outputBitstrings = new List<string>(); //List containing the bitstrings of all output neurons
+    private bool guidedCreated = false; //Bool for checking if a guided menu has already been created
 
     public static bool quitConfirmation = false;
     public static GameObject quitTest;
@@ -1420,6 +1420,7 @@ public class EditorController : MonoBehaviour
         lineCount += 1;
     }
 
+    //Called when play button is pressed. Stops or starts the firing depending on the current state
     public void PlayButton()
     {
         Debug.Log((playButton.GetComponent<Image>().sprite == pauseImage));
@@ -1429,6 +1430,7 @@ public class EditorController : MonoBehaviour
             StartContinuous();
     }
 
+    //Stops continuous firing. fireState = 0
     public void StopContinuous()
     {
         backButton.GetComponent<Button>().interactable = true;
@@ -1438,6 +1440,7 @@ public class EditorController : MonoBehaviour
         SetStatusText("Stopped at t = " + globalTime);
     }
 
+    //Starts continuous firing. fireState = 1
     public void StartContinuous()
     {
         backButton.GetComponent<Button>().interactable = false;
@@ -1448,21 +1451,27 @@ public class EditorController : MonoBehaviour
         StartCoroutine(continuousIEnum);
     }
 
+    //Continuous firing loop
     IEnumerator ContinuousFire()
     {
+        //while fireState is not stop (0), continue firing
         while(fireState > 0)
         {
             Debug.Log("before:"+fireState);
             StartFire();
             Debug.Log("after:" + fireState);
+            //if fireState == 1, pause
             while (fireState == 1)
                 yield return null;
             print(fireState);
+            //arbitrary wait time (number of seconds before next firing)
             yield return new WaitForSeconds(waitTime);
             print("Waited 2 secs");
         }
     }
 
+    //Checks if there is no available move left in the system
+    //Checks if there are any applicable rules OR if there is any neuron with timer > 0
     public bool CheckHalt()
     {
         List<int> currentTimers = GetAllDelay();
@@ -1478,13 +1487,13 @@ public class EditorController : MonoBehaviour
                 noActionsLeft = false;
         }
 
-        //fireState = 2;
         return noActionsLeft;
     }
 
     public void StartFire()
     {
-        //check if waiting for choices
+        //Check if waiting for choices
+        //if not, begin next time step
         if (fireState != 3)
         {
             IEnumerator oneStep = FireOneStep();
@@ -1492,13 +1501,15 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    //Moves forward one time step
     IEnumerator FireOneStep()
     {
+        //Adds current configuration and neuron timers to their respective histories
         configHistory.Add(GetAllSpikes());
         LogConfig();
         delayHistory.Add(GetAllDelay());
-        //fireState = 1;
-        //create Root (ie. the first configuration)
+
+        //Create Root (ie. the first configuration)
         if (root == null)
         {
             root = new ChoiceNode(root, GetAllSpikes());
@@ -1517,16 +1528,17 @@ public class EditorController : MonoBehaviour
             appliedRulesStorage.Add((rule.Item1, rule.Item2, i));
         }
         
+        //Check if halting
         bool halting = CheckHalt();
         Debug.Log("halt " + halting);
         yield return halting;
-        if (halting)
+        if (halting) // Stop firing
         {
             StopContinuous();
             configHistory.RemoveAt(configHistory.Count - 1);
             delayHistory.RemoveAt(delayHistory.Count - 1);
         }
-        else
+        else //Check if guided, create menus (if guided)
         {
             Debug.Log("Going in");
             Debug.Log(guidedMode + "store" + appliedRulesStorage.Count + " create" + guidedCreated);
@@ -1535,52 +1547,9 @@ public class EditorController : MonoBehaviour
             IEnumerator waitGuided = WaitForGuided();
             StartCoroutine(waitGuided);
         }
-        //yield return halting;
-        /*
-        List<(List<string>, string ,int)> nondeterministicList = new List<(List<string>, string, int)>();
-        (List<string>, string) determinismCheck = (new List<string>(), "");
-
-        synapses.Sort();
-        List<GameObject> receivingNeurons = new List<GameObject>();
-        int shootingNeuron = 0;
-        foreach ((int i, int j) in synapses)
-        {
-            print(i.ToString() + j.ToString());
-            if (shootingNeuron != i && receivingNeurons != null)
-            {
-                print("Firing " + shootingNeuron.ToString());
-                //determinismCheck receives a tuple of a list of applicable rules and the chosen rules, respectively
-                determinismCheck = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + shootingNeuron.ToString()), receivingNeurons);
-                if (determinismCheck.Item1.Count > 1)
-                {
-                    nondeterministicList.Add((determinismCheck.Item1, determinismCheck.Item2, shootingNeuron));
-                    print((determinismCheck.Item1, determinismCheck.Item2, i)); 
-                }   
-                receivingNeurons.Clear();
-            }
-            receivingNeurons.Add(GameObject.Find("Neurons/" + j.ToString()));
-            shootingNeuron = i;
-        }
-        //Takes the last neuron and fires
-        var lastElement = synapses[synapses.Count - 1];
-        int lastNeuron = lastElement.Item1;
-        determinismCheck = Neurons.GetComponent<NeuronsController>().Fire(GameObject.Find("Neurons/" + lastNeuron.ToString()), receivingNeurons);
-        globalTime++;
-        if (determinismCheck.Item1.Count > 1)
-        {
-            nondeterministicList.Add((determinismCheck.Item1, determinismCheck.Item2, lastNeuron));
-            print((determinismCheck.Item1, determinismCheck.Item2, lastNeuron));
-        }
-
-        LogAppliedRules();
-        EndFire();
-
-        if (nondeterministicList.Count > 0)
-        {
-            AddChoiceElement(nondeterministicList);
-        }*/
     }
 
+    //Create guided menu UI
     private void CreateGuidedMenus()
     {
         SetFreeMode(false);
@@ -1591,14 +1560,18 @@ public class EditorController : MonoBehaviour
             {
                 GameObject neuron = GameObject.Find("Neurons/" + rule.Item3.ToString());
                 GameObject newGuidedMenu = Instantiate(guidedMenu, neuron.transform.position, Quaternion.identity, guidedMenusContainer.transform);
+                //Set up with the list of applicable rules and the neuron number
                 newGuidedMenu.GetComponent<GuidedMenuController>().SetUpMenu(rule.Item1, rule.Item3);
             }
         }
+        //Set fireState = 3  (waiting for choices)
         fireState = 3;
     }
 
+    //Called when a choice is clicked
     public void SetGuidedChoice(List<string> rules, string choice, int neuronNo)
     {
+        //Cycle through appliedRulesStorage and search for the neuron that called the function
         for (int i=0; i<appliedRulesStorage.Count; i++)
         {
             if(neuronNo == appliedRulesStorage[i].Item3)
@@ -1615,6 +1588,7 @@ public class EditorController : MonoBehaviour
 
     }
 
+    //Checks if all rules in appliedRulesStorage has a chosen rule
     IEnumerator WaitForGuided()
     {
         bool allNeuronsGuided = false;
@@ -1623,6 +1597,7 @@ public class EditorController : MonoBehaviour
             allNeuronsGuided = true;
             foreach ((List<string>, string, int) rule in appliedRulesStorage)
             {
+                //Check if neuron is non-deterministic and chosenRule is empty
                 if (rule.Item1.Count > 0 && rule.Item2 == "")
                     allNeuronsGuided = false;
             }
@@ -1632,6 +1607,7 @@ public class EditorController : MonoBehaviour
         EndFire();
     }
 
+    //Signals the end of one time step
     public void EndFire()
     {
         Debug.Log("end of the world");
@@ -1642,6 +1618,7 @@ public class EditorController : MonoBehaviour
             Neurons.GetComponent<NeuronsController>().EndFireNeurons(GameObject.Find("Neurons/" + i.ToString()));
         }
         
+        //Update output neurons
         outputBitstrings.Clear();
         if (outputneurons.Count > 0)
         {
@@ -1659,6 +1636,7 @@ public class EditorController : MonoBehaviour
         globalTime++;
         SetStatusText("Fired at t = " + globalTime);
 
+        //Log non-deterministic choises into the Choice History storage
         List<(List<string>, string, int)> nondeterministicList = new List<(List<string>, string, int)>();
         foreach ((List<string>, string, int)rule in appliedRulesStorage)
         {
@@ -1672,6 +1650,9 @@ public class EditorController : MonoBehaviour
         fireState = 2;
     }
 
+    //Moves back one time step:
+    //Take last configuration and delay
+    //Delete last bit in output bitstring
     public void GoBackOne()
     {
         if(configHistory.Count > 0 && globalTime > 0)
@@ -1699,6 +1680,7 @@ public class EditorController : MonoBehaviour
         }    
     }
 
+    //For debugging: Logs the configuration History
     public void LogConfig()
     {
         string log = "";
@@ -1713,6 +1695,7 @@ public class EditorController : MonoBehaviour
         Debug.Log(log);
     }
 
+    //For debugging: Logs the delay History
     public void LogDelay()
     {
         string log = "";
@@ -1727,6 +1710,8 @@ public class EditorController : MonoBehaviour
         Debug.Log(log);
     }
 
+    //Goes to choice selected in Choice History
+    //Currently set to go back to the original configuration at t = 0
     public void GoToChoice()
     {
 
@@ -1746,27 +1731,31 @@ public class EditorController : MonoBehaviour
 
     }
 
+    //Create a choice element or node in the choice history
+    //Choice elements are stored as a linked list
     public void AddChoiceElement(List<(List<string>, string, int)> nondeterministicList)
     {
+        //Add the new element to the linked list
         ChoiceNode newChoice = new ChoiceNode(root, GetAllSpikes(), nondeterministicList, globalTime);
         newChoice.SetFather(last);
         choiceTimes.Add(globalTime);
                 
         GameObject newChoiceElement = Instantiate(choiceElement, new Vector3(transform.position.x, transform.position.y, transform.position.z),
                Quaternion.identity, choiceContent.transform);
-        //newChoiceButton.GetComponent<Button>().interactable = false;
-        //newChoiceButton.transform.localScale = new Vector3(1, 1, 1);
-        //newChoiceButton.GetComponentInChildren<Text>().text = newChoice.GetChosen();
-        //newChoiceButton.name = "Choice" + newChoice.time.ToString();
 
+        //set Timetext to time
         newChoiceElement.transform.Find("Time").Find("TimeText").gameObject.GetComponent<Text>().text = "t=" + globalTime.ToString();
         Transform perNeuronContainer = newChoiceElement.transform.Find("PerNeuron Container");
 
         foreach ((List<string> matched, string chosen, int neuronNo) in nondeterministicList)
         {
+            //remove the chosen rule string from the matched (applicable) rules
             matched.Remove(chosen);
             GameObject newChoicePerNeuron = Instantiate(choicePerNeuron, new Vector3(transform.position.x, transform.position.y, transform.position.z),
                Quaternion.identity, perNeuronContainer.transform);
+            //set NeuronNoText to neuron no in nondeterministic list
+            //set ChosenText to chosen in nondeterministic list
+            //set IgnoredText to the elements in the matched rules
             newChoicePerNeuron.transform.Find("NeuronNo").Find("NeuronNoText").GetComponent<Text>().text = "N" + neuronNo.ToString();
             newChoicePerNeuron.transform.Find("Chosen").Find("ChosenText").GetComponent<Text>().text = chosen;
             string ignoredRules = "";
@@ -1791,6 +1780,7 @@ public class EditorController : MonoBehaviour
         newChoiceElement.GetComponent<HorizontalLayoutGroup>().enabled = true;
     }
 
+    //For debugging: Logs the contents of applied rules storage
     public void LogAppliedRules()
     {
         string appliedRules = "Matched Rules: ";
@@ -2072,6 +2062,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    //Check validity of rules
     public bool ValidateRules(string rules)
     {
         if(rules == ""){
@@ -2089,18 +2080,22 @@ public class EditorController : MonoBehaviour
                 print("2:" + parts[2]+"end");
                 print(parts[2] != "");
                 print(!Regex.Match(parts[2], "^ *a+ *$").Success);
+                //Check if valid regex only using a as the letter
                 if (!Regex.Match(parts[0], "^[^A-Zb-z0-9]*a[^A-Zb-z0-9]*$").Success)
                 {
                     SetStatusText("Invalid Rule Format: Invalid regex");
                     return false;
                 }
+                //Check if consumed spikes are in the alphabet {a}
                 if(!Regex.Match(parts[1], "^ *a+ *$").Success)
                 {
                     SetStatusText("Invalid Rule Format: Consumed spikes must be a string in {a}");
                     return false;
                 }                    
+                //Check if given spikes are in the alphabet{a}
                 if (!Regex.Match(parts[2], "^ *a+ *$").Success)
                 {
+                    //Check if given spikes is 0 (for forgetting rules)
                     if(!Regex.Match(parts[2], "^ *0 *$").Success)
                     {
                         SetStatusText("Invalid Rule Format: Given spikes must be a string in {a} or 0");
@@ -2108,6 +2103,7 @@ public class EditorController : MonoBehaviour
                     }     
                     else
                     {
+                        //Check if delay is 0 for forgetting rules
                         if (!Regex.Match(parts[3], "^ *0 *$").Success)
                         {
                             SetStatusText("Invalid Rule Format: Forgetting rules must have a delay of 0");
@@ -2115,8 +2111,10 @@ public class EditorController : MonoBehaviour
                         }
                     }
                 }
+                //Check if delay is a natural number
                 if (!Regex.Match(parts[3], "^ *[0-9]+ *$").Success)
                 {
+                    //Also allow putting nothing in the delay (defaulting to 0)
                     if (parts[3].Length != 0)
                     {
                         if (!Regex.Match(parts[3], "^ *$").Success)
@@ -2127,9 +2125,10 @@ public class EditorController : MonoBehaviour
                     }
                 }
                 Regex.Match("", parts[0]);
+                //Remove all spaces
                 string part1 = parts[1].Replace(" ", "");
                 string part2 = parts[2].Replace(" ", "");
-                //consumed should be greater than or equal to produced
+                //Consumed should be greater than or equal to produced
                 if (part1.Length < part2.Length)
                 {
                     SetStatusText("Invalid Rule Format: Consumed must be greater than given");

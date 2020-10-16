@@ -48,14 +48,14 @@ public class NeuronController : MonoBehaviour
     private Vector3 screenPoint;
     private Vector3 offset;
 
-    private int storedGive;
-    private int storedConsume;
-    private int storedReceived;
-    private int timer = -1;
-    public string spikes = "";
-    private List<string> rules = new List<string>();
+    private int storedGive; //int containing the current number of spikes to be given
+    private int storedConsume; //int containing the current number of spikes to be consumed
+    private int storedReceived; //int containing the current number of spikes to be received
+    private int timer = -1; //int for the internal neuron timer
+    public string spikes = ""; //spikes are stored as strings in the alphabet {a}
+    private List<string> rules = new List<string>(); //list of rules in the neuron
 
-    private bool isClosed = false;
+    private bool isClosed = false; //boolean for checking if the neuron is closed
 
     // Start is called before the first frame update
     void Start()
@@ -64,11 +64,8 @@ public class NeuronController : MonoBehaviour
             timerUI.SetActive(false);
 
         }
-        // spikes = "";
         EditorController = GameObject.Find("EditorController");
         ec = EditorController.GetComponent<EditorController>();
-        // rules.Add("a+/a -> a;0");
-        // rules.Add("(aaa)+/aaa -> aaa;0");
         float scale = (float)spikes.Length / ((float)30);
         transform.localScale = new Vector3(1, 1, 1);
 
@@ -378,6 +375,10 @@ public class NeuronController : MonoBehaviour
         return outputText.text;
     }
 
+    //The start of the firing phase for one neuron
+    //Checks for the applicable rules in CheckRules()
+    //Returns the applicable rules to NeuronsController
+    //which returns it to the EditorController
     public (List<string>, string) StartFire()
     {
         timer = timer - 1;
@@ -389,6 +390,8 @@ public class NeuronController : MonoBehaviour
         return rules;
     }
 
+    //Signals the end of the firing phase
+    //Fires and opens a neuron if timer == 0
     public void EndFire()
     {
         if(!IsOutputNeuron() && timer == 0)
@@ -398,11 +401,14 @@ public class NeuronController : MonoBehaviour
         }
     }
 
+    //Function for checking rules
     private (List<string>, string) CheckRules()
     {
         int i = 0;
         List<string> matches = new List<string>();
         string chosenRule = "";
+        //Parses the rule and 
+        //checks if the spikes in neuron matches the regex
         foreach (string rule in rules)
         {
             string checkRule = rule.Replace(" ", "");
@@ -413,11 +419,14 @@ public class NeuronController : MonoBehaviour
             reg = "^" + reg + "$";
             if (Regex.IsMatch(spikes, reg) && consume <= spikes.Length)
             {
+                Debug.Log(checkRule);
                 matches.Add(checkRule);
             }
+            Debug.Log("matches done");
         }
 
-        Debug.Log(ec.guidedMode);
+        //If in Pseudorandom, select random from the applicable rules and
+        //processes it
         if (!ec.guidedMode)
         {
             if (matches.Count > 0)
@@ -428,6 +437,8 @@ public class NeuronController : MonoBehaviour
 
             return (matches, chosenRule);
         }
+        //If in guided AND more than one, return all applicable rules
+        //if there is only one rule, select that rule
         else
         {
             if(matches.Count == 1)
@@ -439,6 +450,8 @@ public class NeuronController : MonoBehaviour
         }           
     }
 
+    //Parse the string and store the data in the string
+    //Gets consumed, given, and delay
     public void ProcessRule(string chosenRule)
     {
         int slashInd = chosenRule.IndexOf("/");
@@ -459,34 +472,23 @@ public class NeuronController : MonoBehaviour
             delay = 0;
         }
         timer = delay;
+        //If there is no delay, store the rule for firing,
+        //else close the neuron and wait for timer == 0
         if (delay == 0)
             StoreRule(consume, give);
         else
             CloseNeuron(consume, give);
     }
 
-    //private string GuidedNondetStart(List<string> matches)
-    //{
-    //    GameObject newGuideMenu = Instantiate(ec.guidedMenu, new Vector3(transform.position.x, transform.position.y, transform.position.z),
-    //          Quaternion.identity, GameObject.Find("Overlay").transform);
-    //    foreach(string rule in matches)
-    //    {
-    //        GameObject newRulePrefab = Instantiate(ec.guidedMenu, new Vector3(transform.position.x, transform.position.y, transform.position.z),
-    //          Quaternion.identity, GameObject.Find("Overlay").transform);
-    //    }
-    //}
-
-    //private (int, int, List<GameObject>) parseRule()
-    //{
-
-    //}
-
+    //Stores consume and give
     private void StoreRule(int consume, int give)
     {
         storedConsume = consume;
         storedGive = give;
     }
 
+    //Stores consume and give and closes the neuron,
+    //triggering a UI change
     private void CloseNeuron(int consumed, int give)
     {
         isClosed = true;
@@ -496,13 +498,11 @@ public class NeuronController : MonoBehaviour
         UIChanged = true;
     }
 
+    //Applies the rule to the neuron
     private void Fire(int consumed, int give)
     {
+        //Spikes are removed via substring
         spikes = spikes.Substring(consumed);
-        //for (i = 0; i < connexion.Length; i++)
-        //{
-        //    Neuron target = connexion[i];
-        //    DrawMovingSpike(transform.position, target.transform.position);
         foreach(int i in outSynapses){
             GameObject target = GameObject.Find("Neurons/" + i.ToString());
             target.GetComponent<NeuronController>().Receive(give);
@@ -515,13 +515,10 @@ public class NeuronController : MonoBehaviour
             }
                 
         }
-
-        //}
-        //float scale = (float)spikes.Length / ((float)30);
-        // transform.localScale = new Vector3(scale, scale, scale);
         UIChanged = true;
     }
 
+    //Called when a neuron is a target of a spike
     public void Receive(int received)
     {
         if(!isClosed)
@@ -529,8 +526,6 @@ public class NeuronController : MonoBehaviour
             string recStr = new string('a', received);
             spikes = string.Concat(spikes, recStr);
             storedReceived += received;
-            //float scale = (float)spikes.Length / ((float)30);
-            // transform.localScale = new Vector3(scale, scale, scale);
             UIChanged = true;
         }        
     }

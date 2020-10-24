@@ -5,17 +5,6 @@ using UnityEngine;
 public class ZoomController : MonoBehaviour
 {
     public Camera camera;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void ZoomIn(){
         if(camera.orthographicSize >= 3){

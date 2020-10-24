@@ -41,6 +41,9 @@ public class TutorialController : MonoBehaviour
         tutorialTitle.Add("Writing Rules");
         tutorialText.Add("To write a rule, follow the format \"E/c->p;d\" where E is a regular expression over {a} and c and p are strings over the alphabet {a} whose length is equal to the number of spikes to be consumed and to be produced, respectively. d, on the other hand, is a number equal to the delay. For example, a(aa)*/aaa→aa;2 is a valid rule while a(aa)*/a3→a2;2 and a(aa)*/a3→a2;2 are not. \n\nTo write a forgetting rule simply assign p=0 and d=0. For example, a*/a->0;0 is a valid forgetting rule");
 
+        tutorialTitle.Add("Writing Rules cont");
+        tutorialText.Add("You can also use '|' in the rules to check for multiple rules, for example you can write a|aa/a->a;0 to check if the neuron contains 1 or 2 spikes. You can use the '|' more than once too, a|aa|aaa/a->a;0, is a rule that checks if a neuron contains 1, 2, or 3 spikes");
+
         tutorialTitle.Add("Deleting Neurons");
         tutorialText.Add("Clicking \"Delete Neuron\" toggles neuron deletion mode. During neuron deletion mode, you can delete neurons by clicking them.\n\nTo exit neuron deletion mode, simply click \"Delete Neuron\" again.");
 
@@ -94,17 +97,12 @@ public class TutorialController : MonoBehaviour
 
     public void NextPage(){
         if(currentPage < tutorialTitle.Count-1){
-
             currentPage += 1;
         }
     }
 
     public void PrevPage(){
         if(currentPage+1 > 1){
-            // title.GetComponent<Text>().text = tutorialTitle[currentPage];
-            // content.GetComponent<Text>().text = tutorialText[currentPage];
-            // pageNav.GetComponent<Text>().text = (currentPage+1).ToString() + "/" + tutorialTitle.Count.ToString();
-
             currentPage -= 1;
         }
     }
@@ -119,13 +117,4 @@ public class TutorialController : MonoBehaviour
             PlayerPrefs.SetInt("ShowTutorial", 0);
         }
     }
-
-        //SKELETON
-        //Change Page Tutorial Function
-        //Close Tutorial
-        //Disable Tutorial
-
-        //Add enableTutorial preference
-    //SKELETON
-
 }

@@ -122,21 +122,6 @@ public class NeuronController : MonoBehaviour
 
             UIChanged = false;
         }
-
-        // if(showRules){
-        //     ShowRules();
-        // }
-        // else if(!showRules){
-        //     HideRules();
-        // }
-
-        // if(showLabel){
-        //     ShowLabel();
-        // }
-        // else if(!showLabel){
-        //     HideLabel();
-        // }
-
     }
 
 
@@ -153,7 +138,6 @@ public class NeuronController : MonoBehaviour
     }
 
     public void EditRules(){        //Called by clicking the rules box of a neuron
-        // if(ec.isFreeMode() && editNeuronMode){
         if(editNeuronMode){
             ec.EditNeuron(gameObject, "rules");
         }
@@ -161,7 +145,6 @@ public class NeuronController : MonoBehaviour
 
     public void EditSpikes(){       //Called by clicking the spikes box of a neuron
         print("EDIT SPIKES");
-        // if(ec.isFreeMode() && editNeuronMode){
         if(editNeuronMode){
             ec.EditNeuron(gameObject, "spikes");
         }
@@ -171,7 +154,6 @@ public class NeuronController : MonoBehaviour
         if(gameObject.tag != "OutputNeuron")
         {
             showRules = true;
-            // gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
             rulesUI.SetActive(true);
             UIChanged = true;
         }       
@@ -179,7 +161,6 @@ public class NeuronController : MonoBehaviour
 
     public void HideRules(){
         showRules = false;
-        // gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
         rulesUI.SetActive(false);
         UIChanged = true;
     }
@@ -284,9 +265,6 @@ public class NeuronController : MonoBehaviour
         // ec.Draw();
     }
 
-    void OnMouseUp(){
-    }
-
 
     void OnMouseDown()
     {
@@ -294,42 +272,21 @@ public class NeuronController : MonoBehaviour
 
         offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
 
-        // EditorController ec = EditorController.GetComponent<EditorController>();
-        // Debug.Log("OOF");
-        // ec.nemu();
-
         // Handles clicks received depending on editing mode
         if(newSynapseMode && synapseV1Mode){
             Debug.Log("Synapse source selected");
-            // var x = new {position = gameObject.transform.position, name = gameObject.name};
             SendMessageUpwards("SynapseCoordinate1", gameObject);
 
         }
         else if(newSynapseMode && synapseV2Mode){
             Debug.Log("Synapse destination selected");
-            // var x = new {position = gameObject.transform.position, name = gameObject.name};
             SendMessageUpwards("SynapseCoordinate2", gameObject);
         }
-        // else if(editNeuronMode){
-        //     SendMessageUpwards("EditNeuronTarget", gameObject);
-        // }
         else if(deleteNeuronMode){
             SendMessageUpwards("DeleteNeuronTarget", gameObject);
         }
     }
 
-    void OnMouseOver()
-    {
-        //If your mouse hovers over the GameObject with the script attached, output this message
-        // Debug.Log("Mouse is over GameObject." + neuron.name);
-        // Debug.Log();
-    }
-
-    void OnMouseExit()
-    {
-        //The mouse is no longer hovering over the GameObject so output this message each frame
-        // Debug.Log("Mouse is no longer on GameObject.");
-    }
 
     public void SetStoredGive(int newStoredGive){
         storedGive = newStoredGive;
@@ -338,7 +295,6 @@ public class NeuronController : MonoBehaviour
     public int GetStoredGive(){
         return storedGive;
     }
-
 
     public void SetStoredConsume(int newStoredConsume){
         storedConsume = newStoredConsume;

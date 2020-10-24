@@ -18,12 +18,6 @@ public class NeuronsController : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void LoadedFile() {
         Destroy(GetComponent<GridLayoutGroup>()); // For auto layout;
     }
@@ -41,11 +35,6 @@ public class NeuronsController : MonoBehaviour
     public void EditNeuronMode(bool mode) {
         print("Edit Neuron Mode");
         BroadcastMessage("EditNeuronModeReceiver", mode);
-    }
-
-    public void EditNeuronTarget(GameObject neuron) {
-        print("EditNeuronTarget: " + neuron.name);
-        ec.EditNeuron(neuron);
     }
 
     public void NewSynapseMode(bool mode) {

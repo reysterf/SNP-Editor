@@ -20,26 +20,14 @@ public class SynapseController : MonoBehaviour
 
     float distance = 0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        // if(sourceNeuronName != null || sourceNeuronName != ""){
-        //     sourceNeuron =  GameObject.Find(sourceNeuronName);
-        // }
-        // if(destNeuronName != null || destNeuronName != ""){
-        //     destNeuron = GameObject.Find(destNeuronName);
-        // }
-    }
 
     // Update is called once per frame
     void Update()
     {
         if(sourceNeuronName != null || sourceNeuronName != "" || sourceNeuron == null){
-            // print("SN: " + sourceNeuronName);
             sourceNeuron =  GameObject.Find(sourceNeuronName);
         }
         if(destNeuronName != null || destNeuronName != "" || destNeuron == null){
-            // print("DN: " + destNeuronName);
             destNeuron = GameObject.Find(destNeuronName);
 
         //Set Rotation
@@ -52,24 +40,11 @@ public class SynapseController : MonoBehaviour
         }
 
         }
-        // if(sourceNeuron && destNeuron){s
-        // print(sourceNeuron.transform.position);
         distance = Vector3.Distance(sourceNeuron.transform.localPosition, destNeuron.transform.localPosition);
         gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(distance, 30);
         transform.position = sourceNeuron.transform.position;
-        // }
     }
 
-    void OnMouseDown(){
-        // screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-
-        // offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
-
-        // print("Oh Synapse");
-        // if(deleteSynapseMode){
-        //     SendMessageUpwards("DeleteSynapseTarget", gameObject);
-        // }
-    }
 
     public void SetSourceNeuronName(string neuronName){
         sourceNeuronName = neuronName;
@@ -118,10 +93,6 @@ public class SynapseController : MonoBehaviour
         else if(!deleteSynapseMode){
 
         }
-    }
-
-    public void FetchDeleteSynapseMode(){
-        // GameObject.Find("Synapses").GetComponent<SynapsesController>().
     }
 
     public void DeleteSynapseTarget(){

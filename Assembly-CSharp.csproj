@@ -63,24 +63,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\DropdownController.cs" />
-    <Compile Include="Assets\LoadMenuController.cs" />
-    <Compile Include="Assets\OutputNeuronController.cs" />
-    <Compile Include="Assets\SaveMenuController.cs" />
     <Compile Include="Assets\Scripts\ChoiceController.cs" />
     <Compile Include="Assets\Scripts\ChoiceNode.cs" />
     <Compile Include="Assets\Scripts\DeleteButtonController.cs" />
-    <Compile Include="Assets\Scripts\Drawer.cs" />
+    <Compile Include="Assets\Scripts\DropdownController.cs" />
     <Compile Include="Assets\Scripts\EditorController.cs" />
     <Compile Include="Assets\Scripts\GuidedMenuController.cs" />
     <Compile Include="Assets\Scripts\HistoryNode.cs" />
+    <Compile Include="Assets\Scripts\LoadMenuController.cs" />
     <Compile Include="Assets\Scripts\NeuronController.cs" />
     <Compile Include="Assets\Scripts\NeuronsController.cs" />
     <Compile Include="Assets\Scripts\PanController.cs" />
     <Compile Include="Assets\Scripts\RulePrefabController.cs" />
+    <Compile Include="Assets\Scripts\SaveMenuController.cs" />
     <Compile Include="Assets\Scripts\SynapseController.cs" />
     <Compile Include="Assets\Scripts\SynapsesController.cs" />
-    <Compile Include="Assets\Scripts\testScript.cs" />
+    <Compile Include="Assets\Scripts\TutorialController.cs" />
+    <Compile Include="Assets\Scripts\ZoomController.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\IStandaloneFileBrowser.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\Sample\BasicSample.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileImage.cs" />
@@ -93,8 +92,7 @@
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserLinux.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserMac.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserWindows.cs" />
-    <Compile Include="Assets\TutorialController.cs" />
-    <Compile Include="Assets\ZoomController.cs" />
+    <None Include="Assets\Test Suite.txt" />
     <None Include="Assets\output.txt" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.8f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

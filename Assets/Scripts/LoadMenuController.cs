@@ -19,10 +19,6 @@ public class LoadMenuController : MonoBehaviour
     List<Dropdown.OptionData> optionDataList = new List<Dropdown.OptionData>();
     DirectoryInfo di;
 
-    void Awake(){
-        // loadMenu.SetActive(false);
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -47,7 +43,6 @@ public class LoadMenuController : MonoBehaviour
 		foreach (var item in fileInfo)
 		{
             fileNames.Add(item.Name);
-            // print(item.Name);
 		}
 
         loadMenuDropdown.AddOptions(fileNames);

@@ -27,6 +27,7 @@ public class ChoiceNode
         return config;
     }
 
+    //For debugging
     public void PrintNondetRules()
     {
         string contents = "";
@@ -58,6 +59,7 @@ public class ChoiceNode
         this.father = father;
     }
 
+    //ChoiceNode created at t = 0 when there are no choices
     public ChoiceNode(ChoiceNode root, List<int> config)
     {
         this.root = root;

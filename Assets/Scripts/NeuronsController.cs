@@ -89,20 +89,25 @@ public class NeuronsController : MonoBehaviour
         shootingNeuron.GetComponent<NeuronController>().EndFire();
     }
 
+    //Function that tells a neuron to set the chosen rule after guided choosing
     public string UpdateOutputNeurons(GameObject outputNeuron){
         return outputNeuron.GetComponent<NeuronController>().UpdateOutput();
     }
 
+    //Function that tells a neuron to delete the last digit of the output bitstring
+    //Used in going back one time step
     public string RetractOutput(GameObject outputNeuron)
     {
         return outputNeuron.GetComponent<NeuronController>().Retract();
     }
 
+    //Function that clears the output bitstring of a neuron
     public void ClearOutput(GameObject outputNeuron)
     {
         outputNeuron.GetComponent<NeuronController>().ClearOutput();
     }
 
+    //Function that tells a neuron to set the chosen rule after guided choosing
     public void SetChosenRule(GameObject neuron, string chosenRule)
     {
         neuron.GetComponent<NeuronController>().ProcessRule(chosenRule);

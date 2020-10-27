@@ -16,12 +16,6 @@ public class GuidedMenuController : MonoBehaviour
         ec = GameObject.Find("EditorController").GetComponent<EditorController>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void SetNeuronNo(int neuronNo)
     {
         this.neuronNo = neuronNo;

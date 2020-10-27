@@ -124,7 +124,7 @@ public class NeuronController : MonoBehaviour
         }
     }
 
-
+    // Handles broadcasted messages for edit neuron mode
     void EditNeuronModeReceiver(bool mode){
         editNeuronMode = mode;
         if(editNeuronMode){
@@ -235,26 +235,31 @@ public class NeuronController : MonoBehaviour
         return outSynapses;
     }
 
+    // Handles new synapse mode messages
     void NewSynapseModeReceiver(bool mode)
     {
         newSynapseMode = mode;
     }
 
+    // Handles source neuron messages
     void SynapseV1ModeReceiver(bool mode)
     {
         synapseV1Mode = mode;
     }
 
+    // Handles destination neuron messages
     void SynapseV2ModeReceiver(bool mode)
     {
         synapseV2Mode = mode;
     }
 
+    // Handles delete neuron messages
     void DeleteNeuronModeReceiver(bool mode)
     {
         deleteNeuronMode = mode;
     }
 
+    // Handles neuron dragging
     void OnMouseDrag()
     {
         if(!ec.isDeleteSynapseMode() && ec.GetDragMode() && !ec.GetEditInstanceMode()){
@@ -265,7 +270,7 @@ public class NeuronController : MonoBehaviour
         // ec.Draw();
     }
 
-
+    // Handles clicks on the neuron
     void OnMouseDown()
     {
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);

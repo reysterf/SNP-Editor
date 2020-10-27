@@ -78,7 +78,6 @@ public class EditorController : MonoBehaviour
     public GameObject editRulesMenu;
     public GameObject editSpikesMenu;
     public GameObject neuronLabel;
-    // public GameObject cancelButton;
     public GameObject nextButton;
     public GameObject playButton;
     public GameObject backButton;
@@ -166,19 +165,23 @@ public class EditorController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Hide menus at startup
         editNeuronMenu.SetActive(false);
         editRulesMenu.SetActive(false);
         editSpikesMenu.SetActive(false);
         settingsMenu.SetActive(false);
         helpMenu.SetActive(false);
 
+        //Hide mode indicators at startup
         newSynapseModeIndicator.SetActive(false);
         editNeuronModeIndicator.SetActive(false);
         deleteNeuronModeIndicator.SetActive(false);
         deleteSynapseModeIndicator.SetActive(false);
 
+        //Disable pan mode at startup
         panModeIndicator.SetActive(false);
 
+        //Initial values
         lastData = null;
         root = null;
         configHistory = new List<List<int>>();
@@ -193,17 +196,13 @@ public class EditorController : MonoBehaviour
         showLabelsText.text = "Hide Labels";
         showRulesText.text = "Hide Rules";
 
-        foreach ((int i, int j) in synapses)
-        {
-            print(i.ToString() + ", " + j.ToString());
-        }
-
         SetStatusText("");
 
         AutoSave();
         
         autoSaveInterval = 60f;
 
+        //Start autosaving thread
         InvokeRepeating("AutoSave", autoSaveInterval, autoSaveInterval);
     }
 
@@ -272,6 +271,8 @@ public class EditorController : MonoBehaviour
         if(deleteSynapseMode){
             deleteSynapseButton.interactable = true;
         }
+
+        //Save shortcut
         if(Input.GetKey(KeyCode.RightControl) ||
                 Input.GetKey(KeyCode.LeftControl) ||
                 Input.GetKey(KeyCode.LeftApple) ||
@@ -304,11 +305,13 @@ public class EditorController : MonoBehaviour
     }
 
     public void DisableNonInteractable(){
+        //Reduces opacity of the non-interactable objects
         ReduceOpacity(titleText.GetComponent<Image>());
         ReduceOpacity(statusBar.GetComponent<Image>());
     }
 
     public void EnableNonInteractable(){
+        //Returns opacity of the non-interactable objects to full
         ReturnToWhite(titleText.GetComponent<Image>());
         ReturnToWhite(statusBar.GetComponent<Image>());
     }
@@ -339,32 +342,40 @@ public class EditorController : MonoBehaviour
 
 
     void DisableViewButtons(){
+        // Get all view buttons
         Button[] buttons = viewButtons.transform.GetComponentsInChildren<Button>();
 
+        // Make the buttons not interactable
         foreach (Button button in buttons) {
             button.interactable = false;
         }
     }
 
     void EnableViewButtons(){
+        // Get all view buttons
         Button[] buttons = viewButtons.transform.GetComponentsInChildren<Button>();
 
+        // Make the buttons interactable
         foreach (Button button in buttons) {
             button.interactable = true;
         }
     }
 
     void DisableSimulationButtons(){
+        // Get all simulation buttons
         Button[] buttons = simulationButtons.transform.GetComponentsInChildren<Button>();
 
+        // Make the buttons not interactable
         foreach (Button button in buttons) {
             button.interactable = false;
         }
     }
 
     void EnableSimulationButtons(){
+        // Get all simulation buttons
         Button[] buttons = simulationButtons.transform.GetComponentsInChildren<Button>();
 
+        // Make the buttons interactable
         foreach (Button button in buttons) {
             button.interactable = true;
         }
@@ -372,28 +383,34 @@ public class EditorController : MonoBehaviour
 
 
     void DisableControlButtons(){
+        // Get all control buttons
         Button[] buttons = controlButtons.transform.GetComponentsInChildren<Button>();
 
+        // Make the buttons not interactable
         foreach (Button button in buttons) {
             button.interactable = false;
         }
     }
 
     void EnableControlButtons(){
+        // Get all control buttons
         Button[] buttons = controlButtons.transform.GetComponentsInChildren<Button>();
 
+        // Make the buttons interactable
         foreach (Button button in buttons) {
             button.interactable = true;
         }
     }
 
     void DisableMiscButtons(){
+        // Make the settings, show, and help button not interactable
         settingsButton.GetComponent<Button>().interactable = false;
         showButtonsButton.GetComponent<Button>().interactable = false;
         helpButton.GetComponent<Button>().interactable = false;
     }
 
     void EnableMiscButtons(){
+        // Make the settings, show, and help button interactable
         settingsButton.GetComponent<Button>().interactable = true;
         showButtonsButton.GetComponent<Button>().interactable = true;
         helpButton.GetComponent<Button>().interactable = true;
@@ -403,12 +420,14 @@ public class EditorController : MonoBehaviour
     //Used by hide buttons button
     public void HideButtonsToggle(){
         if(!showButtonsMode){
+            // Shows view and control button groups and the title text
             viewButtons.SetActive(true);
             controlButtons.SetActive(true);
             titleText.SetActive(true);
             showButtonsMode = true;
         }
         else if(showButtonsMode){
+            // Hides view and control button groups and the title text
             viewButtons.SetActive(false);
             controlButtons.SetActive(false);
             titleText.SetActive(false);
@@ -418,21 +437,31 @@ public class EditorController : MonoBehaviour
 
 
     private void BlankSlate() {
-        //Reset the program state into a blank slate
+        // Reset the program state into a blank slate
         DeleteAllNeurons();
         neuronCount = 0;
     }
 
     public void HelpMenuOpen(){
+        // Changed UI Free mode to false
         SetFreeMode(false);
+
+        // Displays the help menu
         helpMenu.SetActive(true);
+
+        // Makes buttons not interactable and reduces opacity for noninteractable elements
         DisableButtonsAll();
         DisableNonInteractable();
     }
 
     public void HelpMenuClose(){
+        // Changed UI Free mode to true
         SetFreeMode(true);
+
+        // Hides help menu
         helpMenu.SetActive(false);
+
+        // Makes buttons interactable and returns opacity to full for noninteractable elements
         EnableButtonsAll();
         EnableNonInteractable();
     }
@@ -451,15 +480,25 @@ public class EditorController : MonoBehaviour
     }
 
     public void SettingsMenuOpen(){
+        // Changed UI Free mode to false
         SetFreeMode(false);
-        settingsMenu.SetActive(true);        
+
+        // Shows settings menu
+        settingsMenu.SetActive(true);
+
+        // Makes buttons not interactable and reduces opacity for noninteractable elements
         DisableButtonsAll();
         DisableNonInteractable();
     }
 
     public void SettingsMenuClose(){
+        // Changed UI Free mode to true
         SetFreeMode(true);
+
+        // Hides help menu
         settingsMenu.SetActive(false);
+
+        // Makes buttons interactable and returns opacity to full for noninteractable elements
         EnableButtonsAll();
         EnableNonInteractable();
     }
@@ -468,6 +507,8 @@ public class EditorController : MonoBehaviour
         //Change nondeterminism mode to pseudorandom
         if(guidedMode == true){
             guidedMode = false;
+
+            // Updates the radio button UI
             pseudorandomToggleIndicator.SetActive(true);
             guidedToggleIndicator.SetActive(false);
         }
@@ -476,12 +517,15 @@ public class EditorController : MonoBehaviour
     public void SetToGuidedMode(){
         if(guidedMode == false){
             guidedMode = true;
+
+            // Updates the radio button UI
             pseudorandomToggleIndicator.SetActive(false);
             guidedToggleIndicator.SetActive(true);
         }
     }
 
     public void SetStatusText(string statusText) {
+        // Changes the text on the Status bar
         statusBar.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = statusText;
     }
 
@@ -525,10 +569,12 @@ public class EditorController : MonoBehaviour
         panModeIndicator.SetActive(panMode);
         panController.SetPanMode(panMode);
         if (panMode) {
+            // Disables dragging
             SetDragMode(false);
             SetStatusText("Pan Mode");
         }
         else if(!panMode){
+            // Enables dragging
             SetDragMode(true);
         }
     }
@@ -601,16 +647,21 @@ public class EditorController : MonoBehaviour
     public void NewNeuron() //Used by New Neuron button
     {
         if (freeMode) {
+            // Looks at the current view port
             Vector3[] neuronsBounds = new Vector3[4];
             cameraCenterArea.GetComponent<RectTransform>().GetWorldCorners(neuronsBounds);
 
+            // Sets the new neuron's position within the view port
             Vector3 initialPosition = new Vector3(UnityEngine.Random.Range(neuronsBounds[0].x, neuronsBounds[3].x), UnityEngine.Random.Range(neuronsBounds[0].y, neuronsBounds[1].y), 0);
             GameObject newron = Instantiate(NeuronPrefab, initialPosition, Quaternion.identity);
+
             newron.name = neuronCount.ToString();
             newron.transform.SetParent(Neurons.transform);
             newron.transform.tag = "Neuron";
             neurons.Add(neuronCount); //neuronCount
+
             neuronCount += 1;
+
             SetStatusText("New neuron created");
         }
     }
@@ -619,32 +670,41 @@ public class EditorController : MonoBehaviour
     {
         if (freeMode)
         {
+            // Looks at the current view port
             Vector3[] neuronsBounds = new Vector3[4];
             cameraCenterArea.GetComponent<RectTransform>().GetWorldCorners(neuronsBounds);
 
+            // Sets the new neuron's position within the view port
             Vector3 initialPosition = new Vector3(UnityEngine.Random.Range(neuronsBounds[0].x, neuronsBounds[3].x), UnityEngine.Random.Range(neuronsBounds[0].y, neuronsBounds[1].y), 0);
             GameObject newron = Instantiate(OutputNeuronPrefab, initialPosition, Quaternion.identity);
+
             newron.name = neuronCount.ToString();
             newron.transform.SetParent(Neurons.transform);
             newron.transform.tag = "OutputNeuron";
             neurons.Add(neuronCount); //neuronCount
             outputneurons.Add(neuronCount);
+
             neuronCount += 1;
+
             SetStatusText("New output neuron created");
         }
     }
 
-    public GameObject NewOutputNeuron(int neuronInt)
+    public GameObject NewOutputNeuron(int neuronInt) // Used by load function
     {
+        // Looks at the current view port
         Vector3[] neuronsBounds = new Vector3[4];
         cameraCenterArea.GetComponent<RectTransform>().GetWorldCorners(neuronsBounds);
 
+        // Sets the new neuron's position to be within the viewport
         Vector3 initialPosition = new Vector3(UnityEngine.Random.Range(neuronsBounds[0].x, neuronsBounds[3].x), UnityEngine.Random.Range(neuronsBounds[0].y, neuronsBounds[1].y), 0);
         GameObject newron = Instantiate(OutputNeuronPrefab, initialPosition, Quaternion.identity);
+
         newron.name = neuronInt.ToString();
         newron.transform.SetParent(Neurons.transform);
         newron.transform.tag = "OutputNeuron";
         neurons.Add(neuronInt); //neuronCount
+
         outputneurons.Add(neuronInt);
         neuronCount += 1;
 
@@ -653,17 +713,21 @@ public class EditorController : MonoBehaviour
 
     public GameObject NewNeuron(int number, bool setActive) //Used by load function
     {
+        // Looks at the current view port
         Vector3[] neuronsBounds = new Vector3[4];
         cameraCenterArea.GetComponent<RectTransform>().GetWorldCorners(neuronsBounds);
 
+        // Sets the new neuron's position to be within the viewport
         Vector3 initialPosition = new Vector3(UnityEngine.Random.Range(neuronsBounds[0].x, neuronsBounds[3].x), UnityEngine.Random.Range(neuronsBounds[0].y, neuronsBounds[1].y), 0);
         GameObject newron = Instantiate(NeuronPrefab, initialPosition, Quaternion.identity);
+
         newron.transform.localScale = new Vector3(1, 1, 1);
         newron.SetActive(setActive);
         newron.name = number.ToString();
         newron.transform.SetParent(Neurons.transform);
         newron.transform.tag = "Neuron";
         neurons.Add(number); //neuronCount
+
         neuronCount += 1;
 
 
@@ -679,6 +743,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Starts delete synapse mode
     public void DeleteSynapseOn(){
         if(freeMode){
             SetFreeMode(false);
@@ -688,6 +753,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Ends delete synapse mode
     public void DeleteSynapseOff(){
         deleteSynapseModeIndicator.SetActive(false);
         SetFreeMode(true);
@@ -700,10 +766,12 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Starts a synapse deletion cycle
     public void DeleteSynapseStart(){
         Synapses.GetComponent<SynapsesController>().DeleteSynapseMode(true);
     }
 
+    // Deletes a synapse
     public void DeleteSynapse(string synapseName){
         print("Deleting synapse: " + synapseName);
         GameObject targetSynapse = GameObject.Find(synapseName);
@@ -720,12 +788,14 @@ public class EditorController : MonoBehaviour
         DeleteSynapseEnd();
     }
 
+    // Ends a synapse deletion cycle
     public void DeleteSynapseEnd(){
         SetStatusText("Synapse deleted");
 
         DeleteSynapseStart();
     }
 
+    // Exits the delete synapse mode
     public void DeleteSynapseCancel(){
         SetFreeMode(true);
         deleteSynapseMode = false;
@@ -749,6 +819,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Starts the delete neuron mode
     public void DeleteNeuronOn(){
         if(freeMode){
             SetStatusText("Delete Neuron: Select a neuron to delete");
@@ -759,6 +830,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Ends the delete neuron mode
     public void DeleteNeuronOff(){
         SetFreeMode(true);
         deleteNeuronMode = false;
@@ -766,10 +838,12 @@ public class EditorController : MonoBehaviour
         deleteNeuronModeIndicator.SetActive(false);
     }
 
+    // Starts a neuron deletion cycle
     public void DeleteNeuronStart(){
         Neurons.GetComponent<NeuronsController>().DeleteNeuronMode(true);
     }
 
+    // Deletes a neuron
     public void DeleteNeuron(GameObject neuron){
         removeConnectedSynapses(neuron);
         neurons.Remove(int.Parse(neuron.name));
@@ -777,10 +851,12 @@ public class EditorController : MonoBehaviour
         DeleteNeuronEnd();
     }
 
+    // Ends a neuron deletion cycle
     public void DeleteNeuronEnd(){
         SetStatusText("Neuron deleted");     
     }
 
+    // Exits a neuron deletion cycle
     public void DeleteNeuronCancel(){
         SetFreeMode(true);
         deleteNeuronMode = false;
@@ -788,6 +864,7 @@ public class EditorController : MonoBehaviour
         SetStatusText("Neuron deletion cancelled");     
     }
 
+    // Gets all neurons and deletes them
     public void DeleteAllNeurons(){
         GameObject[] neuronsToDelete = GameObject.FindGameObjectsWithTag("Neuron");
         GameObject[] outputNeuronsToDelete = GameObject.FindGameObjectsWithTag("OutputNeuron");
@@ -799,6 +876,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Deletes the synapses  connected to a neuron
     private void removeConnectedSynapses(GameObject neuron){
         int n = int.Parse(neuron.name);
         int k = 0;
@@ -806,6 +884,7 @@ public class EditorController : MonoBehaviour
         List<int> indexToRemove = new List<int>();
         List<(int,int)> synapsesToDelete = new List<(int,int)>();
 
+        // Finds synapses to delete
         foreach ((int i, int j) in synapses)
         {
             if (i == n || j == n){
@@ -815,12 +894,14 @@ public class EditorController : MonoBehaviour
             k += 1;
         }
         
+        // Removes synapses from array
         int indexOffset = 0;
         foreach (int i in indexToRemove){
             synapses.RemoveAt(i - indexOffset);
             indexOffset += 1;
         }
 
+        // Destroys the synapse gameobjects
         foreach ((int i, int j) in synapsesToDelete){
             GameObject synapseToDelete = GameObject.Find(i.ToString() + "-" + j.ToString());
             RemoveOutSynapseFromSource(i, j);
@@ -828,6 +909,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Deletes a neuron's outsynapse
     void RemoveOutSynapseFromSource(int source, int dest){
         GameObject sourceNeuron = GameObject.Find(source.ToString());
         sourceNeuron.GetComponent<NeuronController>().DeleteOutSynapse(dest);
@@ -842,6 +924,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Starts the edit neuron mode
     public void EditNeuronOn(){
         if(freeMode){
             editNeuronModeIndicator.SetActive(true);
@@ -850,23 +933,26 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Ends the edit neuron mode
     public void EditNeuronOff(){
         editNeuronModeIndicator.SetActive(false);
         SetFreeMode(true);
         EditNeuronEnd();
     }
 
+    // Ends a neuron editing cycle
     public void EditNeuronEnd(){
         editNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);       
     }
 
+    // Starts a neuron editing cycle
     public void EditNeuronStart(){
         editNeuronMode = true;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(true);
     }
 
-
+    // Handles calls for editing a neuron's spikes or rules
     public void EditNeuron(GameObject neuron, string mode){
         activeNeuronForEditing = neuron;
         editInstanceMode = true;
@@ -878,6 +964,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Cancels the editting a neuron and disables the editing menu
     public void EditNeuronCancel(){ //Used by cancel button
         editNeuronMode = false;
         Neurons.GetComponent<NeuronsController>().EditNeuronMode(false);
@@ -885,6 +972,7 @@ public class EditorController : MonoBehaviour
         SetStatusText("Neuron editting cancelled");
     }
 
+    // Starts a rule editing cycle
     public void EditRulesStart(){
         editRulesMode = true;
         editRulesMenu.SetActive(true);
@@ -893,6 +981,7 @@ public class EditorController : MonoBehaviour
         EditRules();
     }
 
+    // Rule editing main function
     public void EditRules(){
         GameObject initialGameObject = Instantiate(activeNeuronForEditing);
         initialGameObject.SetActive(false);
@@ -908,6 +997,7 @@ public class EditorController : MonoBehaviour
         rulesInputField.text = rulesString;
     }
 
+    // Saves rule changes
     public void EditRulesConfirm(){ //Used by confirm button in edit rules window
         editRulesMode = false;
         editRulesMenu.SetActive(false);
@@ -919,6 +1009,7 @@ public class EditorController : MonoBehaviour
         editInstanceMode = false;
     }
 
+    // Cancel rule changes
     public void EditRulesCancel(){ //Used by cancel button in edit rules window 
         editRulesMode = false;
         editRulesMenu.SetActive(false);
@@ -927,6 +1018,7 @@ public class EditorController : MonoBehaviour
         editInstanceMode = false;
     }
 
+    // Starts a spike editing cycle
     public void EditSpikesStart(){
         editSpikesMode = true;
         editSpikesMenu.SetActive(true);
@@ -935,12 +1027,14 @@ public class EditorController : MonoBehaviour
         EditSpikes();
     }
 
+    // Spike editing main function
     public void EditSpikes(){
         InputField spikesInputField = editSpikesMenu.transform.Find("Spikes InputField").GetComponent<InputField>();
 
         spikesInputField.text = activeNeuronForEditing.GetComponent<NeuronController>().GetSpikesNum().ToString();
     }
 
+    // Save spikes changes
     public void EditSpikesConfirm(){ //Used by confirm button in edit spikes window
 
         InputField spikesInputField = editSpikesMenu.transform.Find("Spikes InputField").GetComponent<InputField>();
@@ -955,14 +1049,13 @@ public class EditorController : MonoBehaviour
 
     }
 
+    // Cancel spike changes
     public void EditSpikesCancel(){ // Used by cancel button in edit spikes window
 
         editSpikesMode = false;
         editSpikesMenu.SetActive(false);
         editInstanceMode = false;
     }
-
-
 
     public void NewSynapseToggle(){ //Used by New Synapse button
 
@@ -974,6 +1067,7 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Starts the New Synapse mode
     void NewSynapseOn(){
         if(freeMode){
             SetStatusText("Entered New Synapse Mode");
@@ -984,14 +1078,17 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Starts a synapse creation cycle
     public void NewSynapseStart(){
         Neurons.GetComponent<NeuronsController>().NewSynapseMode(true);
     }
 
+    // Synapse creation main function
     public void NewSynapse(string sourceNeuronName, string destNeuronName, bool loadMode = false){
         int sourceNeuron = int.Parse(sourceNeuronName);
         int destNeuron = int.Parse(destNeuronName);
 
+        //Checks if synapse already exists
         bool synapseExists = false;
         foreach ((int i, int j) in synapses)
         {
@@ -1020,11 +1117,13 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Ends a synapse creation cycle
     public void NewSynapseEnd(){
         SetStatusText("Synapse successfully created");
         NewSynapseStart();
     }
 
+    // Ends New Synapse mode
     public void NewSynapseOff(){
         newSynapseMode = false;
         newSynapseModeIndicator.SetActive(false);
@@ -1033,10 +1132,12 @@ public class EditorController : MonoBehaviour
         SetFreeMode(true);
     }
 
+    // Restart creation cycle
     public void NewSynapseError(){
         NewSynapseStart();
     }
 
+    // Exit new synapse mode
     public void NewSynapseCancel(){
         newSynapseMode = false;
         SetFreeMode(true);
@@ -1058,16 +1159,17 @@ public class EditorController : MonoBehaviour
         }
     }
 
+    // Create synapse gameObject
     public void InstantiateSynapse(string sourceNeuronName, string destNeuronName){
         print("Instantiating synapse " + sourceNeuronName + "-" + destNeuronName);
         GameObject sourceNeuron = GameObject.Find(sourceNeuronName);
         print(sourceNeuron.transform.position);
         if(sourceNeuron == null){
-            print("Oopsie no sourceNeuron");
+            print("No sourceNeuron");
         }
         GameObject destNeuron = GameObject.Find(destNeuronName);
         if(destNeuron == null){
-            print("Oopsie no destNeuron");
+            print("No destNeuron");
         }
         GameObject synapse = Instantiate(SynapsePrefab, sourceNeuron.transform.position, Quaternion.identity);
         synapse.transform.SetParent(SynapsesPanel.transform);
@@ -1452,6 +1554,7 @@ public class EditorController : MonoBehaviour
         last = newChoice;
         last.PrintNondetRules();
 
+        // Update layout calculation
         newChoiceElement.GetComponent<HorizontalLayoutGroup>().enabled = false;
         newChoiceElement.GetComponent<HorizontalLayoutGroup>().CalculateLayoutInputHorizontal();
         newChoiceElement.GetComponent<HorizontalLayoutGroup>().CalculateLayoutInputVertical();
@@ -1477,6 +1580,7 @@ public class EditorController : MonoBehaviour
         print(appliedRules);
     }
 
+    // Changes path where output bitstring would be saved
     public void ChangeOutputPath()
     {
         if (!changeOutputMode)
@@ -1537,6 +1641,7 @@ public class EditorController : MonoBehaviour
         } 
     }
 
+
     public void CloseChangeOutput()
     {
         
@@ -1554,6 +1659,7 @@ public class EditorController : MonoBehaviour
         changeOutputMode = false;
     }
 
+    // Save output bitstring to outputpath
     public void SaveOutput(List<string> outputBitstrings)
     {
         StreamWriter writer = new StreamWriter(outputPath, false);
@@ -1585,11 +1691,13 @@ public class EditorController : MonoBehaviour
         return autoSavePath;
     }
 
+    // Update auto save path
     public void ChangeAutoSavePath(string newPath){
         autoSavePath = newPath;
         AutoSave();
     }
 
+    // Function triggered during autosave
     public void AutoSave(){
         print(Time.time);
         string path = autoSavePath;
@@ -1602,6 +1710,8 @@ public class EditorController : MonoBehaviour
             
             SetStatusText("Autosaved!");
         }
+
+        // Start notification coroutine
         autoSaveNotif.GetComponent<Text>().text = "System autosaved at: \n" + autoSavePath;
         IEnumerator notify = AutoSaveNotify();
         StartCoroutine(notify);
@@ -1615,6 +1725,7 @@ public class EditorController : MonoBehaviour
 
     }
 
+    // Load an SNP system from a snapse file
     public void LoadFromPath(string path){
         
         if (path.Length != 0)
@@ -1629,7 +1740,7 @@ public class EditorController : MonoBehaviour
             hasPositionData = DecodeFromFormat(formatData);
 
            
-
+            // Auto layout files in a grid if there's no given position data
             if(!hasPositionData){
                 //Auto Layout
                 print("NO POSITION DATA");
@@ -1795,6 +1906,7 @@ public class EditorController : MonoBehaviour
         return true;
     }
 
+    // Create a snapse file from the SNP system in the program
     public string EncodeToFormat(){
         string lineEnder = ":";
         string format = "";
@@ -1945,10 +2057,11 @@ public class EditorController : MonoBehaviour
         return format;
     }
 
-    public void testEncodeToFormat(){
+    public void testEncodeToFormat(){ // Debug
         print(EncodeToFormat());        
     }
 
+    // Parse snapse file into SNP system
     public bool DecodeFromFormat(string formatData){
         BlankSlate();
         print(formatData);
@@ -2106,6 +2219,7 @@ public class EditorController : MonoBehaviour
                     }
                 }
 
+                //storedReceived
                 storedReceivedIndex = Array.IndexOf(strValues, "storedReceived", storedReceivedSearchIndex, Mathf.Min(searchArea, strValues.Length - storedReceivedSearchIndex));
                 if (storedReceivedIndex >= 0)
                 {

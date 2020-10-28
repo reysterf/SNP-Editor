@@ -33,6 +33,7 @@ public class LoadMenuController : MonoBehaviour
         loadPathText.text = loadPath;
     }
 
+    // Get an updated list of SNP systems to load
     public void UpdateOptions(){
         loadPath = Application.dataPath + "/saves/";
         di = new DirectoryInfo(loadPath);
@@ -74,6 +75,7 @@ public class LoadMenuController : MonoBehaviour
         editorController.SetDragMode(true);
     }
 
+    // Try to load a snapse file into the program
     public void Load(){
         optionDataList = loadMenuDropdown.options;
         Dropdown.OptionData chosenOption = optionDataList[loadMenuDropdown.value];

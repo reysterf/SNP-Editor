@@ -7,15 +7,6 @@ public class RulePrefabController : MonoBehaviour
 {
     private string rule;
 
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
 
     //Calls choicemade in GuidedMenuController, passing the rule chosen
     public void SendRule()

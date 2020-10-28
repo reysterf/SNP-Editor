@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Handles all NeuronControllers
 public class NeuronsController : MonoBehaviour
 {
     Vector3 v1;
@@ -22,6 +23,7 @@ public class NeuronsController : MonoBehaviour
         Destroy(GetComponent<GridLayoutGroup>()); // For auto layout;
     }
 
+    // Broadcasts delete neuron mode messages
     public void DeleteNeuronMode(bool mode) {
         print("Delete Neuron Mode");
         BroadcastMessage("DeleteNeuronModeReceiver", mode);
@@ -32,11 +34,13 @@ public class NeuronsController : MonoBehaviour
         ec.DeleteNeuron(neuron);
     }
 
+    // Broadcasts edit neuron mode messages
     public void EditNeuronMode(bool mode) {
         print("Edit Neuron Mode");
         BroadcastMessage("EditNeuronModeReceiver", mode);
     }
 
+    // Broadcasts new synapse mode messages
     public void NewSynapseMode(bool mode) {
         BroadcastMessage("NewSynapseModeReceiver", mode);
         BroadcastMessage("SynapseV1ModeReceiver", true);
@@ -45,6 +49,7 @@ public class NeuronsController : MonoBehaviour
         }
     }
 
+    // Handles and broadcasts synapse source neuron messages
     public void SynapseCoordinate1(GameObject neuron) {
         v1 = neuron.transform.position;
         sourceNeuronName = neuron.name;
@@ -53,6 +58,7 @@ public class NeuronsController : MonoBehaviour
         ec.SetStatusText("New Synapse: Click destination neuron");
     }
 
+    // Handles and broadcasts synapse destination neuron messages
     public void SynapseCoordinate2(GameObject neuron) {
         v2 = neuron.transform.position;
         destNeuronName = neuron.name;

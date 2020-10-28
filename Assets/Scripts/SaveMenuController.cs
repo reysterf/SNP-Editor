@@ -60,6 +60,7 @@ public class SaveMenuController : MonoBehaviour
         }
     }
 
+    // Checks if path is valid to save to
     bool ValidPath(){
         System.IO.FileInfo fi = null;
         try {
@@ -93,6 +94,7 @@ public class SaveMenuController : MonoBehaviour
         return savePath;
     }
 
+    // Starts save notification coroutine
     void SaveNotification(){
         saveNotif.gameObject.SetActive(true);
         Invoke("DisableNotif", 3.0f);
@@ -102,6 +104,7 @@ public class SaveMenuController : MonoBehaviour
         saveNotif.gameObject.SetActive(false);
     }
 
+    // Starts error notification coroutine
     void ErrorNotification(string error){
         errorNotif.text = error;
         errorNotif.gameObject.SetActive(true);

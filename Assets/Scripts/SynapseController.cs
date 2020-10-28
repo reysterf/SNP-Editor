@@ -80,6 +80,7 @@ public class SynapseController : MonoBehaviour
         return destNeuronName;
     }
 
+    // Handles delete synapse messages
     public void DeleteSynapseModeReceiver(bool mode){
         print("Delete Synapse Received: " + mode);
         deleteSynapseMode = mode;
@@ -95,6 +96,7 @@ public class SynapseController : MonoBehaviour
         }
     }
 
+    // Sends delete synapse target message
     public void DeleteSynapseTarget(){
         SendMessageUpwards("DeleteSynapseTarget", gameObject.name);
     }

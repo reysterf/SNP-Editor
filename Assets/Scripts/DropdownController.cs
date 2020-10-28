@@ -7,6 +7,7 @@ public class DropdownController : MonoBehaviour, IPointerDownHandler
 {
     public LoadMenuController loadMenuController;
 
+    //Updates the list of files to load upon clicking the dropdown in the Load Menu
     public void OnPointerDown(PointerEventData eventData)
     {
         loadMenuController.UpdateOptions();

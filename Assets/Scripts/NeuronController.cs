@@ -112,12 +112,10 @@ public class NeuronController : MonoBehaviour
                 neuronContainer.GetComponent<Image>().color = new Color(1f, 1f, 1f);
             }
             if(timer >= 0){
-                // timerUI.SetActive(true);
                 timerText.text = timer.ToString();
             }
             if(timer < 0){
                 timerText.text = "0";
-                // timerUI.SetActive(false);
             }
 
             UIChanged = false;
@@ -267,7 +265,6 @@ public class NeuronController : MonoBehaviour
             Vector3 cursorPosition = Camera.main.ScreenToWorldPoint (cursorScreenPoint) + offset;
             transform.position = cursorPosition;
         }
-        // ec.Draw();
     }
 
     // Handles clicks on the neuron
@@ -534,7 +531,6 @@ public class NeuronController : MonoBehaviour
 
     private IEnumerator AnimateFire(Vector3 startPosition, Vector3 endPosition)
     {
-        // print("Animate Firing");
         GameObject sprite = Instantiate(spikeSprite, startPosition, Quaternion.identity);
         sprite.transform.SetParent(GameObject.Find("Neurons and Synapses").transform);
         sprite.transform.SetAsFirstSibling();

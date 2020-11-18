@@ -1669,11 +1669,6 @@ public class EditorController : MonoBehaviour
     }
 
     public void Save(){
-        // var path = StandaloneFileBrowser.SaveFilePanel(
-        // "Save as",
-        // "",
-        // "Untitled.snapse",
-        // "snapse");
         string path = autoSavePath;
 
         if (path.Length != 0)
